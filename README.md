@@ -21,11 +21,13 @@ open source, this engine's code is open source, and Godot is open source. So, it
 together as a perfect fit.
 
 ## How to use
-Currently, you will need Godot 4.1.1 C# (latest C# / Mono version of Godot) to build the 
+Currently, you will need Godot 4.1.1 C# (latest .NET version of Godot) to build the 
 project. We will make binary versions when the project gets closer to completion. Until 
 then, download the source, and open it up as a project in Godot. it'll take a minute to 
 load, as it's importing all of the assets. When it's done, you can hit the Play button in
 the upper righthand corner.
+
+Use this version: ![img.png](statics%2Fgodot-version.png)
 
 You can also build a fully executable version of the game for your OS by clicking 
 `Project` -> `Export...` and select the predefined export package. You will need to download

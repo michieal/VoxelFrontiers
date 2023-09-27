@@ -10,4 +10,7 @@
     <ItemGroup>
         <EmbeddedResource Remove=".godot\**"/>
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="statics\godot-version.png" />
+    </ItemGroup>
 </Project>
