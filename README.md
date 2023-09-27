@@ -20,4 +20,15 @@ moved the project over to the Godot engine (4.1.1 stable-mono-offical). Mineclon
 open source, this engine's code is open source, and Godot is open source. So, it all came
 together as a perfect fit.
 
-Just testing to see if this works?
+## How to use
+Currently, you will need Godot 4.1.1 C# (latest C# / Mono version of Godot) to build the 
+project. We will make binary versions when the project gets closer to completion. Until 
+then, download the source, and open it up as a project in Godot. it'll take a minute to 
+load, as it's importing all of the assets. When it's done, you can hit the Play button in
+the upper righthand corner.
+
+You can also build a fully executable version of the game for your OS by clicking 
+`Project` -> `Export...` and select the predefined export package. You will need to download
+the project targets from the pop up, but they are small (~120 mb) to make it. Additionally,
+you will need DotNet installed, so that it can use MS Build to compile the code into a fully 
+working game. 
