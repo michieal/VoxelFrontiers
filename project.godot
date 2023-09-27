@@ -1,0 +1,50 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Gui Test 2"
+run/main_scene="res://Scenes/Main.tscn"
+config/features=PackedStringArray("4.1", "C#", "Forward Plus")
+run/flush_stdout_on_print=true
+boot_splash/bg_color=Color(0.0705882, 0.0705882, 0.0705882, 1)
+boot_splash/image="res://Sprites/Apophis Software Logo-4-2023.png"
+config/icon="res://Sprites/farming_pumpkin_face_light.png"
+
+[autoload]
+
+CoroutineManagerNode="*res://Prefabs/coroutine_manager_node.tscn"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=3
+window/size/extend_to_title=true
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/vsync/vsync_mode=0
+
+[dotnet]
+
+project/assembly_name="Gui Test 2"
+
+[filesystem]
+
+import/blender/enabled=false
+
+[physics]
+
+3d/run_on_separate_thread=true
+
+[rendering]
+
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
+occlusion_culling/use_occlusion_culling=true

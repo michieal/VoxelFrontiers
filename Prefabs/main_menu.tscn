@@ -1,0 +1,123 @@
+[gd_scene load_steps=11 format=3 uid="uid://couf2jnw4wmc7"]
+
+[ext_resource type="Theme" uid="uid://d070er741ktai" path="res://GUIThemes/GUITheme.tres" id="1_1eawn"]
+[ext_resource type="Texture2D" uid="uid://c020vyedurc4y" path="res://Sprites/Icons/Free Flat Gear 2 Icon.png" id="2_lidbm"]
+[ext_resource type="Texture2D" uid="uid://ckxl2atf8eije" path="res://Sprites/Icons/Free Flat Download Cloud Icon.png" id="3_yce8r"]
+[ext_resource type="Texture2D" uid="uid://cpiq5b3pduo2u" path="res://Sprites/Icons/Free Flat Exit Door Icon.png" id="4_exy8m"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_bayis"]
+device = -1
+alt_pressed = true
+keycode = 83
+unicode = 115
+
+[sub_resource type="Shortcut" id="Shortcut_sf10k"]
+events = [SubResource("InputEventKey_bayis")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_pwxc6"]
+device = -1
+alt_pressed = true
+keycode = 85
+unicode = 117
+
+[sub_resource type="Shortcut" id="Shortcut_v4w4r"]
+events = [SubResource("InputEventKey_pwxc6")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_6q5xq"]
+device = -1
+alt_pressed = true
+keycode = 88
+unicode = 120
+
+[sub_resource type="Shortcut" id="Shortcut_ofb0c"]
+events = [SubResource("InputEventKey_6q5xq")]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="MainMenuButtons" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 440.0
+offset_bottom = 1080.0
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer2" type="MarginContainer" parent="MainMenuButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenuButtons/MarginContainer2"]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="MainMenuButtons/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="btnSettings" type="Button" parent="MainMenuButtons/MarginContainer2/VBoxContainer"]
+texture_filter = 1
+texture_repeat = 1
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+tooltip_text = "Opens the Settings Menu.
+Used to adjust the game settings."
+theme = ExtResource("1_1eawn")
+theme_override_constants/h_separation = 10
+theme_override_constants/icon_max_width = 80
+theme_override_font_sizes/font_size = 72
+shortcut = SubResource("Shortcut_sf10k")
+text = "Settings"
+icon = ExtResource("2_lidbm")
+text_overrun_behavior = 3
+
+[node name="btnUpdateGame" type="Button" parent="MainMenuButtons/MarginContainer2/VBoxContainer"]
+texture_filter = 1
+texture_repeat = 1
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+tooltip_text = "Clears out, and redownloads
+the Game Source from official 
+repositories."
+theme = ExtResource("1_1eawn")
+theme_override_constants/h_separation = 10
+theme_override_constants/icon_max_width = 80
+theme_override_font_sizes/font_size = 72
+shortcut = SubResource("Shortcut_v4w4r")
+text = "Update Game"
+icon = ExtResource("3_yce8r")
+text_overrun_behavior = 3
+
+[node name="btnExit" type="Button" parent="MainMenuButtons/MarginContainer2/VBoxContainer"]
+texture_filter = 1
+texture_repeat = 1
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+tooltip_text = "Exit the game."
+theme = ExtResource("1_1eawn")
+theme_override_constants/h_separation = 10
+theme_override_constants/icon_max_width = 80
+theme_override_font_sizes/font_size = 72
+shortcut = SubResource("Shortcut_ofb0c")
+text = "Exit Game"
+icon = ExtResource("4_exy8m")
+text_overrun_behavior = 3
+
+[node name="Spacer2" type="Control" parent="MainMenuButtons/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.5

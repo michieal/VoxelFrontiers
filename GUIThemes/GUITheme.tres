@@ -1,0 +1,117 @@
+[gd_resource type="Theme" load_steps=14 format=3 uid="uid://d070er741ktai"]
+
+[ext_resource type="Texture2D" uid="uid://cvp0cs2gr8te" path="res://Sprites/dark_button_mcl.png" id="1_logf8"]
+[ext_resource type="Texture2D" uid="uid://ceofl6kigvrix" path="res://Sprites/dark_button_pressed_mcl.png" id="2_2mc7f"]
+[ext_resource type="FontFile" uid="uid://db16s6dpfprcw" path="res://Fonts/Minecraftchmc-dBlX.ttf" id="3_0h2yh"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_afbtw"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("1_logf8")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+modulate_color = Color(1.25, 1.25, 1.25, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_g7o15"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("1_logf8")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_r518v"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("2_2mc7f")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_olpp2"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("2_2mc7f")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+modulate_color = Color(1.25, 1.25, 1.25, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cepy1"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("1_logf8")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+modulate_color = Color(1.25, 1.25, 1.25, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mh0ak"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("2_2mc7f")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+modulate_color = Color(1.25, 1.25, 1.25, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r475k"]
+bg_color = Color(0.0941176, 0.6, 0.847059, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_0lrvp"]
+texture = ExtResource("1_logf8")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dt5ct"]
+texture = ExtResource("1_logf8")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cdvai"]
+texture = ExtResource("2_2mc7f")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[resource]
+default_font = ExtResource("3_0h2yh")
+default_font_size = 32
+Button/styles/hover = SubResource("StyleBoxTexture_afbtw")
+Button/styles/normal = SubResource("StyleBoxTexture_g7o15")
+Button/styles/pressed = SubResource("StyleBoxTexture_r518v")
+CheckBox/icons/checked = ExtResource("1_logf8")
+CheckBox/icons/checked_disabled = ExtResource("1_logf8")
+CheckBox/icons/unchecked = ExtResource("2_2mc7f")
+CheckBox/icons/unchecked_disabled = ExtResource("2_2mc7f")
+CheckBox/styles/hover_pressed = SubResource("StyleBoxTexture_olpp2")
+CheckButton/styles/hover = SubResource("StyleBoxTexture_cepy1")
+CheckButton/styles/hover_pressed = SubResource("StyleBoxTexture_mh0ak")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_r475k")
+TabBar/font_sizes/font_size = 32
+TabBar/styles/button_highlight = SubResource("StyleBoxTexture_0lrvp")
+TabBar/styles/tab_selected = SubResource("StyleBoxTexture_dt5ct")
+TabBar/styles/tab_unselected = SubResource("StyleBoxTexture_cdvai")

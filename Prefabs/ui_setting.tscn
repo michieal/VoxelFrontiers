@@ -1,0 +1,130 @@
+[gd_scene load_steps=3 format=3 uid="uid://di2hbvo6026el"]
+
+[ext_resource type="Theme" uid="uid://d070er741ktai" path="res://GUIThemes/GUITheme.tres" id="1_28svq"]
+[ext_resource type="Script" path="res://Scripts/UISetting.cs" id="2_f1vi1"]
+
+[node name="UISetting" type="Control" node_paths=PackedStringArray("Description", "SettingName", "DefaultValue", "ValueInput", "ValueDropdown", "ValueToggle")]
+custom_minimum_size = Vector2(450, 185)
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 0.171
+offset_bottom = 40.32
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_28svq")
+script = ExtResource("2_f1vi1")
+Description = NodePath("Description")
+SettingName = NodePath("SettingName")
+DefaultValue = NodePath("DefaultValue")
+ValueInput = NodePath("ValueInput")
+ValueDropdown = NodePath("ValueDropdown")
+ValueToggle = NodePath("ValueToggle")
+
+[node name="Description" type="Label" parent="."]
+custom_minimum_size = Vector2(1000, 155)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 152.0
+grow_horizontal = 2
+text = "Some Text goes here!"
+autowrap_mode = 3
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="HSeparator" type="HSeparator" parent="Description"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -155.0
+offset_bottom = -151.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="SettingName" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -30.0
+offset_right = 116.0
+offset_bottom = 1.0
+grow_vertical = 0
+text = "SettingName"
+
+[node name="DefaultValue" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -36.0
+offset_top = -30.0
+offset_right = 36.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Default"
+
+[node name="ValueInput" type="LineEdit" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -61.0
+offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+placeholder_text = "New Value..."
+max_length = 10
+caret_blink = true
+caret_force_displayed = true
+
+[node name="ValueDropdown" type="OptionButton" parent="."]
+visible = false
+custom_minimum_size = Vector2(150, 32)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -61.0
+offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="ValueToggle" type="CheckBox" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -61.0
+offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Value"
+
+[node name="BottomLine" type="HSeparator" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 0

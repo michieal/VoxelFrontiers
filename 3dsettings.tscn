@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://ctb3uqto720j2"]
+
+[sub_resource type="Environment" id="Environment_iw40v"]
+tonemap_mode = 2
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+volumetric_fog_enabled = true
+
+[sub_resource type="BoxOccluder3D" id="BoxOccluder3D_r8clj"]
+
+[node name="Node" type="Node"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_iw40v")
+
+[node name="OccluderInstance3D" type="OccluderInstance3D" parent="."]
+occluder = SubResource("BoxOccluder3D_r8clj")

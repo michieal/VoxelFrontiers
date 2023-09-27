@@ -1,0 +1,430 @@
+[gd_scene load_steps=25 format=3 uid="uid://dh6fejngvqnn4"]
+
+[ext_resource type="Script" path="res://Scripts/SCC.cs" id="1_euqum"]
+[ext_resource type="PackedScene" uid="uid://di2hbvo6026el" path="res://Prefabs/ui_setting.tscn" id="2_878le"]
+[ext_resource type="Script" path="res://Scripts/MenuController.cs" id="3_xkg32"]
+[ext_resource type="Texture2D" uid="uid://df328v26s62pr" path="res://Sprites/background.10.png" id="4_7jvqt"]
+[ext_resource type="Texture2D" uid="uid://c4g64qh4aerta" path="res://Sprites/header.2.png" id="5_tifxl"]
+[ext_resource type="Theme" uid="uid://d070er741ktai" path="res://GUIThemes/GUITheme.tres" id="6_f1isn"]
+[ext_resource type="FontFile" uid="uid://db16s6dpfprcw" path="res://Fonts/Minecraftchmc-dBlX.ttf" id="7_155va"]
+[ext_resource type="AudioStream" uid="uid://c2ykq00ghkdpj" path="res://Audio/Lupus Nocte - Howling (RFM).MP3" id="8_fdtaj"]
+[ext_resource type="Texture2D" uid="uid://c020vyedurc4y" path="res://Sprites/Icons/Free Flat Gear 2 Icon.png" id="9_2fl68"]
+[ext_resource type="Texture2D" uid="uid://ckxl2atf8eije" path="res://Sprites/Icons/Free Flat Download Cloud Icon.png" id="10_fhalh"]
+[ext_resource type="Texture2D" uid="uid://cpiq5b3pduo2u" path="res://Sprites/Icons/Free Flat Exit Door Icon.png" id="11_m3l68"]
+[ext_resource type="Texture2D" uid="uid://cvp0cs2gr8te" path="res://Sprites/dark_button_mcl.png" id="12_u8xgm"]
+[ext_resource type="Texture2D" uid="uid://xk3qrputwrl0" path="res://Sprites/Icons/Free Flat Arrow Curved Left 2 Icon.png" id="13_0tfgv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ycca0"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0, 0, 0, 0.627451)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="InputEventKey" id="InputEventKey_bayis"]
+device = -1
+alt_pressed = true
+keycode = 83
+unicode = 115
+
+[sub_resource type="Shortcut" id="Shortcut_sf10k"]
+events = [SubResource("InputEventKey_bayis")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_pwxc6"]
+device = -1
+alt_pressed = true
+keycode = 85
+unicode = 117
+
+[sub_resource type="Shortcut" id="Shortcut_v4w4r"]
+events = [SubResource("InputEventKey_pwxc6")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_6q5xq"]
+device = -1
+alt_pressed = true
+keycode = 88
+unicode = 120
+
+[sub_resource type="Shortcut" id="Shortcut_ofb0c"]
+events = [SubResource("InputEventKey_6q5xq")]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xm6ap"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("12_u8xgm")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="InputEventAction" id="InputEventAction_f2t7m"]
+action = &"ui_cancel"
+
+[sub_resource type="Shortcut" id="Shortcut_i6j0m"]
+events = [SubResource("InputEventAction_f2t7m")]
+
+[sub_resource type="CSharpScript" id="CSharpScript_dnoe6"]
+script/source = "using Godot;
+using System;
+
+public partial class btnExitSettings : TextureButton {
+	[ExportGroup(\"Properties\")] [ExportCategory(\"Button Settings\")] [Export]
+	public TextureButton BtnExitSettings;
+
+	[Export] public bool   blnMainMenu;
+	[Export] public Control SettingsMenu;
+	[Export] public Control MainMenu;
+
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready() {
+		BtnExitSettings.Pressed += BtnExitSettingsOnPressed;
+		base._Ready();
+	}
+
+	private void BtnExitSettingsOnPressed() {
+		GD.Print(\"Exit Settings Button Pressed.\");
+		SettingsMenu.Visible = false;
+		if (blnMainMenu) {
+			MainMenu.Visible = true;
+		}
+	}
+}"
+
+[node name="Main" type="Node3D"]
+
+[node name="Canvas" type="Node2D" parent="."]
+
+[node name="SourceCodeSettingsNode" type="Node" parent="Canvas" node_paths=PackedStringArray("StatusLabel", "BtnUpdate", "VersionLabel", "_engineSettings", "_gameSettings")]
+script = ExtResource("1_euqum")
+StatusLabel = NodePath("../MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer/Footer/StatusText")
+BtnUpdate = NodePath("../MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnUpdateGame")
+VersionLabel = NodePath("../MainMenuSetup/MenuBackground/VersionText")
+_engineSettings = NodePath("../MainMenuSetup/ActualSettings/TabContainer/Engine Settings/ES_Mount")
+_gameSettings = NodePath("../MainMenuSetup/ActualSettings/TabContainer/Game Settings/GS_Mount")
+DEBUG = true
+SettingsPrefab = ExtResource("2_878le")
+
+[node name="MainMenuSetup" type="Control" parent="Canvas" node_paths=PackedStringArray("MainMenu", "SettingsMenu", "MenuBackground", "btnSettings", "btnUpdate", "btnExit", "BtnExitSettings")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+script = ExtResource("3_xkg32")
+MainMenu = NodePath("MainMenu")
+SettingsMenu = NodePath("ActualSettings")
+MenuBackground = NodePath("MenuBackground")
+btnSettings = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnSettings")
+btnUpdate = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnUpdateGame")
+btnExit = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnExit")
+BtnExitSettings = NodePath("ActualSettings/btnExitSettings")
+DEBUG = true
+
+[node name="MenuBackground" type="Panel" parent="Canvas/MainMenuSetup"]
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BkgdImage" type="TextureRect" parent="Canvas/MainMenuSetup/MenuBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_7jvqt")
+expand_mode = 3
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="Canvas/MainMenuSetup/MenuBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Canvas/MainMenuSetup/MenuBackground/MarginContainer"]
+layout_mode = 2
+
+[node name="Header" type="TextureRect" parent="Canvas/MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+auto_translate = false
+localize_numeral_system = false
+mouse_filter = 2
+texture = ExtResource("5_tifxl")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Label++" type="Label" parent="Canvas/MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 889.0
+offset_top = -9.0
+offset_right = 983.0
+offset_bottom = 102.0
+rotation = -0.353749
+theme = ExtResource("6_f1isn")
+theme_override_colors/font_color = Color(0.588235, 0.898039, 0.298039, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.588235, 0.898039, 0.298039, 0.627451)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 6
+theme_override_fonts/font = ExtResource("7_155va")
+theme_override_font_sizes/font_size = 125
+text = "++"
+
+[node name="Spacer" type="Control" parent="Canvas/MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="Footer" type="HBoxContainer" parent="Canvas/MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Canvas/MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("6_f1isn")
+theme_override_font_sizes/font_size = 52
+theme_override_styles/normal = SubResource("StyleBoxFlat_ycca0")
+text = "Beta Version.
+Expect Many Bugs!"
+
+[node name="Spacer" type="Control" parent="Canvas/MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="StatusText" type="Label" parent="Canvas/MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer/Footer"]
+custom_minimum_size = Vector2(700, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+size_flags_stretch_ratio = 1.5
+theme = ExtResource("6_f1isn")
+theme_override_colors/font_color = Color(0.184314, 0.592157, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 44
+text = "Loading..."
+
+[node name="VersionText" type="Label" parent="Canvas/MainMenuSetup/MenuBackground"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -310.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 60.0
+grow_horizontal = 0
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme = ExtResource("6_f1isn")
+theme_override_colors/font_color = Color(0.184314, 0.592157, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 36
+text = "Version 2023.9.20:0.85.0-SNAPSHOT"
+
+[node name="BGM Player" type="AudioStreamPlayer2D" parent="Canvas/MainMenuSetup/MenuBackground"]
+position = Vector2(960, 540)
+stream = ExtResource("8_fdtaj")
+volume_db = -5.0
+autoplay = true
+
+[node name="MainMenu" type="Control" parent="Canvas/MainMenuSetup"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="MainMenuButtons" type="VBoxContainer" parent="Canvas/MainMenuSetup/MainMenu"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 440.0
+offset_bottom = 1080.0
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer2" type="MarginContainer" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2"]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="btnSettings" type="Button" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
+texture_filter = 1
+texture_repeat = 1
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+tooltip_text = "Opens the Settings Menu.
+Used to adjust the game settings."
+theme = ExtResource("6_f1isn")
+theme_override_constants/h_separation = 10
+theme_override_constants/icon_max_width = 80
+theme_override_font_sizes/font_size = 72
+shortcut = SubResource("Shortcut_sf10k")
+text = "Settings"
+icon = ExtResource("9_2fl68")
+text_overrun_behavior = 3
+
+[node name="btnUpdateGame" type="Button" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
+texture_filter = 1
+texture_repeat = 1
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+tooltip_text = "Clears out, and redownloads
+the Game Source from official 
+repositories."
+theme = ExtResource("6_f1isn")
+theme_override_constants/h_separation = 10
+theme_override_constants/icon_max_width = 80
+theme_override_font_sizes/font_size = 72
+shortcut = SubResource("Shortcut_v4w4r")
+text = "Update Game"
+icon = ExtResource("10_fhalh")
+text_overrun_behavior = 3
+
+[node name="btnExit" type="Button" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
+texture_filter = 1
+texture_repeat = 1
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+tooltip_text = "Exit the game."
+theme = ExtResource("6_f1isn")
+theme_override_constants/h_separation = 10
+theme_override_constants/icon_max_width = 80
+theme_override_font_sizes/font_size = 72
+shortcut = SubResource("Shortcut_ofb0c")
+text = "Exit Game"
+icon = ExtResource("11_m3l68")
+text_overrun_behavior = 3
+
+[node name="Spacer2" type="Control" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.5
+
+[node name="ActualSettings" type="Control" parent="Canvas/MainMenuSetup"]
+visible = false
+custom_minimum_size = Vector2(500, 110)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="Canvas/MainMenuSetup/ActualSettings"]
+clip_contents = true
+custom_minimum_size = Vector2(1000, 950)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -510.0
+offset_top = -475.0
+offset_right = 510.0
+offset_bottom = 475.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("6_f1isn")
+theme_override_constants/side_margin = 10
+tab_alignment = 1
+use_hidden_tabs_for_min_size = true
+
+[node name="Game Settings" type="ScrollContainer" parent="Canvas/MainMenuSetup/ActualSettings/TabContainer"]
+custom_minimum_size = Vector2(1020, 914)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_xm6ap")
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="GS_Mount" type="VBoxContainer" parent="Canvas/MainMenuSetup/ActualSettings/TabContainer/Game Settings"]
+clip_contents = true
+custom_minimum_size = Vector2(1000, 190)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="Engine Settings" type="ScrollContainer" parent="Canvas/MainMenuSetup/ActualSettings/TabContainer"]
+visible = false
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_xm6ap")
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="ES_Mount" type="VBoxContainer" parent="Canvas/MainMenuSetup/ActualSettings/TabContainer/Engine Settings"]
+custom_minimum_size = Vector2(1000, 190)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="btnExitSettings" type="TextureButton" parent="Canvas/MainMenuSetup/ActualSettings"]
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -56.0
+offset_bottom = 56.0
+grow_horizontal = 0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Exit the Settings menu"
+theme = ExtResource("6_f1isn")
+shortcut = SubResource("Shortcut_i6j0m")
+texture_normal = ExtResource("13_0tfgv")
+ignore_texture_size = true
+stretch_mode = 4
+script = SubResource("CSharpScript_dnoe6")

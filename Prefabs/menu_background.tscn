@@ -1,0 +1,152 @@
+[gd_scene load_steps=7 format=3 uid="uid://ev5sk70xksq8"]
+
+[ext_resource type="Texture2D" uid="uid://df328v26s62pr" path="res://Sprites/background.10.png" id="1_krsry"]
+[ext_resource type="Texture2D" uid="uid://c4g64qh4aerta" path="res://Sprites/header.2.png" id="2_v2maa"]
+[ext_resource type="Theme" uid="uid://d070er741ktai" path="res://GUIThemes/GUITheme.tres" id="3_lom76"]
+[ext_resource type="FontFile" uid="uid://db16s6dpfprcw" path="res://Fonts/Minecraftchmc-dBlX.ttf" id="4_f7uth"]
+[ext_resource type="AudioStream" uid="uid://c2ykq00ghkdpj" path="res://Audio/Lupus Nocte - Howling (RFM).MP3" id="5_r5g4j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ycca0"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0, 0, 0, 0.627451)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="MenuBackground" type="Panel"]
+custom_minimum_size = Vector2(1920, 1080)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BkgdImage" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_krsry")
+expand_mode = 3
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Header" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+auto_translate = false
+localize_numeral_system = false
+mouse_filter = 2
+texture = ExtResource("2_v2maa")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Label++" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 889.0
+offset_top = -9.0
+offset_right = 983.0
+offset_bottom = 102.0
+rotation = -0.353749
+theme = ExtResource("3_lom76")
+theme_override_colors/font_color = Color(0.588235, 0.898039, 0.298039, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.588235, 0.898039, 0.298039, 0.627451)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 6
+theme_override_fonts/font = ExtResource("4_f7uth")
+theme_override_font_sizes/font_size = 125
+text = "++"
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="Footer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_lom76")
+theme_override_font_sizes/font_size = 52
+theme_override_styles/normal = SubResource("StyleBoxFlat_ycca0")
+text = "Beta Version.
+Expect Many Bugs!"
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="StatusText" type="Label" parent="MarginContainer/VBoxContainer/Footer"]
+custom_minimum_size = Vector2(700, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+size_flags_stretch_ratio = 1.5
+theme = ExtResource("3_lom76")
+theme_override_colors/font_color = Color(0.184314, 0.592157, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 44
+text = "Loading..."
+
+[node name="VersionText" type="Label" parent="."]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -310.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 60.0
+grow_horizontal = 0
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme = ExtResource("3_lom76")
+theme_override_colors/font_color = Color(0.184314, 0.592157, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 36
+text = "Version 2023.9.20:0.85.0-SNAPSHOT"
+
+[node name="BGM Player" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(960, 540)
+stream = ExtResource("5_r5g4j")
+volume_db = -5.0
+autoplay = true
