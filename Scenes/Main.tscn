@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dh6fejngvqnn4"]
+[gd_scene load_steps=24 format=3 uid="uid://dh6fejngvqnn4"]
 
 [ext_resource type="Script" path="res://Scripts/SCC.cs" id="1_euqum"]
 [ext_resource type="PackedScene" uid="uid://di2hbvo6026el" path="res://Prefabs/ui_setting.tscn" id="2_878le"]
@@ -73,33 +73,6 @@ action = &"ui_cancel"
 [sub_resource type="Shortcut" id="Shortcut_i6j0m"]
 events = [SubResource("InputEventAction_f2t7m")]
 
-[sub_resource type="CSharpScript" id="CSharpScript_dnoe6"]
-script/source = "using Godot;
-using System;
-
-public partial class btnExitSettings : TextureButton {
-	[ExportGroup(\"Properties\")] [ExportCategory(\"Button Settings\")] [Export]
-	public TextureButton BtnExitSettings;
-
-	[Export] public bool   blnMainMenu;
-	[Export] public Control SettingsMenu;
-	[Export] public Control MainMenu;
-
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready() {
-		BtnExitSettings.Pressed += BtnExitSettingsOnPressed;
-		base._Ready();
-	}
-
-	private void BtnExitSettingsOnPressed() {
-		GD.Print(\"Exit Settings Button Pressed.\");
-		SettingsMenu.Visible = false;
-		if (blnMainMenu) {
-			MainMenu.Visible = true;
-		}
-	}
-}"
-
 [node name="Main" type="Node3D"]
 
 [node name="Canvas" type="Node2D" parent="."]
@@ -109,8 +82,8 @@ script = ExtResource("1_euqum")
 StatusLabel = NodePath("../MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer/Footer/StatusText")
 BtnUpdate = NodePath("../MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnUpdateGame")
 VersionLabel = NodePath("../MainMenuSetup/MenuBackground/VersionText")
-_engineSettings = NodePath("../MainMenuSetup/ActualSettings/TabContainer/Engine Settings/ES_Mount")
-_gameSettings = NodePath("../MainMenuSetup/ActualSettings/TabContainer/Game Settings/GS_Mount")
+_engineSettings = NodePath("../MainMenuSetup/SettingsMenu/TabContainer/Engine Settings/ES_Mount")
+_gameSettings = NodePath("../MainMenuSetup/SettingsMenu/TabContainer/Game Settings/GS_Mount")
 DEBUG = true
 SettingsPrefab = ExtResource("2_878le")
 
@@ -121,12 +94,12 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 script = ExtResource("3_xkg32")
 MainMenu = NodePath("MainMenu")
-SettingsMenu = NodePath("ActualSettings")
+SettingsMenu = NodePath("SettingsMenu")
 MenuBackground = NodePath("MenuBackground")
 btnSettings = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnSettings")
 btnUpdate = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnUpdateGame")
 btnExit = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnExit")
-BtnExitSettings = NodePath("ActualSettings/btnExitSettings")
+BtnExitSettings = NodePath("SettingsMenu/btnExitSettings")
 DEBUG = true
 
 [node name="MenuBackground" type="Panel" parent="Canvas/MainMenuSetup"]
@@ -350,7 +323,7 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 1.5
 
-[node name="ActualSettings" type="Control" parent="Canvas/MainMenuSetup"]
+[node name="SettingsMenu" type="Control" parent="Canvas/MainMenuSetup"]
 visible = false
 custom_minimum_size = Vector2(500, 110)
 layout_mode = 1
@@ -360,7 +333,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TabContainer" type="TabContainer" parent="Canvas/MainMenuSetup/ActualSettings"]
+[node name="TabContainer" type="TabContainer" parent="Canvas/MainMenuSetup/SettingsMenu"]
 clip_contents = true
 custom_minimum_size = Vector2(1000, 950)
 layout_mode = 1
@@ -380,14 +353,14 @@ theme_override_constants/side_margin = 10
 tab_alignment = 1
 use_hidden_tabs_for_min_size = true
 
-[node name="Game Settings" type="ScrollContainer" parent="Canvas/MainMenuSetup/ActualSettings/TabContainer"]
+[node name="Game Settings" type="ScrollContainer" parent="Canvas/MainMenuSetup/SettingsMenu/TabContainer"]
 custom_minimum_size = Vector2(1020, 914)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_xm6ap")
 follow_focus = true
 horizontal_scroll_mode = 0
 
-[node name="GS_Mount" type="VBoxContainer" parent="Canvas/MainMenuSetup/ActualSettings/TabContainer/Game Settings"]
+[node name="GS_Mount" type="VBoxContainer" parent="Canvas/MainMenuSetup/SettingsMenu/TabContainer/Game Settings"]
 clip_contents = true
 custom_minimum_size = Vector2(1000, 190)
 layout_mode = 2
@@ -395,7 +368,7 @@ size_flags_horizontal = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 5
 
-[node name="Engine Settings" type="ScrollContainer" parent="Canvas/MainMenuSetup/ActualSettings/TabContainer"]
+[node name="Engine Settings" type="ScrollContainer" parent="Canvas/MainMenuSetup/SettingsMenu/TabContainer"]
 visible = false
 custom_minimum_size = Vector2(500, 200)
 layout_mode = 2
@@ -403,21 +376,23 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_xm6ap")
 follow_focus = true
 horizontal_scroll_mode = 0
 
-[node name="ES_Mount" type="VBoxContainer" parent="Canvas/MainMenuSetup/ActualSettings/TabContainer/Engine Settings"]
+[node name="ES_Mount" type="VBoxContainer" parent="Canvas/MainMenuSetup/SettingsMenu/TabContainer/Engine Settings"]
 custom_minimum_size = Vector2(1000, 190)
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 5
 
-[node name="btnExitSettings" type="TextureButton" parent="Canvas/MainMenuSetup/ActualSettings"]
+[node name="btnExitSettings" type="TextureButton" parent="Canvas/MainMenuSetup/SettingsMenu"]
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -56.0
-offset_bottom = 56.0
+offset_left = -66.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 66.0
 grow_horizontal = 0
 size_flags_horizontal = 8
 size_flags_vertical = 0
@@ -427,4 +402,3 @@ shortcut = SubResource("Shortcut_i6j0m")
 texture_normal = ExtResource("13_0tfgv")
 ignore_texture_size = true
 stretch_mode = 4
-script = SubResource("CSharpScript_dnoe6")
