@@ -20,7 +20,7 @@ config/icon="res://Sprites/farming_pumpkin_face_light.png"
 
 [autoload]
 
-CoroutineManagerNode="*res://Prefabs/coroutine_manager_node.tscn"
+CoroutineManagerNode="*res://statics/coroutine_manager_node.tscn"
 
 [display]
 
