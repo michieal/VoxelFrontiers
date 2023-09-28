@@ -12,9 +12,11 @@ public partial class MenuController : Control {
 
 	[Export] public Control SettingsMenu;
 
-	[Export] public Panel   MenuBackground;
-	[Export] public Control UpdateMessage;
+	[Export] public Panel        MenuBackground;
+	[Export] public Control      UpdateMessage;
 	[Export] public AcceptDialog DownloadError;
+
+	[Export] public SCC SourceControl;
 
 	[ExportCategory("GameState vars")] [Export]
 	public bool InGame;
@@ -44,7 +46,7 @@ public partial class MenuController : Control {
 		InSettings = false;
 		InGame = false;
 
-
+		btnUpdate.Pressed += SourceControl.DownloadGameSource;
 		btnSettings.Pressed += BtnSettingsOnPressed;
 		btnExit.Pressed += BtnExitOnPressed;
 		BtnExitSettings.Pressed += BtnExitSettingsOnPressed;
@@ -110,11 +112,13 @@ public partial class MenuController : Control {
 	}
 
 	internal void ShowUpdateNotice() {
+		btnUpdate.Disabled = true;
 		UpdateMessage.Visible = true;
 		InUpdate = true;
 	}
-	
+
 	internal void HideUpdateNotice() {
+		btnUpdate.Disabled = false;
 		UpdateMessage.Visible = false;
 		InUpdate = false;
 	}
@@ -123,5 +127,4 @@ public partial class MenuController : Control {
 		DownloadError.DialogText = message;
 		DownloadError.Show();
 	}
-	
 }

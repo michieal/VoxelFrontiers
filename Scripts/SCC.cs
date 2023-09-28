@@ -447,19 +447,12 @@ public partial class SCC : Node {
 		SettingsProcCoroutine = CoroutineManager.Instance.StartCoroutine(SettingsProcessor());
 	}
 
-	// Called by UpdateSourceCode button.
-	public void UpdateSourceCode() {
-		BtnUpdate.Disabled = true;
-		DownloadGameSource();
-	}
-
-	private void DownloadGameSource() {
+	internal void DownloadGameSource() {
 		if (BtnUpdate.Visible == false ||
 		    BtnUpdate.Disabled)
 			return; // if this is buried, don't allow the hot-key to force download the source code. 
 
 		// Handle UI display info
-		BtnUpdate.Disabled = true;
 		MenuHandler.ShowUpdateNotice();
 
 		if (dirScanCoroutine != null) { // stop processing, if we are going to download / update the files.
@@ -522,8 +515,7 @@ public partial class SCC : Node {
 
 		if (File.Exists(_ZipFile))
 			File.Delete(_ZipFile); // clean up the download to save space.
-
-		BtnUpdate.Disabled = false;
+		
 		MenuHandler.HideUpdateNotice();
 		ScanDirectories();
 	}
