@@ -10,13 +10,16 @@ config_version=5
 
 [application]
 
-config/name="Gui Test 2"
+config/name="MineclonePP"
+config/description="Mineclone ++ Version 2023.9.27"
 run/main_scene="res://Scenes/Main.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 run/flush_stdout_on_print=true
 boot_splash/bg_color=Color(0.0705882, 0.0705882, 0.0705882, 1)
 boot_splash/image="res://Sprites/Apophis Software Logo-4-2023.png"
 config/icon="res://Sprites/farming_pumpkin_face_light.png"
+boot_splash/minimum_display_time=500
+config/version="2023.9.27"
 
 [autoload]
 
@@ -34,7 +37,11 @@ window/vsync/vsync_mode=0
 
 [dotnet]
 
-project/assembly_name="Gui Test 2"
+project/assembly_name="MineclonePP"
+
+[editor]
+
+naming/scene_name_casing=1
 
 [filesystem]
 

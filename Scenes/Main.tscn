@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://dh6fejngvqnn4"]
+[gd_scene load_steps=25 format=3 uid="uid://dh6fejngvqnn4"]
 
 [ext_resource type="Script" path="res://Scripts/SCC.cs" id="1_euqum"]
 [ext_resource type="PackedScene" uid="uid://di2hbvo6026el" path="res://Prefabs/ui_setting.tscn" id="2_878le"]
@@ -73,21 +73,34 @@ action = &"ui_cancel"
 [sub_resource type="Shortcut" id="Shortcut_i6j0m"]
 events = [SubResource("InputEventAction_f2t7m")]
 
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xvryy"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("12_u8xgm")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
+modulate_color = Color(0.607843, 0.607843, 0.607843, 1)
+
 [node name="Main" type="Node3D"]
 
 [node name="Canvas" type="Node2D" parent="."]
 
-[node name="SourceCodeSettingsNode" type="Node" parent="Canvas" node_paths=PackedStringArray("StatusLabel", "BtnUpdate", "VersionLabel", "_engineSettings", "_gameSettings")]
+[node name="SourceCodeSettingsNode" type="Node" parent="Canvas" node_paths=PackedStringArray("StatusLabel", "BtnUpdate", "VersionLabel", "_engineSettings", "_gameSettings", "MenuHandler")]
 script = ExtResource("1_euqum")
 StatusLabel = NodePath("../MainMenuSetup/MenuBackground/MarginContainer/VBoxContainer/Footer/StatusText")
 BtnUpdate = NodePath("../MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnUpdateGame")
 VersionLabel = NodePath("../MainMenuSetup/MenuBackground/VersionText")
 _engineSettings = NodePath("../MainMenuSetup/SettingsMenu/TabContainer/Engine Settings/ES_Mount")
 _gameSettings = NodePath("../MainMenuSetup/SettingsMenu/TabContainer/Game Settings/GS_Mount")
+MenuHandler = NodePath("../MainMenuSetup")
 DEBUG = true
 SettingsPrefab = ExtResource("2_878le")
 
-[node name="MainMenuSetup" type="Control" parent="Canvas" node_paths=PackedStringArray("MainMenu", "SettingsMenu", "MenuBackground", "btnSettings", "btnUpdate", "btnExit", "BtnExitSettings")]
+[node name="MainMenuSetup" type="Control" parent="Canvas" node_paths=PackedStringArray("MainMenu", "SettingsMenu", "MenuBackground", "UpdateMessage", "btnSettings", "btnUpdate", "btnExit", "BtnExitSettings")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
@@ -96,6 +109,7 @@ script = ExtResource("3_xkg32")
 MainMenu = NodePath("MainMenu")
 SettingsMenu = NodePath("SettingsMenu")
 MenuBackground = NodePath("MenuBackground")
+UpdateMessage = NodePath("UpdateMessage")
 btnSettings = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnSettings")
 btnUpdate = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnUpdateGame")
 btnExit = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnExit")
@@ -225,7 +239,7 @@ theme = ExtResource("6_f1isn")
 theme_override_colors/font_color = Color(0.184314, 0.592157, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 36
-text = "Version 2023.9.20:0.85.0-SNAPSHOT"
+text = "Version :"
 
 [node name="BGM Player" type="AudioStreamPlayer2D" parent="Canvas/MainMenuSetup/MenuBackground"]
 position = Vector2(960, 540)
@@ -324,7 +338,6 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 1.5
 
 [node name="SettingsMenu" type="Control" parent="Canvas/MainMenuSetup"]
-visible = false
 custom_minimum_size = Vector2(500, 110)
 layout_mode = 1
 anchors_preset = 15
@@ -389,10 +402,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -66.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = 66.0
+offset_left = -436.0
+offset_top = 102.0
+offset_right = -380.0
+offset_bottom = 158.0
 grow_horizontal = 0
 size_flags_horizontal = 8
 size_flags_vertical = 0
@@ -402,3 +415,61 @@ shortcut = SubResource("Shortcut_i6j0m")
 texture_normal = ExtResource("13_0tfgv")
 ignore_texture_size = true
 stretch_mode = 4
+
+[node name="UpdateMessage" type="Control" parent="Canvas/MainMenuSetup"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("6_f1isn")
+
+[node name="Panel" type="Panel" parent="Canvas/MainMenuSetup/UpdateMessage"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Message Background" type="Panel" parent="Canvas/MainMenuSetup/UpdateMessage/Panel"]
+custom_minimum_size = Vector2(800, 800)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -400.0
+offset_right = 400.0
+offset_bottom = 400.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_xvryy")
+
+[node name="Label" type="Label" parent="Canvas/MainMenuSetup/UpdateMessage/Panel/Message Background"]
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -200.0
+offset_right = 200.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 45
+text = "Downloading the game source.
+Please wait while we do so.
+
+Depending on your internet speed, and travel time to the servers, this could take a couple of minutes."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true

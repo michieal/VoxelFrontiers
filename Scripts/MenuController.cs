@@ -12,7 +12,8 @@ public partial class MenuController : Control {
 
 	[Export] public Control SettingsMenu;
 
-	[Export] public Panel MenuBackground;
+	[Export] public Panel   MenuBackground;
+	[Export] public Control UpdateMessage;
 
 	[ExportCategory("GameState vars")] [Export]
 	public bool InGame;
@@ -20,6 +21,7 @@ public partial class MenuController : Control {
 	[Export] public bool InGameScreen;
 	[Export] public bool InMainMenu = true;
 	[Export] public bool InSettings;
+	[Export] public bool InUpdate;
 
 	[ExportCategory("Button Settings")] [Export]
 	public Button btnSettings;
@@ -64,6 +66,7 @@ public partial class MenuController : Control {
 	private void BtnSettingsOnPressed() {
 		AcceptEvent();
 		if (btnSettings.Visible == false || InMainMenu == false) return;
+		if (InUpdate) return;
 
 		InMainMenu = false;
 		InSettings = true;
@@ -98,9 +101,21 @@ public partial class MenuController : Control {
 
 	private void BtnExitOnPressed() {
 		if (Visible == false) return; //do nothing.
+		if (InUpdate) return;
 
 		if (DEBUG) Logging.Log("Exit Button Pressed.");
 
 		System.Environment.Exit(0);
 	}
+
+	internal void ShowUpdateNotice() {
+		UpdateMessage.Visible = true;
+		InUpdate = true;
+	}
+	
+	internal void HideUpdateNotice() {
+		UpdateMessage.Visible = false;
+		InUpdate = false;
+	}
+
 }

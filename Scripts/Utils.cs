@@ -36,7 +36,7 @@ public class Utils {
 	public static string GetStoragePath() {
 		string PathString = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 		if (!ANDROID && !WEBDEPLOY) {
-			PathString += "/.Apophis Software/.mineclonepp";
+			PathString += "/.Apophis Software/mineclonepp";
 			Directory.CreateDirectory(PathString); // make the path string, if it doesn't exist.
 			return PathString;
 		} else {

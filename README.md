@@ -16,21 +16,28 @@ build this from just fanciful thoughts into a real, honest engine.
 
 Initial versions of this project were created In Unity/C#. But, with the recent events, 
 and Unity being a dumpster fire (as well as closed source, proprietary software) I have
-moved the project over to the Godot engine (4.1.1 stable-mono-offical). Mineclone 2 is 
-open source, this engine's code is open source, and Godot is open source. So, it all came
-together as a perfect fit.
+moved the project over to the Godot engine 4.1.1 stable-mono-official (.NET Version). 
+Mineclone 2 is open source, this engine's code is open source, and Godot is open source. 
+So, it all came together as a perfect fit.
 
 ## How to use
 Currently, you will need Godot 4.1.1 C# (latest .NET version of Godot) to build the 
 project. We will make binary versions when the project gets closer to completion. Until 
-then, download the source, and open it up as a project in Godot. it'll take a minute to 
-load, as it's importing all of the assets. When it's done, you can hit the Play button in
-the upper righthand corner.
+then, download the source, and open it up as a project in Godot. It'll take a minute to 
+load, as it's importing all of the assets. When it's done, you can hit the `Play` button in
+the upper right-hand corner.
 
-Use this version: ![img.png](statics%2Fgodot-version.png)
+Use this version (or the latest): 
+![godot-version.png](statics%2Fgodot-version.png)
 
 You can also build a fully executable version of the game for your OS by clicking 
 `Project` -> `Export...` and select the predefined export package. You will need to download
 the project targets from the pop up, but they are small (~120 mb) to make it. Additionally,
-you will need DotNet installed, so that it can use MS Build to compile the code into a fully 
-working game. 
+you will need DotNet installed (DotNet 6) and configured, so that it can use MS Build to compile 
+the code into a fully working game. There have been some issues for people installing DotNet, and 
+if you're one of those affected by that, use the command `dotnet --list-sdks` to make sure that 
+dotnet can see that it has the sdk(s) listed. Ideally, install both version 6 and 7.
+
+## Contributing
+At the current moment, the only contributions needed are people to test it on various systems. 
+Please use the Issue Tracker to report the outcomes, so that if needed, we can look into it.

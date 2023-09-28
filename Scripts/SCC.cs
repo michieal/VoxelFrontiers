@@ -15,10 +15,11 @@ public partial class SCC : Node {
 	[ExportGroup("Sourcecode Properties")] [ExportCategory("SourceCode Settings")] [Export]
 	public Label StatusLabel;
 
-	[Export] public Button        BtnUpdate;
-	[Export] public Label         VersionLabel;
-	[Export] public VBoxContainer _engineSettings;
-	[Export] public VBoxContainer _gameSettings;
+	[Export] public Button         BtnUpdate;
+	[Export] public Label          VersionLabel;
+	[Export] public VBoxContainer  _engineSettings;
+	[Export] public VBoxContainer  _gameSettings;
+	[Export] public MenuController MenuHandler;
 
 	[Export] public bool DEBUG;
 
@@ -62,6 +63,11 @@ public partial class SCC : Node {
 		if (OS.HasFeature("web"))
 			Utils.WEBDEPLOY = true;
 #endif
+
+		// application/config/version
+
+		GameVersion = (string) ProjectSettings.GetSetting("application/config/version");
+
 		GamePath = Utils.GetStoragePath() + PathSep + "Game" + PathSep;
 		if (Directory.Exists(GamePath) == false)
 			Directory.CreateDirectory(GamePath);
@@ -72,6 +78,8 @@ public partial class SCC : Node {
 		BtnUpdate.Pressed += DownloadGameSource;
 		ScanDirectories();
 	}
+
+	internal string GameVersion { get; set; }
 
 	// make sure that we're as fresh as new york snow!
 	private void InitializeStorage() {
@@ -155,7 +163,7 @@ public partial class SCC : Node {
 			if (File.Exists(MainPath + "settingtypes.txt"))
 				SettingsFiles.Add(MainPath + "settingtypes.txt");
 
-		if (VersionLabel != null) VersionLabel.Text = "Version: 2023.9.20" + ":" + ProcessVersionCode();
+		if (VersionLabel != null) VersionLabel.Text = "Version: " + GameVersion + ":" + ProcessVersionCode();
 		// Example: 'Version 2023.9.20:0.85.0-SNAPSHOT'
 		// handle actual Dir scanning code.
 		// look for MODules, Textures, and Menu.
@@ -310,10 +318,19 @@ public partial class SCC : Node {
 
 		foreach (string settingsFile in SettingsFiles) {
 			Dictionary<string, Setting> temp = Utils.ProcessSettingFromTextFile(settingsFile);
-			foreach (KeyValuePair<string, Setting> keyValuePair in temp)
-				if (keyValuePair.Key != "")
-					GameSettings.Add(keyValuePair.Key,
-						keyValuePair.Value); // migrate the returned settings to the combined settings.
+			foreach (KeyValuePair<string, Setting> keyValuePair in temp) {
+				if (keyValuePair.Key != "") {
+					if (GameSettings.ContainsKey(keyValuePair.Key)) {
+						Logging.Log("error", "setting duplication: " +
+						                     keyValuePair.Key + "\n" + keyValuePair.Value +
+						                     "\nSetting Skipped.");
+					} else {
+						GameSettings.Add(keyValuePair.Key,
+							keyValuePair.Value); // migrate the returned settings to the combined settings.
+					}
+				}
+			}
+
 
 			yield return WaitAFrame;
 			GC.Collect(); // we've probably created a ton of garbage by now. Let's fix that.
@@ -321,11 +338,13 @@ public partial class SCC : Node {
 		}
 
 		// handle setting the saved values... 
-		// Dictionary<string, object> curvals = new Dictionary<string, object>();
-		// TODO: Make CurVals useful, and have it hold the current settings' values like it is supposed to!
 		SettingsConf = Utils.GetStoragePath() + "/settings.conf";
 		if (File.Exists(SettingsConf) == false) // prepare first time use.
 			ProcessGameMTC(SettingsConf);
+
+		Dictionary<string, object> curvals = new Dictionary<string, object>();
+		// TODO: Make CurVals useful, and have it hold the current settings' values like it is supposed to!
+
 
 		SettingsFiles.Clear(); // Release settings files.
 
@@ -384,9 +403,6 @@ public partial class SCC : Node {
 		StatusLabel.Text = "Building Source Code List.";
 		if (DEBUG) Logging.Log("Building Source Code List.");
 
-		ModPaths.Clear();
-		SourceFiles.Clear();
-		SettingsFiles.Clear();
 		List<string> RemoveDirs = new List<string>();
 		foreach (string dir in GlobalSourceDirs) {
 			string dirpath = dir + PathSep;
@@ -398,7 +414,13 @@ public partial class SCC : Node {
 					if (File.Exists(dirpath + "init.lua"))
 						SourceFiles.Add(dirpath + "init.lua");
 
-				if (File.Exists(dirpath + "settingtypes.txt")) SettingsFiles.Add(dirpath + "settingtypes.txt");
+				if (File.Exists(dirpath + "settingtypes.txt")) {
+					if (SettingsFiles.Contains(dirpath + "settingtypes.text")) {
+						Logging.Log("error", "Settings file found twice!\nFilename: " + dirpath + "settingtypes.text");
+					} else {
+						SettingsFiles.Add(dirpath + "settingtypes.txt");
+					}
+				}
 			} else {
 				RemoveDirs.Add(dir);
 			}
@@ -427,7 +449,10 @@ public partial class SCC : Node {
 		    BtnUpdate.Disabled)
 			return; // if this is buried, don't allow the hot-key to force download the source code. 
 
+		// Handle UI display info
 		BtnUpdate.Disabled = true;
+		MenuHandler.ShowUpdateNotice();
+
 		if (dirScanCoroutine != null) { // stop processing, if we are going to download / update the files.
 			CoroutineManager.Instance.StopCoroutine(dirScanCoroutine);
 			dirScanCoroutine = null;
@@ -443,6 +468,8 @@ public partial class SCC : Node {
 		// ------------------------------------------------------
 		StatusLabel.Text = "Downloading Source; Please wait.";
 		if (DEBUG) Logging.Log("Downloading Game Source.");
+
+		DestroySettingsUI();
 
 		WebClient client = new WebClient();
 		client.DownloadFileCompleted += DownloadGameSourceFileCompleted;
@@ -467,7 +494,7 @@ public partial class SCC : Node {
 			File.Delete(_ZipFile); // clean up the download to save space.
 
 		BtnUpdate.Disabled = false;
-
+		MenuHandler.HideUpdateNotice();
 		ScanDirectories();
 	}
 }
