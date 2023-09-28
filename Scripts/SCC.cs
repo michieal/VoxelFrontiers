@@ -18,7 +18,6 @@ public partial class SCC : Node {
 	[ExportGroup("Sourcecode Properties")] [ExportCategory("SourceCode Settings")] [Export]
 	public Label StatusLabel;
 
-	[Export] public Button         BtnUpdate;
 	[Export] public Label          VersionLabel;
 	[Export] public VBoxContainer  _engineSettings;
 	[Export] public VBoxContainer  _gameSettings;
@@ -86,7 +85,7 @@ public partial class SCC : Node {
 		_ZipFile = GamePath + "GameZip.zip";
 		StatusLabel.Text = "Game Initializing.";
 		Logging.LogStartup("System Start.");
-		BtnUpdate.Pressed += DownloadGameSource;
+		
 		ScanDirectories();
 	}
 
@@ -448,8 +447,8 @@ public partial class SCC : Node {
 	}
 
 	internal void DownloadGameSource() {
-		if (BtnUpdate.Visible == false ||
-		    BtnUpdate.Disabled)
+		if (MenuHandler.btnUpdate.Visible == false ||
+		    MenuHandler.btnUpdate.Disabled)
 			return; // if this is buried, don't allow the hot-key to force download the source code. 
 
 		// Handle UI display info

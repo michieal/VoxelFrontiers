@@ -29,9 +29,9 @@ public partial class MenuController : Control {
 	[ExportCategory("Button Settings")] [Export]
 	public Button btnSettings;
 
-	[Export] public Button        btnUpdate;
-	[Export] public Button        btnExit;
-	[Export] public TextureButton BtnExitSettings;
+	[Export] public Button btnUpdate;
+	[Export] public Button btnExit;
+	[Export] public Button BtnExitSettings;
 
 	[ExportCategory("Debugging")] [Export] public bool DEBUG;
 
@@ -45,6 +45,7 @@ public partial class MenuController : Control {
 		InMainMenu = true;
 		InSettings = false;
 		InGame = false;
+
 
 		btnUpdate.Pressed += SourceControl.DownloadGameSource;
 		btnSettings.Pressed += BtnSettingsOnPressed;
