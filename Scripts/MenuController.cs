@@ -14,6 +14,7 @@ public partial class MenuController : Control {
 
 	[Export] public Panel   MenuBackground;
 	[Export] public Control UpdateMessage;
+	[Export] public AcceptDialog DownloadError;
 
 	[ExportCategory("GameState vars")] [Export]
 	public bool InGame;
@@ -118,4 +119,9 @@ public partial class MenuController : Control {
 		InUpdate = false;
 	}
 
+	internal void ShowDownloadError(string message) {
+		DownloadError.DialogText = message;
+		DownloadError.Show();
+	}
+	
 }

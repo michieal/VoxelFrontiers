@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using HttpClient = System.Net.Http.HttpClient;
 
 #endregion
 
@@ -49,9 +52,16 @@ public partial class SCC : Node {
 	private readonly Utils     _utils  = new();
 	private static   string    PathSep = "/";
 	private          string    GamePath;
-	private          string    _ZipFile;
+	private static   string    _ZipFile;
 	private          Coroutine dirScanCoroutine;
 	private          Coroutine SettingsProcCoroutine;
+
+	// Http Net Access
+	// HttpClient lifecycle management best practices:
+	// https://learn.microsoft.com/dotnet/fundamentals/networking/http/httpclient-guidelines#recommended-use
+	private static HttpClient SourceClient = new() {
+		BaseAddress = new Uri("https://git.minetest.land"),
+	};
 
 	public Utils Utils => _utils;
 
@@ -345,7 +355,6 @@ public partial class SCC : Node {
 
 		// TODO: Make CurVals useful, and have it hold the current settings' values like it is supposed to!
 
-		
 
 		SettingsFiles.Clear(); // Release settings files.
 		StatusLabel.Text = "Settings Processing Done.";
@@ -471,24 +480,45 @@ public partial class SCC : Node {
 
 		DestroySettingsUI();
 
-		WebClient client = new WebClient();
-		client.DownloadFileCompleted += DownloadGameSourceFileCompleted;
-		client.DownloadFileAsync(new Uri("https://git.minetest.land/Michieal/MineClone2/archive/master.zip"),
-			_ZipFile);
+		DownloadFile(SourceClient);
 	}
 
-	private void DownloadGameSourceFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e) {
-		if (e.Error == null) {
-			StatusLabel.Text = "Game Source Download Complete! Extracting.";
+	async Task DownloadFile(HttpClient httpClient) {
+		using HttpResponseMessage response = await
+			httpClient.GetAsync("Michieal/MineClone2/archive/master.zip");
+
+		if (response is {StatusCode: HttpStatusCode.OK}) {
+			byte[] responseByteArray = await response.Content.ReadAsByteArrayAsync();
+			using (FileStream fileStream = new FileStream(_ZipFile, FileMode.Create)) {
+				// save the downloaded file out...
+				await fileStream.WriteAsync(responseByteArray, 0, responseByteArray.Length);
+			}
+
 			ExtractSource();
+		} else {
+			Logging.Log("error", "Error retrieving Game Source: \n" + response.ReasonPhrase);
+			MenuHandler.ShowDownloadError("An error has occurred trying to download the source code. Please try again later.");
 		}
 	}
 
 	private void ExtractSource() {
+		StatusLabel.Text = "Game Source Download Complete! Extracting.";
 		using (ZipArchive GameSourceZip = ZipFile.Open(_ZipFile, ZipArchiveMode.Read)) {
-			GameSourceZip.ExtractToDirectory(GamePath, true);
+			try {
+				// This method should handle the extraction of the downloaded ZIP file.
+				GameSourceZip.ExtractToDirectory(GamePath, true);
+			} catch (Exception ex) {
+				// Handle extraction errors
+				Logging.Log("error", "Extraction Error: " + ex.Message);
+				MenuHandler.ShowDownloadError("An error has occurred trying to extract the source code.\n" +
+				                              "Trying to redownload the source code.");
+				DownloadGameSource();
+				return;
+			}
+
 			StatusLabel.Text = "Game Source Extracted. Scanning Directories.";
 		}
+
 
 		if (File.Exists(_ZipFile))
 			File.Delete(_ZipFile); // clean up the download to save space.
