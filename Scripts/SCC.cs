@@ -29,19 +29,20 @@ public partial class SCC : Node {
 	internal List<string>                GlobalSourceDirs = new();
 	internal string                      ModulePath;
 	internal string                      MainPath;
-	internal List<string>                LocaleDirs    = new();
-	internal List<string>                TexDirs       = new();
-	internal List<string>                SoundDirs     = new();
-	internal List<string>                ModelDirs     = new();
-	internal List<string>                MenuFiles     = new();
-	internal List<string>                TextureFiles  = new();
-	internal List<string>                SourceFiles   = new();
-	internal List<string>                SoundFiles    = new();
-	internal List<string>                ModelFiles    = new();
-	internal Dictionary<string, string>  LocaleFiles   = new();
-	internal Dictionary<string, string>  ModPaths      = new();
-	private  List<string>                SettingsFiles = new(); // Released in SettingsProcessor.
-	internal Dictionary<string, Setting> GameSettings  = new();
+	internal List<string>                LocaleDirs;
+	internal List<string>                TexDirs;
+	internal List<string>                SoundDirs;
+	internal List<string>                ModelDirs;
+	internal List<string>                MenuFiles;
+	internal List<string>                TextureFiles;
+	internal List<string>                SourceFiles;
+	internal List<string>                SoundFiles;
+	internal List<string>                ModelFiles;
+	internal Dictionary<string, string>  LocaleFiles;
+	internal Dictionary<string, string>  ModPaths;
+	private  List<string>                SettingsFiles; // Released in SettingsProcessor.
+	internal Dictionary<string, Setting> GameSettings;
+	internal Dictionary<string, object>  CurVals;
 
 	internal string SettingsConf = "";
 
@@ -97,6 +98,7 @@ public partial class SCC : Node {
 		ModPaths = new Dictionary<string, string>();
 		SettingsFiles = new List<string>(); // Released in SettingsProcessor.
 		GameSettings = new Dictionary<string, Setting>();
+		CurVals = new Dictionary<string, object>();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -331,7 +333,6 @@ public partial class SCC : Node {
 				}
 			}
 
-
 			yield return WaitAFrame;
 			GC.Collect(); // we've probably created a ton of garbage by now. Let's fix that.
 			yield return WaitAFrame;
@@ -342,12 +343,11 @@ public partial class SCC : Node {
 		if (File.Exists(SettingsConf) == false) // prepare first time use.
 			ProcessGameMTC(SettingsConf);
 
-		Dictionary<string, object> curvals = new Dictionary<string, object>();
 		// TODO: Make CurVals useful, and have it hold the current settings' values like it is supposed to!
 
+		
 
 		SettingsFiles.Clear(); // Release settings files.
-
 		StatusLabel.Text = "Settings Processing Done.";
 		if (DEBUG) Logging.Log("Done Processing Settings.");
 
