@@ -1,4 +1,4 @@
-#region
+#region usings
 
 using Godot;
 using System;
@@ -58,12 +58,13 @@ public partial class MenuController : Control {
 		AcceptEvent();
 		if (DEBUG) Logging.Log("Exit Settings Button Pressed.");
 
+		Utils.SaveSettingsToFile(SourceControl.SettingsConf, SourceControl.CurVals );
+		
 		SettingsMenu.Visible = false;
 		if (!InGame) {
 			MainMenu.Visible = true;
 			InMainMenu = true;
 		}
-
 		InSettings = false;
 	}
 

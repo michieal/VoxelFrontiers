@@ -1,4 +1,4 @@
-#region
+#region usings
 
 using System;
 using System.Collections.Generic;
@@ -105,6 +105,7 @@ public partial class UISetting : Node {
 					ValueInput.SelectAllOnFocus = true;
 					ValueInput.FocusExited += ValueInputOnFocusExit;
 					ValueInput.TooltipText = ThisSetting.DisplayName + "\n";
+					ValueInput.TooltipText = "Any Changes will be validated and saved automatically.\n";
 					ValueInput.TooltipText += "Default Value = " + ThisSetting.DefaultValue + "\n";
 					ValueInput.TooltipText += "Current Value = " + ThisSetting.CurrentValue + "\n";
 					if (UseRange) {
@@ -126,7 +127,7 @@ public partial class UISetting : Node {
 	}
 
 	private void ValueInputOnTextSubmitted(string newtext) {
-		ValueInput.TooltipText = "Be sure to press Enter to set the new value.\n";
+		ValueInput.TooltipText = "Any Changes will be validated and saved automatically.\n";
 		ValueInput.TooltipText += "Default Value = " + ThisSetting.DefaultValue + "\n";
 		ValueInput.TooltipText += "Current Value = " + ThisSetting.CurrentValue + "\n";
 

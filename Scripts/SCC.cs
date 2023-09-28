@@ -1,4 +1,4 @@
-#region
+#region usings
 
 using Godot;
 using System;
@@ -85,7 +85,7 @@ public partial class SCC : Node {
 		_ZipFile = GamePath + "GameZip.zip";
 		StatusLabel.Text = "Game Initializing.";
 		Logging.LogStartup("System Start.");
-		
+
 		ScanDirectories();
 	}
 
@@ -353,7 +353,20 @@ public partial class SCC : Node {
 			ProcessGameMTC(SettingsConf);
 
 		// TODO: Make CurVals useful, and have it hold the current settings' values like it is supposed to!
+		CurVals = Utils.ProcessSavedSettingsFile(SettingsConf);
 
+		string key;
+		foreach (KeyValuePair<string,Setting> keyValuePair in GameSettings) {
+			// handle keycheck
+			key = keyValuePair.Key;
+			if (CurVals.ContainsKey(key)) {
+				// Handle setting the "Setting" to the CurrentValues' value.
+				keyValuePair.Value.CurrentValue = CurVals[key];
+			} else {
+				// Handle setting the CurrentValues' value for the default setting.
+				CurVals.Add(key,keyValuePair.Value); 
+			}
+		}
 
 		SettingsFiles.Clear(); // Release settings files.
 		StatusLabel.Text = "Settings Processing Done.";
@@ -489,7 +502,8 @@ public partial class SCC : Node {
 			ExtractSource();
 		} else {
 			Logging.Log("error", "Error retrieving Game Source: \n" + response.ReasonPhrase);
-			MenuHandler.ShowDownloadError("An error has occurred trying to download the source code. Please try again later.");
+			MenuHandler.ShowDownloadError(
+				"An error has occurred trying to download the source code. Please try again later.");
 		}
 	}
 
@@ -514,7 +528,7 @@ public partial class SCC : Node {
 
 		if (File.Exists(_ZipFile))
 			File.Delete(_ZipFile); // clean up the download to save space.
-		
+
 		MenuHandler.HideUpdateNotice();
 		ScanDirectories();
 	}
