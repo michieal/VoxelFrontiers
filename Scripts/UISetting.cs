@@ -64,7 +64,8 @@ public partial class UISetting : Node {
 			case "bool":
 				if (ValueToggle != null)
 					ValueToggle.Toggled += ValueToggleOnToggled;
-				if ((bool) ThisSetting.CurrentValue) {
+
+				if (ThisSetting.CurrentValue.ToString().ToLower() == "false") {
 					togVal = true;
 					ValueToggle.Text = "TRUE";
 					ValueToggle.ButtonPressed = true;
@@ -180,10 +181,13 @@ public partial class UISetting : Node {
 
 	private void ValueToggleOnToggled(bool buttonpressed) {
 		togVal = buttonpressed;
-		if (togVal)
+		if (togVal) {
+			ThisSetting.CurrentValue = "true";
 			ValueToggle.Text = "TRUE";
-		else
+		} else {
+			ThisSetting.CurrentValue = "false";
 			ValueToggle.Text = "FALSE";
+		}
 	}
 
 	private void ValueDropdownOnItemSelected(long index) {

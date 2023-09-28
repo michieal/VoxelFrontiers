@@ -377,6 +377,24 @@ public partial class SCC : Node {
 		yield return WaitAFrame;
 	}
 
+	
+	
+	internal void GatherAndSaveSettings() {
+		string key;
+		foreach (KeyValuePair<string,Setting> keyValuePair in GameSettings) {
+			// handle keycheck
+			key = keyValuePair.Key;
+			if (CurVals.ContainsKey(key)) {
+				CurVals[key] = keyValuePair.Value.CurrentValue;
+			} else {
+				// Handle setting the CurrentValues' value for the default setting.
+				CurVals.Add(key,keyValuePair.Value); 
+			}
+		}
+		
+		Utils.SaveSettingsToFile(SettingsConf, CurVals);
+	}
+	
 	private void SettingsPrefabInstantiate(VBoxContainer Parent, Setting thisSetting) {
 		UISetting reference = SettingsPrefab.Instantiate<UISetting>(PackedScene.GenEditState.Disabled);
 		reference.ThisSetting = thisSetting;

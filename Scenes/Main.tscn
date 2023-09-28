@@ -119,7 +119,6 @@ VersionLabel = NodePath("../MainMenuSetup/MenuBackground/VersionText")
 _engineSettings = NodePath("../MainMenuSetup/SettingsMenu/TabContainer/Engine Settings/EngineSet/ES_Mount")
 _gameSettings = NodePath("../MainMenuSetup/SettingsMenu/TabContainer/Game Settings/GameSet/GS_Mount")
 MenuHandler = NodePath("../MainMenuSetup")
-DEBUG = true
 SettingsPrefab = ExtResource("2_878le")
 
 [node name="MainMenuSetup" type="Control" parent="Canvas" node_paths=PackedStringArray("MainMenu", "SettingsMenu", "MenuBackground", "UpdateMessage", "DownloadError", "SourceControl", "btnSettings", "btnUpdate", "btnExit", "BtnExitSettings")]

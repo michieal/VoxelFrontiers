@@ -58,13 +58,14 @@ public partial class MenuController : Control {
 		AcceptEvent();
 		if (DEBUG) Logging.Log("Exit Settings Button Pressed.");
 
-		Utils.SaveSettingsToFile(SourceControl.SettingsConf, SourceControl.CurVals );
+		SourceControl.GatherAndSaveSettings();
 		
 		SettingsMenu.Visible = false;
 		if (!InGame) {
 			MainMenu.Visible = true;
 			InMainMenu = true;
 		}
+
 		InSettings = false;
 	}
 
