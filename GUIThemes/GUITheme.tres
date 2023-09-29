@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=14 format=3 uid="uid://d070er741ktai"]
+[gd_resource type="Theme" load_steps=15 format=3 uid="uid://d070er741ktai"]
 
 [ext_resource type="Texture2D" uid="uid://cvp0cs2gr8te" path="res://Sprites/dark_button_mcl.png" id="1_logf8"]
 [ext_resource type="Texture2D" uid="uid://ceofl6kigvrix" path="res://Sprites/dark_button_pressed_mcl.png" id="2_2mc7f"]
@@ -73,6 +73,10 @@ texture_margin_right = 7.0
 texture_margin_bottom = 7.0
 modulate_color = Color(1.25, 1.25, 1.25, 1)
 
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_ajlap"]
+color = Color(0.431373, 0.611765, 1, 1)
+thickness = 2
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r475k"]
 bg_color = Color(0.0941176, 0.6, 0.847059, 1)
 
@@ -89,6 +93,7 @@ texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
+modulate_color = Color(0.839216, 0.839216, 0.839216, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cdvai"]
 texture = ExtResource("2_2mc7f")
@@ -110,8 +115,13 @@ CheckBox/icons/unchecked_disabled = ExtResource("2_2mc7f")
 CheckBox/styles/hover_pressed = SubResource("StyleBoxTexture_olpp2")
 CheckButton/styles/hover = SubResource("StyleBoxTexture_cepy1")
 CheckButton/styles/hover_pressed = SubResource("StyleBoxTexture_mh0ak")
+HSeparator/styles/separator = SubResource("StyleBoxLine_ajlap")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_r475k")
-TabBar/font_sizes/font_size = 32
+TabBar/colors/font_selected_color = Color(0.431373, 0.745098, 1, 1)
+TabBar/font_sizes/font_size = 36
 TabBar/styles/button_highlight = SubResource("StyleBoxTexture_0lrvp")
+TabBar/styles/button_pressed = SubResource("StyleBoxTexture_dt5ct")
+TabBar/styles/tab_disabled = SubResource("StyleBoxTexture_dt5ct")
+TabBar/styles/tab_hovered = SubResource("StyleBoxTexture_dt5ct")
 TabBar/styles/tab_selected = SubResource("StyleBoxTexture_dt5ct")
 TabBar/styles/tab_unselected = SubResource("StyleBoxTexture_cdvai")

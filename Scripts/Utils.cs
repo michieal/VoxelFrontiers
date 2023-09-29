@@ -71,6 +71,46 @@ public class Utils {
 		return value;
 	}
 
+	public static void SaveSettingsToFile(string settingsConf, Dictionary<string,object> SettingsDict) {
+		StreamWriter swWriter = new StreamWriter(settingsConf);
+		string data;
+
+		foreach (KeyValuePair<string,object> setting in SettingsDict) {
+			data = setting.Key + "=" + setting.Value.ToString();
+			swWriter.WriteLine(data.Trim());
+		}
+		swWriter.Flush();
+		swWriter.Close();
+		GC.Collect();
+	}
+	
+	public static Dictionary<string, object> ProcessSavedSettingsFile(string ConfFilename) {
+		if (File.Exists(ConfFilename) == false) {
+			Logging.Log("warning", "Tried to get settings from a non-existent file:\n" + ConfFilename);
+
+			return null; // not there? exit.
+		}
+
+		Dictionary<string, object> settings = new Dictionary<string, object>();
+		
+		StreamReader srReader = new StreamReader(ConfFilename);
+		string data;
+		string[] setdata;
+		while (srReader.EndOfStream == false) {
+			data = srReader.ReadLine();
+			if (data.Contains('=') && data.StartsWith("#") == false) {
+				setdata = data.Split("=");
+				if (!settings.ContainsKey(setdata[0].ToLower().Trim())) {
+					settings.Add(setdata[0].ToLower().Trim(),setdata[1].ToLower().Trim());
+				}
+			}
+		}
+
+		srReader.Close();
+
+		return settings;
+	}
+
 	public static Dictionary<string, Setting> ProcessSettingFromTextFile(string filename) {
 		Dictionary<string, Setting> settings = new Dictionary<string, Setting>();
 		Setting setting = new Setting();

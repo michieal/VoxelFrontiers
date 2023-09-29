@@ -1,4 +1,4 @@
-#region
+#region usings
 
 using Godot;
 using System;
@@ -12,7 +12,12 @@ public partial class MenuController : Control {
 
 	[Export] public Control SettingsMenu;
 
-	[Export] public Panel MenuBackground;
+	[Export] public Panel        MenuBackground;
+	[Export] public Control      UpdateMessage;
+	[Export] public AcceptDialog DownloadError;
+	[Export] public Control      LogDisplayer;
+
+	[Export] public SCC SourceControl;
 
 	[ExportCategory("GameState vars")] [Export]
 	public bool InGame;
@@ -20,13 +25,16 @@ public partial class MenuController : Control {
 	[Export] public bool InGameScreen;
 	[Export] public bool InMainMenu = true;
 	[Export] public bool InSettings;
+	[Export] public bool InUpdate;
+	[Export] public bool InLog;
 
 	[ExportCategory("Button Settings")] [Export]
 	public Button btnSettings;
 
-	[Export] public Button        btnUpdate;
-	[Export] public Button        btnExit;
-	[Export] public TextureButton BtnExitSettings;
+	[Export] public Button btnUpdate;
+	[Export] public Button btnExit;
+	[Export] public Button BtnExitSettings;
+	[Export] public Button btnDisplayLog;
 
 	[ExportCategory("Debugging")] [Export] public bool DEBUG;
 
@@ -36,22 +44,35 @@ public partial class MenuController : Control {
 		MainMenu.Visible = true;
 		SettingsMenu.Visible = false;
 		MenuBackground.Visible = true;
+		LogDisplayer.Visible = false;
 
 		InMainMenu = true;
 		InSettings = false;
 		InGame = false;
 
 
+		btnUpdate.Pressed += SourceControl.DownloadGameSource;
 		btnSettings.Pressed += BtnSettingsOnPressed;
 		btnExit.Pressed += BtnExitOnPressed;
 		BtnExitSettings.Pressed += BtnExitSettingsOnPressed;
+		btnDisplayLog.Pressed += BtnDisplayLogOnPressed;
 		base._Ready();
+	}
+
+	private void BtnDisplayLogOnPressed() {
+		MainMenu.Visible = false;
+		InMainMenu = false;
+		InLog = true;
+		LogDisplayer.Visible = true;
+
 	}
 
 	private void BtnExitSettingsOnPressed() {
 		AcceptEvent();
-		if (DEBUG) Logging.Log("Exit Settings Button Pressed.");
+		if (DEBUG) Logging.Log("DisplayLog Button Pressed.");
 
+		SourceControl.GatherAndSaveSettings();
+		
 		SettingsMenu.Visible = false;
 		if (!InGame) {
 			MainMenu.Visible = true;
@@ -61,9 +82,23 @@ public partial class MenuController : Control {
 		InSettings = false;
 	}
 
+	internal void BtnExitLogDisplayerOnPressed() {
+		AcceptEvent();
+		if (DEBUG) Logging.Log("Exit DisplayLog Button Pressed.");
+		
+		LogDisplayer.Visible = false;
+		if (!InGame) {
+			MainMenu.Visible = true;
+			InMainMenu = true;
+		}
+
+		InLog = false;
+	}
+
 	private void BtnSettingsOnPressed() {
 		AcceptEvent();
 		if (btnSettings.Visible == false || InMainMenu == false) return;
+		if (InUpdate) return;
 
 		InMainMenu = false;
 		InSettings = true;
@@ -98,9 +133,27 @@ public partial class MenuController : Control {
 
 	private void BtnExitOnPressed() {
 		if (Visible == false) return; //do nothing.
+		if (InUpdate) return;
 
 		if (DEBUG) Logging.Log("Exit Button Pressed.");
 
 		System.Environment.Exit(0);
+	}
+
+	internal void ShowUpdateNotice() {
+		btnUpdate.Disabled = true;
+		UpdateMessage.Visible = true;
+		InUpdate = true;
+	}
+
+	internal void HideUpdateNotice() {
+		btnUpdate.Disabled = false;
+		UpdateMessage.Visible = false;
+		InUpdate = false;
+	}
+
+	internal void ShowDownloadError(string message) {
+		DownloadError.DialogText = message;
+		DownloadError.Show();
 	}
 }

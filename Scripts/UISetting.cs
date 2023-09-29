@@ -1,4 +1,4 @@
-#region
+#region usings
 
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using Godot;
 
 #endregion
 
-namespace ApophisSoftware; 
+namespace ApophisSoftware;
 
 public partial class UISetting : Node {
 	[ExportGroup("UI Setting Properties")] [ExportCategory("Linkages")] [Export]
@@ -18,6 +18,7 @@ public partial class UISetting : Node {
 	[Export] public LineEdit     ValueInput;
 	[Export] public OptionButton ValueDropdown;
 	[Export] public CheckBox     ValueToggle;
+	[Export] public Label        ValueRange;
 	[Export] public bool         DEBUG = false;
 	internal        Setting      ThisSetting;
 
@@ -27,6 +28,7 @@ public partial class UISetting : Node {
 	private string   settingType;
 	private string[] values;
 	private bool     togVal = false;
+	private bool     UseRange;
 
 	internal void InitializeSetting(Setting SettingDefault) {
 		ThisSetting = SettingDefault;
@@ -46,12 +48,24 @@ public partial class UISetting : Node {
 		ValueInput.Visible = false;
 		ValueToggle.Visible = false;
 
+		if (ThisSetting.minValue.Equals(ThisSetting.maxValue))
+			UseRange = false;
+		else
+			UseRange = true;
+
+		if (UseRange) {
+			ValueRange.TooltipText += "Minimum Value = " + ThisSetting.minValue + "\n";
+			ValueRange.TooltipText += "Maximum Value = " + ThisSetting.maxValue + "\n";
+			ValueRange.Text = "Range: " + ThisSetting.minValue + " - " + ThisSetting.maxValue;
+		}
+
 		// set the current value in case we need to edit it.
 		switch (ThisSetting.SettingType) {
 			case "bool":
 				if (ValueToggle != null)
 					ValueToggle.Toggled += ValueToggleOnToggled;
-				if ((bool) ThisSetting.CurrentValue) {
+
+				if (ThisSetting.CurrentValue.ToString().ToLower() == "false") {
 					togVal = true;
 					ValueToggle.Text = "TRUE";
 					ValueToggle.ButtonPressed = true;
@@ -88,13 +102,16 @@ public partial class UISetting : Node {
 			default:
 				if (ValueInput != null) {
 					ValueInput.Text = ThisSetting.CurrentValue.ToString();
-					ValueInput.TextChanged += ValueInputOnTextChanged;
+					ValueInput.TextSubmitted += ValueInputOnTextSubmitted;
+					ValueInput.SelectAllOnFocus = true;
+					ValueInput.FocusExited += ValueInputOnFocusExit;
 					ValueInput.TooltipText = ThisSetting.DisplayName + "\n";
+					ValueInput.TooltipText = "Any Changes will be validated and saved automatically.\n";
 					ValueInput.TooltipText += "Default Value = " + ThisSetting.DefaultValue + "\n";
-					ValueInput.TooltipText += "Current Value =" + ThisSetting.CurrentValue + "\n";
-					if (ThisSetting.maxValue != ThisSetting.maxValue) {
-						ValueInput.TooltipText += "Minimum Value =" + ThisSetting.minValue + "\n";
-						ValueInput.TooltipText += "Maximum Value =" + ThisSetting.maxValue + "\n";
+					ValueInput.TooltipText += "Current Value = " + ThisSetting.CurrentValue + "\n";
+					if (UseRange) {
+						ValueInput.TooltipText += "Minimum Value = " + ThisSetting.minValue + "\n";
+						ValueInput.TooltipText += "Maximum Value = " + ThisSetting.maxValue + "\n";
 					}
 				}
 
@@ -106,27 +123,53 @@ public partial class UISetting : Node {
 		DisplaySetting();
 	}
 
-	private void ValueInputOnTextChanged(string newtext) {
-		ValueInput.TooltipText = "Default Value = " + ThisSetting.DefaultValue + "\n";
-		ValueInput.TooltipText += "Current Value =" + ThisSetting.CurrentValue + "\n";
+	private void ValueInputOnFocusExit() {
+		ValueInputOnTextSubmitted(ValueInput.Text);
+	}
 
-		if (ThisSetting.maxValue != ThisSetting.maxValue) {
-			ValueInput.TooltipText += "Minimum Value =" + ThisSetting.minValue + "\n";
-			ValueInput.TooltipText += "Maximum Value =" + ThisSetting.maxValue + "\n";
+	private void ValueInputOnTextSubmitted(string newtext) {
+		ValueInput.TooltipText = "Any Changes will be validated and saved automatically.\n";
+		ValueInput.TooltipText += "Default Value = " + ThisSetting.DefaultValue + "\n";
+		ValueInput.TooltipText += "Current Value = " + ThisSetting.CurrentValue + "\n";
+
+		if (UseRange) {
+			ValueInput.TooltipText += "Minimum Value = " + ThisSetting.minValue + "\n";
+			ValueInput.TooltipText += "Maximum Value = " + ThisSetting.maxValue + "\n";
+			UseRange = true;
 		}
 
 		switch (ThisSetting.SettingType) {
 			case "int":
 				try {
-					ThisSetting.CurrentValue = newtext.ToInt();
+					int val = newtext.ToInt();
+					if (UseRange) {
+						if (val <= (int) ThisSetting.maxValue && val >= (int) ThisSetting.minValue) {
+							ThisSetting.CurrentValue = val;
+						} else {
+							ValueInput.Text = ThisSetting.CurrentValue.ToString();
+						}
+					} else {
+						ThisSetting.CurrentValue = val;
+					}
 				} catch (Exception e) {
+					ValueInput.Text = ThisSetting.CurrentValue.ToString();
 				}
 
 				break;
 			case "float":
 				try {
-					ThisSetting.CurrentValue = newtext.ToFloat();
+					float val = newtext.ToInt();
+					if (UseRange) {
+						if (val <= (float) ThisSetting.maxValue && val >= (float) ThisSetting.minValue) {
+							ThisSetting.CurrentValue = val;
+						} else {
+							ValueInput.Text = ThisSetting.CurrentValue.ToString();
+						}
+					} else {
+						ThisSetting.CurrentValue = val;
+					}
 				} catch (Exception e) {
+					ValueInput.Text = ThisSetting.CurrentValue.ToString();
 				}
 
 				break;
@@ -138,10 +181,13 @@ public partial class UISetting : Node {
 
 	private void ValueToggleOnToggled(bool buttonpressed) {
 		togVal = buttonpressed;
-		if (togVal)
+		if (togVal) {
+			ThisSetting.CurrentValue = "true";
 			ValueToggle.Text = "TRUE";
-		else
+		} else {
+			ThisSetting.CurrentValue = "false";
 			ValueToggle.Text = "FALSE";
+		}
 	}
 
 	private void ValueDropdownOnItemSelected(long index) {
@@ -151,6 +197,12 @@ public partial class UISetting : Node {
 
 	public void DisplaySetting() {
 		// this is simple - hide the display value and show the editable version.
+
+		if (UseRange) {
+			ValueRange.Visible = true;
+		} else {
+			ValueRange.Visible = false;
+		}
 
 		switch (ThisSetting.SettingType) {
 			case "bool":

@@ -1,4 +1,4 @@
-#region
+#region usings
 
 using Godot;
 using System;
@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using HttpClient = System.Net.Http.HttpClient;
 
 #endregion
 
@@ -15,10 +18,10 @@ public partial class SCC : Node {
 	[ExportGroup("Sourcecode Properties")] [ExportCategory("SourceCode Settings")] [Export]
 	public Label StatusLabel;
 
-	[Export] public Button        BtnUpdate;
-	[Export] public Label         VersionLabel;
-	[Export] public VBoxContainer _engineSettings;
-	[Export] public VBoxContainer _gameSettings;
+	[Export] public Label          VersionLabel;
+	[Export] public VBoxContainer  _engineSettings;
+	[Export] public VBoxContainer  _gameSettings;
+	[Export] public MenuController MenuHandler;
 
 	[Export] public bool DEBUG;
 
@@ -28,28 +31,36 @@ public partial class SCC : Node {
 	internal List<string>                GlobalSourceDirs = new();
 	internal string                      ModulePath;
 	internal string                      MainPath;
-	internal List<string>                LocaleDirs    = new();
-	internal List<string>                TexDirs       = new();
-	internal List<string>                SoundDirs     = new();
-	internal List<string>                ModelDirs     = new();
-	internal List<string>                MenuFiles     = new();
-	internal List<string>                TextureFiles  = new();
-	internal List<string>                SourceFiles   = new();
-	internal List<string>                SoundFiles    = new();
-	internal List<string>                ModelFiles    = new();
-	internal Dictionary<string, string>  LocaleFiles   = new();
-	internal Dictionary<string, string>  ModPaths      = new();
-	private  List<string>                SettingsFiles = new(); // Released in SettingsProcessor.
-	internal Dictionary<string, Setting> GameSettings  = new();
+	internal List<string>                LocaleDirs;
+	internal List<string>                TexDirs;
+	internal List<string>                SoundDirs;
+	internal List<string>                ModelDirs;
+	internal List<string>                MenuFiles;
+	internal List<string>                TextureFiles;
+	internal List<string>                SourceFiles;
+	internal List<string>                SoundFiles;
+	internal List<string>                ModelFiles;
+	internal Dictionary<string, string>  LocaleFiles;
+	internal Dictionary<string, string>  ModPaths;
+	private  List<string>                SettingsFiles; // Released in SettingsProcessor.
+	internal Dictionary<string, Setting> GameSettings;
+	internal Dictionary<string, object>  CurVals;
 
 	internal string SettingsConf = "";
 
 	private readonly Utils     _utils  = new();
 	private static   string    PathSep = "/";
 	private          string    GamePath;
-	private          string    _ZipFile;
+	private static   string    _ZipFile;
 	private          Coroutine dirScanCoroutine;
 	private          Coroutine SettingsProcCoroutine;
+
+	// Http Net Access
+	// HttpClient lifecycle management best practices:
+	// https://learn.microsoft.com/dotnet/fundamentals/networking/http/httpclient-guidelines#recommended-use
+	private static HttpClient SourceClient = new() {
+		BaseAddress = new Uri("https://git.minetest.land"),
+	};
 
 	public Utils Utils => _utils;
 
@@ -62,6 +73,11 @@ public partial class SCC : Node {
 		if (OS.HasFeature("web"))
 			Utils.WEBDEPLOY = true;
 #endif
+
+		// application/config/version
+
+		GameVersion = (string) ProjectSettings.GetSetting("application/config/version");
+
 		GamePath = Utils.GetStoragePath() + PathSep + "Game" + PathSep;
 		if (Directory.Exists(GamePath) == false)
 			Directory.CreateDirectory(GamePath);
@@ -69,9 +85,11 @@ public partial class SCC : Node {
 		_ZipFile = GamePath + "GameZip.zip";
 		StatusLabel.Text = "Game Initializing.";
 		Logging.LogStartup("System Start.");
-		BtnUpdate.Pressed += DownloadGameSource;
+
 		ScanDirectories();
 	}
+
+	internal string GameVersion { get; set; }
 
 	// make sure that we're as fresh as new york snow!
 	private void InitializeStorage() {
@@ -89,6 +107,7 @@ public partial class SCC : Node {
 		ModPaths = new Dictionary<string, string>();
 		SettingsFiles = new List<string>(); // Released in SettingsProcessor.
 		GameSettings = new Dictionary<string, Setting>();
+		CurVals = new Dictionary<string, object>();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -155,7 +174,7 @@ public partial class SCC : Node {
 			if (File.Exists(MainPath + "settingtypes.txt"))
 				SettingsFiles.Add(MainPath + "settingtypes.txt");
 
-		if (VersionLabel != null) VersionLabel.Text = "Version: 2023.9.20" + ":" + ProcessVersionCode();
+		if (VersionLabel != null) VersionLabel.Text = "Version: " + GameVersion + ":" + ProcessVersionCode();
 		// Example: 'Version 2023.9.20:0.85.0-SNAPSHOT'
 		// handle actual Dir scanning code.
 		// look for MODules, Textures, and Menu.
@@ -310,10 +329,18 @@ public partial class SCC : Node {
 
 		foreach (string settingsFile in SettingsFiles) {
 			Dictionary<string, Setting> temp = Utils.ProcessSettingFromTextFile(settingsFile);
-			foreach (KeyValuePair<string, Setting> keyValuePair in temp)
-				if (keyValuePair.Key != "")
-					GameSettings.Add(keyValuePair.Key,
-						keyValuePair.Value); // migrate the returned settings to the combined settings.
+			foreach (KeyValuePair<string, Setting> keyValuePair in temp) {
+				if (keyValuePair.Key != "") {
+					if (GameSettings.ContainsKey(keyValuePair.Key)) {
+						Logging.Log("error", "setting duplication: " +
+						                     keyValuePair.Key + "\n" + keyValuePair.Value +
+						                     "\nSetting Skipped.");
+					} else {
+						GameSettings.Add(keyValuePair.Key,
+							keyValuePair.Value); // migrate the returned settings to the combined settings.
+					}
+				}
+			}
 
 			yield return WaitAFrame;
 			GC.Collect(); // we've probably created a ton of garbage by now. Let's fix that.
@@ -321,14 +348,27 @@ public partial class SCC : Node {
 		}
 
 		// handle setting the saved values... 
-		// Dictionary<string, object> curvals = new Dictionary<string, object>();
-		// TODO: Make CurVals useful, and have it hold the current settings' values like it is supposed to!
 		SettingsConf = Utils.GetStoragePath() + "/settings.conf";
 		if (File.Exists(SettingsConf) == false) // prepare first time use.
 			ProcessGameMTC(SettingsConf);
 
-		SettingsFiles.Clear(); // Release settings files.
+		// TODO: Make CurVals useful, and have it hold the current settings' values like it is supposed to!
+		CurVals = Utils.ProcessSavedSettingsFile(SettingsConf);
 
+		string key;
+		foreach (KeyValuePair<string,Setting> keyValuePair in GameSettings) {
+			// handle keycheck
+			key = keyValuePair.Key;
+			if (CurVals.ContainsKey(key)) {
+				// Handle setting the "Setting" to the CurrentValues' value.
+				keyValuePair.Value.CurrentValue = CurVals[key];
+			} else {
+				// Handle setting the CurrentValues' value for the default setting.
+				CurVals.Add(key,keyValuePair.Value); 
+			}
+		}
+
+		SettingsFiles.Clear(); // Release settings files.
 		StatusLabel.Text = "Settings Processing Done.";
 		if (DEBUG) Logging.Log("Done Processing Settings.");
 
@@ -337,6 +377,24 @@ public partial class SCC : Node {
 		yield return WaitAFrame;
 	}
 
+	
+	
+	internal void GatherAndSaveSettings() {
+		string key;
+		foreach (KeyValuePair<string,Setting> keyValuePair in GameSettings) {
+			// handle keycheck
+			key = keyValuePair.Key;
+			if (CurVals.ContainsKey(key)) {
+				CurVals[key] = keyValuePair.Value.CurrentValue;
+			} else {
+				// Handle setting the CurrentValues' value for the default setting.
+				CurVals.Add(key,keyValuePair.Value); 
+			}
+		}
+		
+		Utils.SaveSettingsToFile(SettingsConf, CurVals);
+	}
+	
 	private void SettingsPrefabInstantiate(VBoxContainer Parent, Setting thisSetting) {
 		UISetting reference = SettingsPrefab.Instantiate<UISetting>(PackedScene.GenEditState.Disabled);
 		reference.ThisSetting = thisSetting;
@@ -384,9 +442,6 @@ public partial class SCC : Node {
 		StatusLabel.Text = "Building Source Code List.";
 		if (DEBUG) Logging.Log("Building Source Code List.");
 
-		ModPaths.Clear();
-		SourceFiles.Clear();
-		SettingsFiles.Clear();
 		List<string> RemoveDirs = new List<string>();
 		foreach (string dir in GlobalSourceDirs) {
 			string dirpath = dir + PathSep;
@@ -398,7 +453,13 @@ public partial class SCC : Node {
 					if (File.Exists(dirpath + "init.lua"))
 						SourceFiles.Add(dirpath + "init.lua");
 
-				if (File.Exists(dirpath + "settingtypes.txt")) SettingsFiles.Add(dirpath + "settingtypes.txt");
+				if (File.Exists(dirpath + "settingtypes.txt")) {
+					if (SettingsFiles.Contains(dirpath + "settingtypes.text")) {
+						Logging.Log("error", "Settings file found twice!\nFilename: " + dirpath + "settingtypes.text");
+					} else {
+						SettingsFiles.Add(dirpath + "settingtypes.txt");
+					}
+				}
 			} else {
 				RemoveDirs.Add(dir);
 			}
@@ -416,18 +477,14 @@ public partial class SCC : Node {
 		SettingsProcCoroutine = CoroutineManager.Instance.StartCoroutine(SettingsProcessor());
 	}
 
-	// Called by UpdateSourceCode button.
-	public void UpdateSourceCode() {
-		BtnUpdate.Disabled = true;
-		DownloadGameSource();
-	}
-
-	private void DownloadGameSource() {
-		if (BtnUpdate.Visible == false ||
-		    BtnUpdate.Disabled)
+	internal void DownloadGameSource() {
+		if (MenuHandler.btnUpdate.Visible == false ||
+		    MenuHandler.btnUpdate.Disabled)
 			return; // if this is buried, don't allow the hot-key to force download the source code. 
 
-		BtnUpdate.Disabled = true;
+		// Handle UI display info
+		MenuHandler.ShowUpdateNotice();
+
 		if (dirScanCoroutine != null) { // stop processing, if we are going to download / update the files.
 			CoroutineManager.Instance.StopCoroutine(dirScanCoroutine);
 			dirScanCoroutine = null;
@@ -444,30 +501,53 @@ public partial class SCC : Node {
 		StatusLabel.Text = "Downloading Source; Please wait.";
 		if (DEBUG) Logging.Log("Downloading Game Source.");
 
-		WebClient client = new WebClient();
-		client.DownloadFileCompleted += DownloadGameSourceFileCompleted;
-		client.DownloadFileAsync(new Uri("https://git.minetest.land/Michieal/MineClone2/archive/master.zip"),
-			_ZipFile);
+		DestroySettingsUI();
+
+		DownloadFile(SourceClient);
 	}
 
-	private void DownloadGameSourceFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e) {
-		if (e.Error == null) {
-			StatusLabel.Text = "Game Source Download Complete! Extracting.";
+	async Task DownloadFile(HttpClient httpClient) {
+		using HttpResponseMessage response = await
+			httpClient.GetAsync("Michieal/MineClone2/archive/master.zip");
+
+		if (response is {StatusCode: HttpStatusCode.OK}) {
+			byte[] responseByteArray = await response.Content.ReadAsByteArrayAsync();
+			using (FileStream fileStream = new FileStream(_ZipFile, FileMode.Create)) {
+				// save the downloaded file out...
+				await fileStream.WriteAsync(responseByteArray, 0, responseByteArray.Length);
+			}
+
 			ExtractSource();
+		} else {
+			Logging.Log("error", "Error retrieving Game Source: \n" + response.ReasonPhrase);
+			MenuHandler.ShowDownloadError(
+				"An error has occurred trying to download the source code. Please try again later.");
 		}
 	}
 
 	private void ExtractSource() {
+		StatusLabel.Text = "Game Source Download Complete! Extracting.";
 		using (ZipArchive GameSourceZip = ZipFile.Open(_ZipFile, ZipArchiveMode.Read)) {
-			GameSourceZip.ExtractToDirectory(GamePath, true);
+			try {
+				// This method should handle the extraction of the downloaded ZIP file.
+				GameSourceZip.ExtractToDirectory(GamePath, true);
+			} catch (Exception ex) {
+				// Handle extraction errors
+				Logging.Log("error", "Extraction Error: " + ex.Message);
+				MenuHandler.ShowDownloadError("An error has occurred trying to extract the source code.\n" +
+				                              "Trying to redownload the source code.");
+				DownloadGameSource();
+				return;
+			}
+
 			StatusLabel.Text = "Game Source Extracted. Scanning Directories.";
 		}
+
 
 		if (File.Exists(_ZipFile))
 			File.Delete(_ZipFile); // clean up the download to save space.
 
-		BtnUpdate.Disabled = false;
-
+		MenuHandler.HideUpdateNotice();
 		ScanDirectories();
 	}
 }
