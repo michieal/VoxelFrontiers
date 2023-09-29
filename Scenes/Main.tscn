@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dh6fejngvqnn4"]
+[gd_scene load_steps=31 format=3 uid="uid://dh6fejngvqnn4"]
 
 [ext_resource type="Script" path="res://Scripts/SCC.cs" id="1_euqum"]
 [ext_resource type="PackedScene" uid="uid://di2hbvo6026el" path="res://Prefabs/ui_setting.tscn" id="2_878le"]
@@ -13,6 +13,8 @@
 [ext_resource type="Texture2D" uid="uid://cpiq5b3pduo2u" path="res://Sprites/Icons/Free Flat Exit Door Icon.png" id="11_m3l68"]
 [ext_resource type="Texture2D" uid="uid://cvp0cs2gr8te" path="res://Sprites/dark_button_mcl.png" id="12_u8xgm"]
 [ext_resource type="Texture2D" uid="uid://d07802t4fh1ce" path="res://Sprites/Icons/Free Flat Arrow Curved Left 1 Icon.png" id="13_tuq1i"]
+[ext_resource type="Script" path="res://Scripts/LogDisplayerNode.cs" id="14_ioj1t"]
+[ext_resource type="Texture2D" uid="uid://dc1icrnphk5dr" path="res://Sprites/Icons/Free Flat Arrow 1 S Icon.png" id="15_511ac"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ycca0"]
 content_margin_left = 10.0
@@ -108,6 +110,17 @@ texture_margin_right = 10.0
 texture_margin_bottom = 10.0
 modulate_color = Color(0.607843, 0.607843, 0.607843, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5mywb"]
+bg_color = Color(0.0156863, 0.0156863, 0.0156863, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
 [node name="Main" type="Node3D"]
 
 [node name="Canvas" type="Node2D" parent="."]
@@ -121,7 +134,7 @@ _gameSettings = NodePath("../MainMenuSetup/SettingsMenu/TabContainer/Game Settin
 MenuHandler = NodePath("../MainMenuSetup")
 SettingsPrefab = ExtResource("2_878le")
 
-[node name="MainMenuSetup" type="Control" parent="Canvas" node_paths=PackedStringArray("MainMenu", "SettingsMenu", "MenuBackground", "UpdateMessage", "DownloadError", "SourceControl", "btnSettings", "btnUpdate", "btnExit", "BtnExitSettings")]
+[node name="MainMenuSetup" type="Control" parent="Canvas" node_paths=PackedStringArray("MainMenu", "SettingsMenu", "MenuBackground", "UpdateMessage", "DownloadError", "LogDisplayer", "SourceControl", "btnSettings", "btnUpdate", "btnExit", "BtnExitSettings", "btnDisplayLog")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
@@ -132,11 +145,13 @@ SettingsMenu = NodePath("SettingsMenu")
 MenuBackground = NodePath("MenuBackground")
 UpdateMessage = NodePath("UpdateMessage")
 DownloadError = NodePath("../../AcceptDialog")
+LogDisplayer = NodePath("LogDisplayerNode")
 SourceControl = NodePath("../SourceCodeSettingsNode")
 btnSettings = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnSettings")
 btnUpdate = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnUpdateGame")
 btnExit = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnExit")
 BtnExitSettings = NodePath("SettingsMenu/btnExitSettings")
+btnDisplayLog = NodePath("MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer/btnDisplayLog")
 DEBUG = true
 
 [node name="MenuBackground" type="Panel" parent="Canvas/MainMenuSetup"]
@@ -300,7 +315,7 @@ layout_mode = 2
 [node name="Spacer" type="Control" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 8.0
+size_flags_stretch_ratio = 7.0
 
 [node name="btnSettings" type="Button" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
 texture_filter = 1
@@ -337,6 +352,23 @@ theme_override_font_sizes/font_size = 72
 shortcut = SubResource("Shortcut_v4w4r")
 text = "Update Game"
 icon = ExtResource("10_fhalh")
+text_overrun_behavior = 3
+
+[node name="btnDisplayLog" type="Button" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
+texture_filter = 1
+texture_repeat = 1
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 7
+tooltip_text = "Opens the Settings Menu.
+Used to adjust the game settings."
+theme = ExtResource("6_f1isn")
+theme_override_constants/h_separation = 10
+theme_override_constants/icon_max_width = 80
+theme_override_font_sizes/font_size = 72
+shortcut = SubResource("Shortcut_sf10k")
+text = "View Log"
 text_overrun_behavior = 3
 
 [node name="btnExit" type="Button" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
@@ -522,6 +554,55 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
+
+[node name="LogDisplayerNode" type="Control" parent="Canvas/MainMenuSetup" node_paths=PackedStringArray("btnCloseLogView", "LogViewDisplay", "MainMenuController")]
+visible = false
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("14_ioj1t")
+btnCloseLogView = NodePath("btnCloseLog")
+LogViewDisplay = NodePath("LogDisplay")
+MainMenuController = NodePath("..")
+
+[node name="Backdrop" type="Panel" parent="Canvas/MainMenuSetup/LogDisplayerNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_5mywb")
+
+[node name="LogDisplay" type="CodeEdit" parent="Canvas/MainMenuSetup/LogDisplayerNode"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+editable = false
+wrap_mode = 1
+scroll_smooth = true
+caret_blink = true
+gutters_draw_line_numbers = true
+
+[node name="btnCloseLog" type="Button" parent="Canvas/MainMenuSetup/LogDisplayerNode"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -80.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 80.0
+grow_horizontal = 0
+icon = ExtResource("15_511ac")
+icon_alignment = 1
 
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 title = "Download Error!"
