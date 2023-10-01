@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://ptkv47i221p5"]
+
+[ext_resource type="PackedScene" uid="uid://c0sult8x70ikw" path="res://Models/character.glb" id="1_tswef"]
+[ext_resource type="Material" uid="uid://bsdddwynpjl64" path="res://Materials/Character_Material_Steve.tres" id="2_nbw2u"]
+[ext_resource type="Script" path="res://Scripts/CameraController.cs" id="3_byscn"]
+
+[node name="character" instance=ExtResource("1_tswef")]
+
+[node name="Skeleton3D" parent="Armature" index="0"]
+transform = Transform3D(0.666, 0, 0, 0, 0.666, 0, 0, 0, 0.666, 0, 0, 0)
+
+[node name="Steve" parent="Armature/Skeleton3D" index="0"]
+surface_material_override/0 = ExtResource("2_nbw2u")
+
+[node name="Node3D" type="Node3D" parent="." index="2" node_paths=PackedStringArray("FirstPersonCamera", "ThirdPersonCameraFront", "ThirdPersonCameraBehind")]
+script = ExtResource("3_byscn")
+FirstPersonCamera = NodePath("FirstPersonCamera")
+ThirdPersonCameraFront = NodePath("ThirdPersonCameraFront")
+ThirdPersonCameraBehind = NodePath("ThirdPersonCameraBack")
+
+[node name="FirstPersonCamera" type="Camera3D" parent="Node3D" index="0"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 2.13663, 0)
+
+[node name="ThirdPersonCameraFront" type="Camera3D" parent="Node3D" index="1"]
+
+[node name="ThirdPersonCameraBack" type="Camera3D" parent="Node3D" index="2"]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." index="3"]
