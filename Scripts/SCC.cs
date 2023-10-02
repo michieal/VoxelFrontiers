@@ -83,7 +83,7 @@ public partial class SCC : Node {
 			Directory.CreateDirectory(GamePath);
 
 		_ZipFile = GamePath + "GameZip.zip";
-		StatusLabel.Text = "Game Initializing.";
+		StatusLabel.Text = Utils.S("Game Initializing.");
 		Logging.LogStartup("System Start.");
 
 		ScanDirectories();
@@ -153,7 +153,7 @@ public partial class SCC : Node {
 
 		string[] dirs = Directory.GetDirectories(GamePath);
 		if (dirs.Length < 1) {
-			StatusLabel.Text = "Game Source Not Found. Downloading.";
+			StatusLabel.Text = Utils.S("Game Source Not Found. Downloading.");
 			if (DEBUG) Logging.Log("Game Source not found - Downloading.");
 
 			DownloadGameSource();
@@ -190,7 +190,7 @@ public partial class SCC : Node {
 
 			// handle Root Texture Files.
 			if (dir.ToLower().EndsWith("textures")) {
-				StatusLabel.Text = "Building Textures List.";
+				StatusLabel.Text = Utils.S("Building Textures List.");
 				if (DEBUG) Logging.Log("Building Textures List.");
 
 				string[] texfiles = Directory.GetFiles(dir);
@@ -204,7 +204,7 @@ public partial class SCC : Node {
 			}
 		}
 
-		StatusLabel.Text = "Deep Scanning Game structure.";
+		StatusLabel.Text = Utils.S("Deep Scanning Game structure.");
 		if (DEBUG) Logging.Log("Deep Scanning Game Structure.");
 
 		dirScanCoroutine = CoroutineManager.Instance.StartCoroutine(DirScan());
@@ -214,7 +214,7 @@ public partial class SCC : Node {
 		WaitOneFrame WaitAFrame = new WaitOneFrame();
 		string[] dirs;
 		// recursively scan all module directories.
-		StatusLabel.Text = "Building directory structure.";
+		StatusLabel.Text = Utils.S("Building directory structure.");
 		if (DEBUG) Logging.Log("Building Directory Modules Structure.");
 
 		dirs = Directory.GetDirectories(ModulePath, "*.*", SearchOption.AllDirectories);
@@ -239,7 +239,7 @@ public partial class SCC : Node {
 
 		foreach (string dir in LocaleDirs) GlobalSourceDirs.Remove(dir);
 
-		StatusLabel.Text = "Building Textures List.";
+		StatusLabel.Text = Utils.S("Building Textures List.");
 		if (DEBUG) Logging.Log("Building Textures List.");
 
 		int indCount = 0;
@@ -258,7 +258,7 @@ public partial class SCC : Node {
 
 		yield return WaitAFrame;
 
-		StatusLabel.Text = "Building Sounds List.";
+		StatusLabel.Text = Utils.S("Building Sounds List.");
 		if (DEBUG) Logging.Log("Building Sounds List.");
 
 		indCount = 0;
@@ -277,7 +277,7 @@ public partial class SCC : Node {
 
 		yield return WaitAFrame;
 
-		StatusLabel.Text = "Building Models List.";
+		StatusLabel.Text = Utils.S("Building Models List.");
 		if (DEBUG) Logging.Log("Indexing Models.");
 
 		indCount = 0;
@@ -295,7 +295,7 @@ public partial class SCC : Node {
 
 		yield return WaitAFrame;
 
-		StatusLabel.Text = "Indexing Locale Files.";
+		StatusLabel.Text = Utils.S("Indexing Locale Files.");
 		if (DEBUG) Logging.Log("Indexing Locale Files.");
 
 		indCount = 0;
@@ -324,7 +324,7 @@ public partial class SCC : Node {
 	private IEnumerator SettingsProcessor() {
 		WaitOneFrame WaitAFrame = new WaitOneFrame();
 
-		StatusLabel.Text = "Processing Settings";
+		StatusLabel.Text = Utils.S("Processing Settings.");
 		if (DEBUG) Logging.Log("Starting the Processing of Settings.");
 
 		foreach (string settingsFile in SettingsFiles) {
@@ -356,7 +356,7 @@ public partial class SCC : Node {
 		CurVals = Utils.ProcessSavedSettingsFile(SettingsConf);
 
 		string key;
-		foreach (KeyValuePair<string,Setting> keyValuePair in GameSettings) {
+		foreach (KeyValuePair<string, Setting> keyValuePair in GameSettings) {
 			// handle keycheck
 			key = keyValuePair.Key;
 			if (CurVals.ContainsKey(key)) {
@@ -364,12 +364,12 @@ public partial class SCC : Node {
 				keyValuePair.Value.CurrentValue = CurVals[key];
 			} else {
 				// Handle setting the CurrentValues' value for the default setting.
-				CurVals.Add(key,keyValuePair.Value); 
+				CurVals.Add(key, keyValuePair.Value);
 			}
 		}
 
 		SettingsFiles.Clear(); // Release settings files.
-		StatusLabel.Text = "Settings Processing Done.";
+		StatusLabel.Text = Utils.S("Settings Processing Done.");
 		if (DEBUG) Logging.Log("Done Processing Settings.");
 
 		yield return WaitAFrame;
@@ -377,24 +377,23 @@ public partial class SCC : Node {
 		yield return WaitAFrame;
 	}
 
-	
-	
+
 	internal void GatherAndSaveSettings() {
 		string key;
-		foreach (KeyValuePair<string,Setting> keyValuePair in GameSettings) {
+		foreach (KeyValuePair<string, Setting> keyValuePair in GameSettings) {
 			// handle keycheck
 			key = keyValuePair.Key;
 			if (CurVals.ContainsKey(key)) {
 				CurVals[key] = keyValuePair.Value.CurrentValue;
 			} else {
 				// Handle setting the CurrentValues' value for the default setting.
-				CurVals.Add(key,keyValuePair.Value); 
+				CurVals.Add(key, keyValuePair.Value);
 			}
 		}
-		
+
 		Utils.SaveSettingsToFile(SettingsConf, CurVals);
 	}
-	
+
 	private void SettingsPrefabInstantiate(VBoxContainer Parent, Setting thisSetting) {
 		UISetting reference = SettingsPrefab.Instantiate<UISetting>(PackedScene.GenEditState.Disabled);
 		reference.ThisSetting = thisSetting;
@@ -413,7 +412,7 @@ public partial class SCC : Node {
 
 		if (DEBUG) Logging.Log("Settings Build Completed.");
 
-		StatusLabel.Text = "Settings Build Completed.";
+		StatusLabel.Text = Utils.S("Settings Build Completed.");
 	}
 
 	internal void DestroySettingsUI() {
@@ -439,7 +438,7 @@ public partial class SCC : Node {
 	}
 
 	private void ProcessDirs() {
-		StatusLabel.Text = "Building Source Code List.";
+		StatusLabel.Text = Utils.S("Building Source Code List.");
 		if (DEBUG) Logging.Log("Building Source Code List.");
 
 		List<string> RemoveDirs = new List<string>();
@@ -465,13 +464,13 @@ public partial class SCC : Node {
 			}
 		}
 
-		StatusLabel.Text = "Source Scan Completed.";
+		StatusLabel.Text = Utils.S("Source Scan Completed.");
 		if (DEBUG) Logging.Log("Game Source Scanning Complete.");
 
 		foreach (string dir in RemoveDirs) GlobalSourceDirs.Remove(dir); // clean up the source dirs. 
 
 		RemoveDirs.Clear();
-		StatusLabel.Text = "Processing Settings Files.";
+		StatusLabel.Text = Utils.S("Processing Settings Files.");
 		if (DEBUG) Logging.Log("Processing Settings Files.");
 
 		SettingsProcCoroutine = CoroutineManager.Instance.StartCoroutine(SettingsProcessor());
@@ -498,7 +497,7 @@ public partial class SCC : Node {
 		}
 
 		// ------------------------------------------------------
-		StatusLabel.Text = "Downloading Source; Please wait.";
+		StatusLabel.Text = Utils.S("Downloading Game Source; Please wait.");
 		if (DEBUG) Logging.Log("Downloading Game Source.");
 
 		DestroySettingsUI();
@@ -526,7 +525,7 @@ public partial class SCC : Node {
 	}
 
 	private void ExtractSource() {
-		StatusLabel.Text = "Game Source Download Complete! Extracting.";
+		StatusLabel.Text = Utils.S("Game Source Download Complete! Extracting.");
 		using (ZipArchive GameSourceZip = ZipFile.Open(_ZipFile, ZipArchiveMode.Read)) {
 			try {
 				// This method should handle the extraction of the downloaded ZIP file.
@@ -540,7 +539,7 @@ public partial class SCC : Node {
 				return;
 			}
 
-			StatusLabel.Text = "Game Source Extracted. Scanning Directories.";
+			StatusLabel.Text = Utils.S("Game Source Extracted. Scanning Directories.");
 		}
 
 
