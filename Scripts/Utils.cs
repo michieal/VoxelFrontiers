@@ -263,6 +263,7 @@ namespace ApophisSoftware {
 					break;
 				case "ES":
 					CurrentLocale = LanguageCodes.es;
+					LoadLocalizationFile("res://locale/locale.es.tr", LanguageCodes.en);
 					break;
 				case "FR":
 					CurrentLocale = LanguageCodes.fr;

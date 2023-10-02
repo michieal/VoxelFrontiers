@@ -1,0 +1,26 @@
+# Template file.
+Game Initializing. = Inicializando el juego.
+Scanning Source. May take a while, please be patient. = Escaneando el código fuente. Esto puede tomar un tiempo, por favor tenga paciencia.
+Game Source Not Found. Downloading. = Fuente del juego no encontrado. Descargando.
+Deep Scanning Game structure. = Escaneo profundo de la estructura del juego.
+Building directory structure. = Construyendo estructura de directorios.
+Building Textures List. = Construyendo lista de texturas.
+Building Sounds List. = Construyendo lista de sonidos.
+Building Models List. = Construyendo lista de modelos.
+Indexing Locale Files. = Indexando archivos de localización.
+Processing Settings. = Procesando configuraciones.
+Settings Processing Done. = Procesamiento de configuraciones completado.
+Settings Build Completed. = Configuraciones construidas correctamente.
+Building Source Code List. = Construyendo lista de código fuente.
+Source Scan Completed. = Escaneo de código fuente completado.
+Processing Settings Files. = Procesando archivos de configuración.
+Downloading Game Source; Please wait. = Descargando código fuente del juego; Por favor, espera.
+Game Source Download Complete! Extracting. = Descarga del código fuente del juego completada.  Extrayendo.
+Game Source Extracted. Scanning  Directories. = Código fuente del juego extraído. Escaneando directorios.
+# Buttons = # Botones
+Settings = Configuración
+View Log = Ver Registro
+Update Game = Actualizar Juego
+Exit Game = Salir del Juego
+# Error Dialog = # Diálogo de Error
+An error has occurred trying to download the source code. Please try again later. = Ha ocurrido un error al intentar descargar el código fuente. Por favor, intenta de nuevo más tarde.
