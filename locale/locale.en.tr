@@ -1,27 +1,25 @@
-# Template file.
-Game Initializing. = 
-Scanning Source. May take a while, please be patient. = 
-Game Source Not Found. Downloading. =
-Deep Scanning Game structure. =
-Building directory structure. =
-Building Textures List. =
-Building Sounds List. =
-Building Models List. =
-Indexing Locale Files. =
-Processing Settings. =
-Settings Processing Done. =
-Settings Build Completed. =
-Building Source Code List. =
-Source Scan Completed. =
-Processing Settings Files. =
-Downloading Game Source; Please wait. =
-Game Source Download Complete! Extracting. =
-Game Source Extracted. Scanning Directories. =
-#
-# Buttons
+# Translation Template.
+# MenuController.cs
+Update Game = 
 Settings = 
-View Log =
-Update Game =
-Exit Game =
-# Error Dialog
-An error has occurred trying to download the source code. Please try again later. =
+Exit Game = 
+View Log = 
+An error has occurred trying to download the source code. Please try again later. = 
+# SCC.cs
+Game Initializing. = 
+Game Source Not Found. Downloading. = 
+Deep Scanning Game structure. = 
+Building directory structure. = 
+Building Textures List. = 
+Building Sounds List. = 
+Building Models List. = 
+Indexing Locale Files. = 
+Processing Settings. = 
+Settings Processing Done. = 
+Settings Build Completed. = 
+Building Source Code List. = 
+Source Scan Completed. = 
+Processing Settings Files. = 
+Downloading Game Source; Please wait. = 
+Game Source Download Complete! Extracting. = 
+Game Source Extracted. Scanning Directories. = 
