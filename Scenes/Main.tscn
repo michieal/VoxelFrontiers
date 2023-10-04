@@ -125,6 +125,9 @@ corner_radius_bottom_left = 2
 
 [node name="Main" type="Node3D"]
 
+[node name="LuaController" type="Node" parent="."]
+script = ExtResource("17_tr6iv")
+
 [node name="Canvas" type="Node2D" parent="."]
 
 [node name="SourceCodeSettingsNode" type="Node" parent="Canvas" node_paths=PackedStringArray("StatusLabel", "VersionLabel", "_engineSettings", "_gameSettings", "MenuHandler")]
@@ -614,6 +617,3 @@ always_on_top = true
 dialog_text = "An error has occurred trying to download the source code. Please try again later."
 
 [node name="Player" parent="." instance=ExtResource("16_5qad6")]
-
-[node name="LuaController" type="Node" parent="."]
-script = ExtResource("17_tr6iv")
