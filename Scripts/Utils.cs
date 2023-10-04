@@ -287,54 +287,43 @@ namespace ApophisSoftware {
 			return LocalizeString(strDisplayString, CurrentLocale);
 		}
 		
-		public static string gS(string strDisplayString) {
+		public static string GS(string strDisplayString) {
 			return LocalizeString(strDisplayString, CurrentLocale, true);
 		}
 		
 		public static string LocalizeString(string DisplayString, LanguageCodes Lang, bool ForGame = false) {
+			// This switch block uses fall-through logic. 
 			switch (Lang) {
 				case LanguageCodes.de:
 					if (ForGame) {
 						if (GameLangDE.ContainsKey(DisplayString) ) {
 							return GameLangDE[DisplayString];
-						} else {
-							return DisplayString;
-						}
+						} 
 					} else {
 						if (EngineLangDE.ContainsKey(DisplayString)) {
 							return EngineLangDE[DisplayString];
-						} else {
-							return DisplayString;
-						}
+						} 
 					}
 					break;
 				case LanguageCodes.fr:
 					if (ForGame) {
 						if (GameLangFR.ContainsKey(DisplayString) ) {
 							return GameLangFR[DisplayString];
-						} else {
-							return DisplayString;
-						}
+						} 
 					} else {
 						if (EngineLangFR.ContainsKey(DisplayString)) {
 							return EngineLangFR[DisplayString];
-						} else {
-							return DisplayString;
-						}
+						} 
 					}
 					break;
 				case LanguageCodes.es:
 					if (ForGame) {
 						if (GameLangES.ContainsKey(DisplayString) ) {
 							return GameLangES[DisplayString];
-						} else {
-							return DisplayString;
 						}
 					} else {
 						if (EngineLangES.ContainsKey(DisplayString)) {
 							return EngineLangES[DisplayString];
-						} else {
-							return DisplayString;
 						}
 					}
 					break;
@@ -342,20 +331,15 @@ namespace ApophisSoftware {
 					if (ForGame) {
 						if (GameLangJA.ContainsKey(DisplayString) ) {
 							return GameLangJA[DisplayString];
-						} else {
-							return DisplayString;
 						}
 					} else {
 						if (EngineLangJA.ContainsKey(DisplayString)) {
 							return EngineLangJA[DisplayString];
-						} else {
-							return DisplayString;
-						}
+						} 
 					}
 					break;
 
 				default:
-					return DisplayString;
 					break;
 
 			}
