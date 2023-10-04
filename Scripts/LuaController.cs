@@ -1,23 +1,25 @@
 using Godot;
 using System;
+using ApophisSoftware;
 using MoonSharp.Interpreter;
 using Script = MoonSharp.Interpreter.Script;
 
-public partial class LuaController : Node {
-	// private LuaAPI LuaCont = new LuaAPI();
+namespace ApophisSoftware {
 
-	private static Script msLua            = new Script();
-	private        Table  msLuaGlobalTable = new Table(msLua);
-	
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready() {
-		
-		msLua.DoFile("", msLuaGlobalTable);
+	public partial class LuaController : Node {
+		// private LuaAPI LuaCont = new LuaAPI();
 
-	}
+		private static Script msLua            = new Script();
+		private        Table  msLuaGlobalTable = new Table(msLua);
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
+		public LuaController() {
+			msLua.Options.DebugPrint = str => { Logging.Log("[LUA]: " + str); };
+		}
+
+		internal void Dofile(string filename) {
+			msLua.DoFile(filename, msLuaGlobalTable);
+		}
+
+
 	}
 }
