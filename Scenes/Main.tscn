@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://dh6fejngvqnn4"]
+[gd_scene load_steps=33 format=3 uid="uid://dh6fejngvqnn4"]
 
 [ext_resource type="Script" path="res://Scripts/SCC.cs" id="1_euqum"]
 [ext_resource type="PackedScene" uid="uid://di2hbvo6026el" path="res://Prefabs/ui_setting.tscn" id="2_878le"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://Scripts/LogDisplayerNode.cs" id="14_ioj1t"]
 [ext_resource type="Texture2D" uid="uid://dc1icrnphk5dr" path="res://Sprites/Icons/Free Flat Arrow 1 S Icon.png" id="15_511ac"]
 [ext_resource type="PackedScene" uid="uid://db5oauoev6u6k" path="res://Prefabs/Player.tscn" id="16_5qad6"]
+[ext_resource type="Script" path="res://Scripts/LuaController.cs" id="17_tr6iv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ycca0"]
 content_margin_left = 10.0
@@ -613,3 +614,6 @@ always_on_top = true
 dialog_text = "An error has occurred trying to download the source code. Please try again later."
 
 [node name="Player" parent="." instance=ExtResource("16_5qad6")]
+
+[node name="LuaController" type="Node" parent="."]
+script = ExtResource("17_tr6iv")
