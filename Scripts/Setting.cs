@@ -6,7 +6,7 @@ using System.Text;
 
 #endregion
 
-namespace ApophisSoftware; 
+namespace ApophisSoftware;
 
 public class Setting {
 	internal List<string> Description;  // A text Description of the Setting, usually shown to the user.
@@ -142,7 +142,6 @@ public class Setting {
 	public override string ToString() {
 		StringBuilder str = new StringBuilder();
 		str.Clear();
-		str.AppendLine(base.ToString());
 		str.AppendLine("Filename for setting: " + SettingsFile);
 		str.AppendLine("Category: " + SettingsHeader);
 		str.AppendLine("Setting Identifier: " + SettingName);

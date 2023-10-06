@@ -1,8 +1,6 @@
 #region usings
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Godot;
 
 #endregion
@@ -152,7 +150,8 @@ public partial class UISetting : Node {
 						ThisSetting.CurrentValue = val;
 					}
 				} catch (Exception e) {
-					Logging.Log(ThisSetting.SettingName + ": Setting Value Conversion error for INT Value.\n"+e.InnerException);
+					Logging.Log(ThisSetting.SettingName + ": Setting Value Conversion error for INT Value.\n" +
+					            e.InnerException);
 					ValueInput.Text = ThisSetting.CurrentValue.ToString();
 				}
 
@@ -170,7 +169,8 @@ public partial class UISetting : Node {
 						ThisSetting.CurrentValue = val;
 					}
 				} catch (Exception e) {
-					Logging.Log(ThisSetting.SettingName + ": Setting Value Conversion error for FLOAT Value.\n"+e.InnerException);
+					Logging.Log(ThisSetting.SettingName + ": Setting Value Conversion error for FLOAT Value.\n" +
+					            e.InnerException);
 					ValueInput.Text = ThisSetting.CurrentValue.ToString();
 				}
 

@@ -2,11 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Godot;
 using Environment = System.Environment;
-using FileAccess = Godot.FileAccess;
-using System.Globalization;
 
 #endregion
 
@@ -274,10 +273,8 @@ namespace ApophisSoftware {
 				case "JA":
 					CurrentLocale = LanguageCodes.ja;
 					break;
-
-				
 			}
-			
+
 			return languageCode;
 		}
 
@@ -286,39 +283,41 @@ namespace ApophisSoftware {
 		public static string S(string strDisplayString) {
 			return LocalizeString(strDisplayString, CurrentLocale);
 		}
-		
+
 		public static string GS(string strDisplayString) {
 			return LocalizeString(strDisplayString, CurrentLocale, true);
 		}
-		
+
 		public static string LocalizeString(string DisplayString, LanguageCodes Lang, bool ForGame = false) {
 			// This switch block uses fall-through logic. 
 			switch (Lang) {
 				case LanguageCodes.de:
 					if (ForGame) {
-						if (GameLangDE.ContainsKey(DisplayString) ) {
+						if (GameLangDE.ContainsKey(DisplayString)) {
 							return GameLangDE[DisplayString];
-						} 
+						}
 					} else {
 						if (EngineLangDE.ContainsKey(DisplayString)) {
 							return EngineLangDE[DisplayString];
-						} 
+						}
 					}
+
 					break;
 				case LanguageCodes.fr:
 					if (ForGame) {
-						if (GameLangFR.ContainsKey(DisplayString) ) {
+						if (GameLangFR.ContainsKey(DisplayString)) {
 							return GameLangFR[DisplayString];
-						} 
+						}
 					} else {
 						if (EngineLangFR.ContainsKey(DisplayString)) {
 							return EngineLangFR[DisplayString];
-						} 
+						}
 					}
+
 					break;
 				case LanguageCodes.es:
 					if (ForGame) {
-						if (GameLangES.ContainsKey(DisplayString) ) {
+						if (GameLangES.ContainsKey(DisplayString)) {
 							return GameLangES[DisplayString];
 						}
 					} else {
@@ -326,30 +325,32 @@ namespace ApophisSoftware {
 							return EngineLangES[DisplayString];
 						}
 					}
+
 					break;
 				case LanguageCodes.ja:
 					if (ForGame) {
-						if (GameLangJA.ContainsKey(DisplayString) ) {
+						if (GameLangJA.ContainsKey(DisplayString)) {
 							return GameLangJA[DisplayString];
 						}
 					} else {
 						if (EngineLangJA.ContainsKey(DisplayString)) {
 							return EngineLangJA[DisplayString];
-						} 
+						}
 					}
+
 					break;
 
 				default:
 					break;
-
 			}
+
 			return DisplayString;
 		}
 
 		public static void LoadLocalizationFile(string Filename, LanguageCodes LangCode, bool ForGame = false) {
 			if (File.Exists(Filename) == false)
 				return;
-			
+
 			StreamReader srTRFile = new StreamReader(Filename);
 
 			string[] data;
@@ -358,7 +359,7 @@ namespace ApophisSoftware {
 				temp = srTRFile.ReadLine();
 				if (temp.StartsWith("#"))
 					continue; // skip lines with # as the starting character. aka, skip remarks.
-				
+
 				data = temp.Split("=");
 
 				switch (LangCode) {
@@ -417,6 +418,12 @@ namespace ApophisSoftware {
 			}
 
 			srTRFile.Close();
+		}
+
+
+		// ---------------------------------------------------------------------------------------------
+		// Lua Section.
+		internal static void LoadLuaScripts(Dictionary<string, string> Scripts) {
 		}
 	} // class Utils.
 

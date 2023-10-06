@@ -1,24 +1,40 @@
 using Godot;
-using System;
-using MoonSharp.Interpreter;
-using Script = MoonSharp.Interpreter.Script;
 
 namespace ApophisSoftware {
-
 	public partial class LuaController : Node {
-		// private LuaAPI LuaCont = new LuaAPI();
-
-		private static Script msLua            = new Script();
-		private        Table  msLuaGlobalTable = new Table(msLua);
+		private static LuaApi lua       = new LuaApi();
+		LuaObjectMetatable    MetaTable = new LuaObjectMetatable();
+		private Callable      print;
 
 		public LuaController() {
-			msLua.Options.DebugPrint = str => { Logging.Log("[LUA]: " + str); };
+			lua.ObjectMetatable = MetaTable;
+			// var luaPrint = Variant.CreateFrom(LuaPrint());
+			// lua.PushVariant("print", luaPrint); // .push_variant("print", _lua_print)
+
+			Godot.Collections.Array libraries = new Godot.Collections.Array();
+			libraries.Add("base");
+			libraries.Add("table");
+			libraries.Add("string");
+
+			lua.BindLibraries(libraries);
+
+			print = new Callable(this, MethodName.LuaPrint);
+			lua.PushVariant("print", print); //override the built in lua 'print' function to use the logging.
+		}
+
+		private void LuaPrint(string message) {
+			Logging.Log("[LUA]: " + message);
 		}
 
 		internal void Dofile(string filename) {
-			msLua.DoFile(filename, msLuaGlobalTable);
+			lua.DoFile(filename);
 		}
 
+		public override void _Ready() {
+		}
 
+		public override void _Process(double delta) {
+			base._Process(delta);
+		}
 	}
 }

@@ -1,21 +1,19 @@
 #region usings
 
-using Godot;
 using System;
 using System.Collections;
-using ApophisSoftware;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Godot;
 using HttpClient = System.Net.Http.HttpClient;
 
 #endregion
 
 namespace ApophisSoftware {
-
 	// -------------------------------
 	// Design Flow: This loads up the code, and processes it.
 	// Then, it sends off to the Lua Controller, to execute the Lua code, and begin the game.
