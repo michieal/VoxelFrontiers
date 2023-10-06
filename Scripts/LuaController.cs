@@ -8,9 +8,8 @@ namespace ApophisSoftware {
 
 		public LuaController() {
 			lua.ObjectMetatable = MetaTable;
-			// var luaPrint = Variant.CreateFrom(LuaPrint());
-			// lua.PushVariant("print", luaPrint); // .push_variant("print", _lua_print)
 
+			// define libraries that the lua code has access to. 
 			Godot.Collections.Array libraries = new Godot.Collections.Array();
 			libraries.Add("base");
 			libraries.Add("table");
@@ -18,8 +17,9 @@ namespace ApophisSoftware {
 
 			lua.BindLibraries(libraries);
 
+			//override the built in lua 'print' function to use the logging.
 			print = new Callable(this, MethodName.LuaPrint);
-			lua.PushVariant("print", print); //override the built in lua 'print' function to use the logging.
+			lua.PushVariant("print", print);
 		}
 
 		private void LuaPrint(string message) {
@@ -28,6 +28,11 @@ namespace ApophisSoftware {
 
 		internal void Dofile(string filename) {
 			lua.DoFile(filename);
+		}
+
+		internal void CreateGlobalVar(string VariableName, string VariableValue) {
+			// Assign a named Lua Variable and give it a value.
+			lua.PushVariant(VariableName, VariableValue);
 		}
 
 		public override void _Ready() {
