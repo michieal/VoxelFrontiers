@@ -27,8 +27,12 @@ then, download the source, and open it up as a project in Godot. It'll take a mi
 load, as it's importing all of the assets. When it's done, you can hit the `Play` button in
 the upper right-hand corner.
 
-Use this version (or the latest): 
-![godot-version.png](statics%2Fgodot-version.png)
+With the switch to using LuaAPI and using the editor with it built in, the current version of the
+editor being used is this [Editor Download](https://github.com/WeaselGames/godot_luaAPI/releases/tag/v2.1-beta6).
+I have been working with Weasel Games to get the DotNet side of their editor working as intended
+and I have been creating examples for their LuaAPI. As it is a different editor build, it requires the use
+of updated Export Templates. Please read the documentation there, as I fully explain how to install the editor,
+and templates to use it. Those instructions apply here. 
 
 You can also build a fully executable version of the game for your OS by clicking 
 `Project` -> `Export...` and select the predefined export package. You will need to download
