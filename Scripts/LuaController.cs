@@ -1,3 +1,4 @@
+using ApophisSoftware.LuaObjects;
 using Godot;
 
 namespace ApophisSoftware {
@@ -7,7 +8,11 @@ namespace ApophisSoftware {
 		private Callable      print;
 
 		public LuaController() {
-			lua.ObjectMetatable = MetaTable;
+			InitializeThis();
+		}
+
+		private void InitializeThis() {
+			//lua.ObjectMetatable = MetaTable;
 
 			// define libraries that the lua code has access to. 
 			Godot.Collections.Array libraries = new Godot.Collections.Array();
@@ -20,6 +25,10 @@ namespace ApophisSoftware {
 			//override the built in lua 'print' function to use the logging.
 			print = new Callable(this, MethodName.LuaPrint);
 			lua.PushVariant("print", print);
+
+			Logging.Log("info", "Initializing Game API.");
+			// try to register the api for the game.
+			RegisterAPI();
 		}
 
 		private void LuaPrint(string message) {
@@ -35,7 +44,34 @@ namespace ApophisSoftware {
 			lua.PushVariant(VariableName, VariableValue);
 		}
 
+		internal void CreateGlobalVar(string VariableName, GodotObject VariableValue) {
+			// Assign a named Lua Variable and give it a value.
+			lua.PushVariant(VariableName, VariableValue);
+		}
+
+		internal void RegisterAPI() {
+			CreateGlobalVar("ItemStack", new ItemStack());
+			CreateGlobalVar("minetest", new MCLPP());
+			CreateGlobalVar("mclpp", new MCLPP());
+		}
+
 		public override void _Ready() {
+			Godot.Collections.Array Params = new Godot.Collections.Array();
+			Params.Add("warning");
+			Params.Add("Lua System Activated.");
+			// We use .CallFunction to actually call the lua function within the Lua State.
+			lua.CallFunction("mclpp.log", Params);
+
+			LuaError error = lua.DoString(@"
+					mclpp.log (""Test Message"")
+				");
+
+			if (error != null && error.Message != "") {
+				if (error != null && error.Message != "") {
+					Logging.Log("error", "An error occurred calling DoString.");
+					Logging.Log("error", "ERROR " + error.Type + ": " + error.Message);
+				}
+			}
 		}
 
 		public override void _Process(double delta) {

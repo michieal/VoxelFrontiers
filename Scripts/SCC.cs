@@ -59,6 +59,26 @@ namespace ApophisSoftware {
 		private          Coroutine dirScanCoroutine;
 		private          Coroutine SettingsProcCoroutine;
 
+		// Private static instance field to hold the single instance of SCC.
+		private static SCC instance;
+
+		// Private constructor to prevent external instantiation.
+		private SCC() {
+		}
+
+		// Public static property to get the Singleton instance.
+		public static SCC Instance {
+			get {
+				// If the instance hasn't been created yet, create it.
+				if (instance == null) {
+					instance = new SCC();
+				}
+
+				return instance;
+			}
+		}
+
+
 		// Http Net Access
 		// HttpClient lifecycle management best practices:
 		// https://learn.microsoft.com/dotnet/fundamentals/networking/http/httpclient-guidelines#recommended-use
@@ -380,7 +400,6 @@ namespace ApophisSoftware {
 			BuildSettingsUI();
 			yield return WaitAFrame;
 		}
-
 
 		internal void GatherAndSaveSettings() {
 			string key;

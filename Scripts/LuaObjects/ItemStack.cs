@@ -1,7 +1,8 @@
 using System.Text;
+using Godot;
 
 namespace ApophisSoftware.LuaObjects {
-	public class ItemStack {
+	public partial class ItemStack : RefCounted {
 		// 
 		// Full item identifier ("item name")
 		// Optional amount
@@ -17,6 +18,7 @@ namespace ApophisSoftware.LuaObjects {
 		public  int      Amount   = 1;
 		public  int      Wear     = 0;
 		private MetaData metaData = new MetaData();
+
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder(ItemName);
@@ -45,6 +47,9 @@ namespace ApophisSoftware.LuaObjects {
 
 		public ItemStack(string identifier) {
 			ItemName = identifier;
+		}
+
+		public ItemStack() {
 		}
 
 		public ItemStack(string identifier, int amount) {

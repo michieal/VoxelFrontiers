@@ -1,8 +1,13 @@
 using System.Collections.Generic;
+using Godot;
 
 namespace ApophisSoftware.LuaObjects {
-	public class MetaData {
-		public Dictionary<string, string> metaData = new Dictionary<string, string>();
+	public partial class MetaData : RefCounted {
+		internal Dictionary<string, string> metaData = new Dictionary<string, string>();
+
+		public Variant[] lua_fields() {
+			return new Variant[] {"metaData"};
+		}
 
 		public void setstring(string key, string value) {
 			// stack:get_meta():set_string("description", "My worn out pick")
