@@ -1,11 +1,12 @@
+using System;
+using System.IO;
 using ApophisSoftware.LuaObjects;
 using Godot;
 
 namespace ApophisSoftware {
 	public partial class LuaController : Node {
-		private static LuaApi lua       = new LuaApi();
-		LuaObjectMetatable    MetaTable = new LuaObjectMetatable();
-		private Callable      print;
+		private static LuaApi   lua = new LuaApi();
+		private        Callable print;
 
 		public LuaController() {
 			InitializeThis();
@@ -15,11 +16,11 @@ namespace ApophisSoftware {
 			//lua.ObjectMetatable = MetaTable;
 
 			// define libraries that the lua code has access to. 
-			Godot.Collections.Array libraries = new Godot.Collections.Array();
-			libraries.Add("base");
-			libraries.Add("table");
-			libraries.Add("string");
-
+			Godot.Collections.Array libraries = new() {
+				"base",  // Base Lua commands
+				"table", // Table functionality.
+				"string" // String Specific functionality.
+			};
 			lua.BindLibraries(libraries);
 
 			//override the built in lua 'print' function to use the logging.
@@ -29,6 +30,35 @@ namespace ApophisSoftware {
 			Logging.Log("info", "Initializing Game API.");
 			// try to register the api for the game.
 			RegisterAPI();
+
+			// test out the api.
+			Godot.Collections.Array Params = new Godot.Collections.Array();
+			Params.Add("system");
+			Params.Add("Lua System Activated.");
+			// var ApiFunc = lua.PullVariant("mclpp.log");
+			// We use .CallFunction to actually call the lua function within the Lua State.
+			var x = lua.CallFunction("mclpp.log", Params);
+			if (TestForError(x))
+				Logging.Log("Error found on API Test Call.");
+		}
+
+		internal bool TestForError(Variant x) {
+			bool isError = false;
+
+			try {
+				if (x.Obj.GetType() == typeof(LuaError)) {
+					var z = (LuaError) x;
+					isError = true;
+					if (z.Message != "") {
+						Logging.Log("error", "LUA Runtime Error Catch.");
+						Logging.Log("error", "ERROR " + z.Type + ": " + z.Message);
+					}
+				}
+			} catch (Exception e) {
+				return false;
+			}
+
+			return isError;
 		}
 
 		private void LuaPrint(string message) {
@@ -56,12 +86,6 @@ namespace ApophisSoftware {
 		}
 
 		public override void _Ready() {
-			Godot.Collections.Array Params = new Godot.Collections.Array();
-			Params.Add("warning");
-			Params.Add("Lua System Activated.");
-			// We use .CallFunction to actually call the lua function within the Lua State.
-			lua.CallFunction("mclpp.log", Params);
-
 			LuaError error = lua.DoString(@"
 					mclpp.log (""Test Message"")
 				");
@@ -76,6 +100,19 @@ namespace ApophisSoftware {
 
 		public override void _Process(double delta) {
 			base._Process(delta);
+		}
+
+		internal bool IsInPath(string RelativePath) {
+			string basePath = Utils.GetStoragePath();
+			string fullPath = Path.Combine(basePath, RelativePath);
+
+			// Get the relative path from the base path to the full path
+			string relative = Path.GetRelativePath(basePath, fullPath);
+
+			// Check if the relative path is not ".." or starts with "..\"
+			bool isInSubdirectory = !relative.Equals("..") && !relative.StartsWith("..\\");
+
+			return isInSubdirectory;
 		}
 	}
 }

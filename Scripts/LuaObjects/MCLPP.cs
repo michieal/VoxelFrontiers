@@ -6,9 +6,9 @@ public partial class MCLPP : RefCounted {
 	public MCLPP() {
 	}
 
-	public void log(string text) {
+	public bool log(string text) {
 		Logging.Log(text);
-
+		return true;
 		/*
 		minetest.debug(...)
 		Equivalent to minetest.log(table.concat({...}, "\t"))
@@ -17,13 +17,14 @@ public partial class MCLPP : RefCounted {
 		*/
 	}
 
-	public void log(string level, string text) {
+	public bool log(string level, string text) {
 		if (level.ToLower() == "none") {
 			log(text);
-			return;
+			return true;
 		}
 
 		Logging.Log(level, text);
+		return true;
 	}
 
 	public void debbug(string text) {
