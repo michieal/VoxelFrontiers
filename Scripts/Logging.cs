@@ -6,7 +6,7 @@ using Godot;
 
 #endregion
 
-namespace ApophisSoftware; 
+namespace ApophisSoftware;
 
 public static class Logging {
 	private static string       LogFile = "";
@@ -53,6 +53,9 @@ public static class Logging {
 				break;
 			case "error":
 				loglevelpretty = "[ERROR]: ";
+				break;
+			case "system":
+				loglevelpretty = "[SYSTEM]: ";
 				break;
 			default:
 				loglevelpretty = "[INFO]: ";

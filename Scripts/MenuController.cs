@@ -50,6 +50,7 @@ public partial class MenuController : Control {
 		InSettings = false;
 		InGame = false;
 
+		LocalizeMenuItems();
 
 		btnUpdate.Pressed += SourceControl.DownloadGameSource;
 		btnSettings.Pressed += BtnSettingsOnPressed;
@@ -59,12 +60,24 @@ public partial class MenuController : Control {
 		base._Ready();
 	}
 
+	private void LocalizeMenuItems() {
+		btnUpdate.Text = S("Update Game");
+		btnSettings.Text = S("Settings");
+		btnExit.Text = S("Exit Game");
+		btnDisplayLog.Text = S("View Log");
+		DownloadError.DialogText =
+			S("An error has occurred trying to download the source code. Please try again later.");
+	}
+
+	private string S(string strText) {
+		return Utils.S(strText);
+	}
+
 	private void BtnDisplayLogOnPressed() {
 		MainMenu.Visible = false;
 		InMainMenu = false;
 		InLog = true;
 		LogDisplayer.Visible = true;
-
 	}
 
 	private void BtnExitSettingsOnPressed() {
@@ -72,7 +85,7 @@ public partial class MenuController : Control {
 		if (DEBUG) Logging.Log("DisplayLog Button Pressed.");
 
 		SourceControl.GatherAndSaveSettings();
-		
+
 		SettingsMenu.Visible = false;
 		if (!InGame) {
 			MainMenu.Visible = true;
@@ -85,7 +98,7 @@ public partial class MenuController : Control {
 	internal void BtnExitLogDisplayerOnPressed() {
 		AcceptEvent();
 		if (DEBUG) Logging.Log("Exit DisplayLog Button Pressed.");
-		
+
 		LogDisplayer.Visible = false;
 		if (!InGame) {
 			MainMenu.Visible = true;

@@ -1,6 +1,17 @@
 # MCLPP Codeneame Mineclone Plus Plus
+==========================
 
-## What it is
+<!-- TOC -->
+* [# MCLPP Codeneame Mineclone Plus Plus](#-mclpp-codeneame-mineclone-plus-plus)
+  * [What it is](#what-it-is)
+  * [How to use](#how-to-use)
+  * [Contributing](#contributing)
+  * [License](#license)
+  * [Code Of Conduct](#code-of-conduct)
+<!-- TOC -->
+
+What it is
+-------
 Mineclone Plus Plus (MCLPP) is an engine designed to run the MineClone2 Minetest Game.
 After having developed for the Mineclone 2 team, and realizing that the Minetest developers
 were more than complacent to leave 5-10 year old issues unanswered, even after most of the 
@@ -20,15 +31,20 @@ moved the project over to the Godot engine 4.1.1 stable-mono-official (.NET Vers
 Mineclone 2 is open source, this engine's code is open source, and Godot is open source. 
 So, it all came together as a perfect fit.
 
-## How to use
+How to use
+-------
 Currently, you will need Godot 4.1.1 C# (latest .NET version of Godot) to build the 
 project. We will make binary versions when the project gets closer to completion. Until 
 then, download the source, and open it up as a project in Godot. It'll take a minute to 
 load, as it's importing all of the assets. When it's done, you can hit the `Play` button in
 the upper right-hand corner.
 
-Use this version (or the latest): 
-![godot-version.png](statics%2Fgodot-version.png)
+With the switch to using LuaAPI and using the editor with it built in, the current version of the
+editor being used is this [Editor Download](https://github.com/WeaselGames/godot_luaAPI/releases/tag/v2.1-beta6).
+I have been working with Weasel Games to get the DotNet side of their editor working as intended
+and I have been creating examples for their LuaAPI. As it is a different editor build, it requires the use
+of updated Export Templates. Please read the documentation there, as I fully explain how to install the editor,
+and templates to use it. Those instructions apply here. 
 
 You can also build a fully executable version of the game for your OS by clicking 
 `Project` -> `Export...` and select the predefined export package. You will need to download
@@ -38,6 +54,16 @@ the code into a fully working game. There have been some issues for people insta
 if you're one of those affected by that, use the command `dotnet --list-sdks` to make sure that 
 dotnet can see that it has the sdk(s) listed. Ideally, install both version 6 and 7.
 
-## Contributing
+Contributing
+-------
 At the current moment, the only contributions needed are people to test it on various systems. 
 Please use the Issue Tracker to report the outcomes, so that if needed, we can look into it.
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
+
+License
+-------
+Please see [LICENSE.md](LICENSE.md) for information on the License of this software.
+
+Code Of Conduct
+-------
+Please see [CODEOFCONDUCT.md](CODEOFCONDUCT.md) for more information.
