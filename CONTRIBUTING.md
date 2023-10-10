@@ -20,7 +20,9 @@ whether you're a programmer or not.
 ## Links
 This section will be filled out as we go along, as this project is still in its 
 infancy stage. We recognize that this project will be a massive undertaking and 
-we are currently working on teh infrastructure needed to handle such an undertaking. 
+we are currently working on the infrastructure needed to handle such an undertaking.
+
+* [Buy me a Taco!](https://ko-fi.com/apophissoftware) (Funding).
 
 ## Using git
 MineClone++ is developed using the version control system
@@ -239,6 +241,9 @@ We do accept donations. If you would like to help us out with a donation, great!
 Please let us know what the donation should be put towards (infrastructure, 
 continued development, etc.) and we will give you instructions on how to do that. 
 And, let me be the first to say thank you for supporting this work!
+
+Currently, the best way to support this work is:
+[Buy me a Taco!](https://ko-fi.com/apophissoftware)
 
 ### Crediting
 Funders are credited in their own section in `CREDITS.md` and will receive a special role 
