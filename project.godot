@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="MineclonePP-LUAAPI"
-config/description="Mineclone ++ Version 2023.10.5-LuaAPI"
+config/description="Mineclone ++ Version 2023.10.10-LuaAPI"
 run/main_scene="res://Scenes/Main.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 run/flush_stdout_on_print=true
