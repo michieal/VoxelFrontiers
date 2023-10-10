@@ -32,13 +32,13 @@ The main open source license for the code, and the godot project is GPL3, unless
 
 A quick and easy understanding:
 -------
-Any code that uses the ApophisSoftware Namespace is GPL3, with the exception of the Apophis Software Coroutines package,
+Any code that uses the `ApophisSoftware` Namespace is GPL3, with the exception of the Apophis Software Coroutines package,
 as that is under the MIT license. 
 
 Commercial Usage:
 -------
-
-Please contact us for licensing options.
+Currently, this project is not open for commercial usage. If you need to use it 
+commercially, then please contact us for licensing options.
 
 What constitutes Commercial Usage:
 -------
