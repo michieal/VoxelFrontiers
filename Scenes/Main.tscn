@@ -8,13 +8,13 @@
 [ext_resource type="Theme" uid="uid://d070er741ktai" path="res://GUIThemes/GUITheme.tres" id="6_f1isn"]
 [ext_resource type="FontFile" uid="uid://db16s6dpfprcw" path="res://Fonts/Minecraftchmc-dBlX.ttf" id="7_155va"]
 [ext_resource type="AudioStream" uid="uid://c2ykq00ghkdpj" path="res://Audio/Lupus Nocte - Howling (RFM).MP3" id="8_fdtaj"]
-[ext_resource type="Texture2D" uid="uid://c020vyedurc4y" path="res://Sprites/Icons/Free Flat Gear 2 Icon.png" id="9_2fl68"]
-[ext_resource type="Texture2D" uid="uid://ckxl2atf8eije" path="res://Sprites/Icons/Free Flat Download Cloud Icon.png" id="10_fhalh"]
-[ext_resource type="Texture2D" uid="uid://cpiq5b3pduo2u" path="res://Sprites/Icons/Free Flat Exit Door Icon.png" id="11_m3l68"]
+[ext_resource type="Texture2D" uid="uid://c020vyedurc4y" path="res://Sprites/Icons/Heathen Engineering/Free Flat Gear 2 Icon.png" id="9_a1wdj"]
+[ext_resource type="Texture2D" uid="uid://ckxl2atf8eije" path="res://Sprites/Icons/Heathen Engineering/Free Flat Download Cloud Icon.png" id="10_kifb8"]
+[ext_resource type="Texture2D" uid="uid://cpiq5b3pduo2u" path="res://Sprites/Icons/Heathen Engineering/Free Flat Exit Door Icon.png" id="11_u65n2"]
 [ext_resource type="Texture2D" uid="uid://cvp0cs2gr8te" path="res://Sprites/dark_button_mcl.png" id="12_u8xgm"]
-[ext_resource type="Texture2D" uid="uid://d07802t4fh1ce" path="res://Sprites/Icons/Free Flat Arrow Curved Left 1 Icon.png" id="13_tuq1i"]
+[ext_resource type="Texture2D" uid="uid://d07802t4fh1ce" path="res://Sprites/Icons/Heathen Engineering/Free Flat Arrow Curved Left 1 Icon.png" id="13_ku13u"]
 [ext_resource type="Script" path="res://Scripts/LogDisplayerNode.cs" id="14_ioj1t"]
-[ext_resource type="Texture2D" uid="uid://dc1icrnphk5dr" path="res://Sprites/Icons/Free Flat Arrow 1 S Icon.png" id="15_511ac"]
+[ext_resource type="Texture2D" uid="uid://dc1icrnphk5dr" path="res://Sprites/Icons/Heathen Engineering/Free Flat Arrow 1 S Icon.png" id="15_jtfkv"]
 [ext_resource type="PackedScene" uid="uid://db5oauoev6u6k" path="res://Prefabs/Player.tscn" id="16_5qad6"]
 [ext_resource type="Script" path="res://Scripts/LuaController.cs" id="17_mgw1e"]
 
@@ -337,7 +337,7 @@ theme_override_constants/icon_max_width = 80
 theme_override_font_sizes/font_size = 72
 shortcut = SubResource("Shortcut_sf10k")
 text = "Settings"
-icon = ExtResource("9_2fl68")
+icon = ExtResource("9_a1wdj")
 text_overrun_behavior = 3
 
 [node name="btnUpdateGame" type="Button" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
@@ -356,7 +356,7 @@ theme_override_constants/icon_max_width = 80
 theme_override_font_sizes/font_size = 72
 shortcut = SubResource("Shortcut_v4w4r")
 text = "Update Game"
-icon = ExtResource("10_fhalh")
+icon = ExtResource("10_kifb8")
 text_overrun_behavior = 3
 
 [node name="btnDisplayLog" type="Button" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
@@ -390,7 +390,7 @@ theme_override_constants/icon_max_width = 80
 theme_override_font_sizes/font_size = 72
 shortcut = SubResource("Shortcut_ofb0c")
 text = "Exit Game"
-icon = ExtResource("11_m3l68")
+icon = ExtResource("11_u65n2")
 text_overrun_behavior = 3
 
 [node name="Spacer2" type="Control" parent="Canvas/MainMenuSetup/MainMenu/MainMenuButtons/MarginContainer2/VBoxContainer"]
@@ -498,7 +498,7 @@ size_flags_vertical = 0
 tooltip_text = "Exit the Settings menu"
 theme = ExtResource("6_f1isn")
 shortcut = SubResource("Shortcut_i6j0m")
-icon = ExtResource("13_tuq1i")
+icon = ExtResource("13_ku13u")
 icon_alignment = 1
 expand_icon = true
 
@@ -606,7 +606,7 @@ offset_top = 8.0
 offset_right = -8.0
 offset_bottom = 80.0
 grow_horizontal = 0
-icon = ExtResource("15_511ac")
+icon = ExtResource("15_jtfkv")
 icon_alignment = 1
 
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
