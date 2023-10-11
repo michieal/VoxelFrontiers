@@ -19,7 +19,7 @@ boot_splash/bg_color=Color(0.0705882, 0.0705882, 0.0705882, 1)
 boot_splash/image="res://Sprites/Apophis Software Logo-4-2023.png"
 config/icon="res://Sprites/farming_pumpkin_face_light.png"
 boot_splash/minimum_display_time=500
-config/version="2023.10.5-LuaAPI"
+config/version="2023.10.10-LuaAPI"
 
 [autoload]
 
