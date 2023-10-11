@@ -1,9 +1,13 @@
 CREDITS
 ================
+Note that some media items may be placeholders during development, and are not 
+considered to be open source. One good example is the song "Howling". It's a 
+placeholder for future Main Menu music.   
+
 
 <!-- TOC -->
 * [CREDITS](#credits)
-  * [AUDIO](#audio)
+  * [Audio](#audio)
   * [Textures / Sprites](#textures--sprites)
   * [C Sharp code](#c-sharp-code)
   * [UI Design](#ui-design)
@@ -12,21 +16,22 @@ CREDITS
   * [Animations](#animations)
 <!-- TOC -->
 
-AUDIO
+Audio
 -------
 
-Primary Main Menu song: "Lupus Nocte - Howling" by Epidemic Arcade. https://www.youtube.com/watch?v=O4Lsah7bEJY
-
+Primary Main Menu song: Lupus Nocte's "Howling", Published by Epidemic Arcade. 
+* https://www.youtube.com/watch?v=O4Lsah7bEJY
+* https://www.epidemicsound.com/release/howling/
 
 Textures / Sprites
 -------
 
 Michieal:
-* Apophis Software Logo-4-2023.png
+* Apophis Software Logo-4-2023.png -- Copyright Apophis Software, 2023. Used with Permission, and is not CC-*anything*. 
 * dark_button_mcl.png
 * dark_button_pressed_mcl.png
 
-Mineclone team:
+Mineclone:
 * background.10.png
 * farming_pumpkin_face_light.png
 * header.2.png
