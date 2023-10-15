@@ -23,12 +23,6 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 namespace ApophisSoftware;
 
 public class Coroutine {
-	/// <summary>
-	/// If assigned a function, this function will be called when the Coroutine stops.
-	/// Note: it does not distinguish between completed and stopped prematurely.
-	/// </summary>
-	public Action onComplete;
-
 	private bool isRunning = false;
 
 	public event Action OnCleanup;
@@ -54,6 +48,5 @@ public class Coroutine {
 	// Called from the caller code, not the manager code, to stop the coroutine. Extra, and probably over-engineering.
 	public void Stop() {
 		isRunning = false;
-		onComplete?.Invoke();
 	}
 }

@@ -1,5 +1,9 @@
+#region
+
 using System.Text;
 using Godot;
+
+#endregion
 
 #region License / Copyright
 
@@ -22,60 +26,56 @@ using Godot;
 
 #endregion
 
-namespace ApophisSoftware.LuaObjects {
-	public partial class ItemStack : RefCounted {
-		// 
-		// Full item identifier ("item name")
-		// Optional amount
-		// Optional wear value
-		// Optional item metadata
+namespace ApophisSoftware.LuaObjects;
 
-		// local stack = ItemStack("default:pick_wood")
-		// stack:set_wear(21323)
-		// stack:get_meta():set_string("description", "My worn out pick")
-		// local itemstring = stack:to_string()
+public partial class ItemStack : RefCounted {
+	// 
+	// Full item identifier ("item name")
+	// Optional amount
+	// Optional wear value
+	// Optional item metadata
 
-		public  string   ItemName = "";
-		public  int      Amount   = 1;
-		public  int      Wear     = 0;
-		private MetaData metaData = new MetaData();
+	// local stack = ItemStack("default:pick_wood")
+	// stack:set_wear(21323)
+	// stack:get_meta():set_string("description", "My worn out pick")
+	// local itemstring = stack:to_string()
+
+	public  string   ItemName = "";
+	public  int      Amount   = 1;
+	public  int      Wear     = 0;
+	private MetaData metaData = new();
 
 
-		public override string ToString() {
-			StringBuilder sb = new StringBuilder(ItemName);
-			if (Amount != 1) {
-				sb.Append(" " + Amount.ToString());
-			}
+	public override string ToString() {
+		StringBuilder sb = new StringBuilder(ItemName);
+		if (Amount != 1) sb.Append(" " + Amount.ToString());
 
-			if (Wear != 0) {
-				if (Amount == 1) {
-					sb.Append(" " + Amount.ToString());
-				}
+		if (Wear != 0) {
+			if (Amount == 1) sb.Append(" " + Amount.ToString());
 
-				sb.Append(" " + Wear.ToString());
-			}
-
-			return sb.ToString();
+			sb.Append(" " + Wear.ToString());
 		}
 
-		public MetaData getmeta() {
-			return metaData;
-		}
+		return sb.ToString();
+	}
 
-		public void setwear(int value) {
-			Wear = value;
-		}
+	public MetaData getmeta() {
+		return metaData;
+	}
 
-		public ItemStack(string identifier) {
-			ItemName = identifier;
-		}
+	public void setwear(int value) {
+		Wear = value;
+	}
 
-		public ItemStack() {
-		}
+	public ItemStack(string identifier) {
+		ItemName = identifier;
+	}
 
-		public ItemStack(string identifier, int amount) {
-			ItemName = identifier;
-			Amount = amount;
-		}
+	public ItemStack() {
+	}
+
+	public ItemStack(string identifier, int amount) {
+		ItemName = identifier;
+		Amount = amount;
 	}
 }

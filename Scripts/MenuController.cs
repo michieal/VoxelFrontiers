@@ -1,4 +1,4 @@
-#region usings
+#region
 
 using ApophisSoftware;
 using Godot;
@@ -164,13 +164,20 @@ public partial class MenuController : Control {
 		base._Input(@event);
 	}
 
+	public override void _Notification(int what) {
+		if (what == NotificationWMCloseRequest) {
+			GetTree().Quit(); // default behavior
+		}
+	}
+
 	private void BtnExitOnPressed() {
 		if (Visible == false) return; //do nothing.
 		if (InUpdate) return;
 
 		if (DEBUG) Logging.Log("Exit Button Pressed.");
 
-		System.Environment.Exit(0);
+		// notify everything of Closing Time. 
+		GetTree().Root.PropagateNotification((int) NotificationWMCloseRequest);
 	}
 
 	internal void ShowUpdateNotice() {

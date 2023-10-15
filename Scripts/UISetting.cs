@@ -1,4 +1,4 @@
-#region usings
+#region
 
 using System;
 using Godot;
@@ -162,11 +162,10 @@ public partial class UISetting : Node {
 				try {
 					int val = newtext.ToInt();
 					if (UseRange) {
-						if (val <= (int) ThisSetting.maxValue && val >= (int) ThisSetting.minValue) {
+						if (val <= (int) ThisSetting.maxValue && val >= (int) ThisSetting.minValue)
 							ThisSetting.CurrentValue = val;
-						} else {
+						else
 							ValueInput.Text = ThisSetting.CurrentValue.ToString();
-						}
 					} else {
 						ThisSetting.CurrentValue = val;
 					}
@@ -181,11 +180,10 @@ public partial class UISetting : Node {
 				try {
 					float val = newtext.ToInt();
 					if (UseRange) {
-						if (val <= (float) ThisSetting.maxValue && val >= (float) ThisSetting.minValue) {
+						if (val <= (float) ThisSetting.maxValue && val >= (float) ThisSetting.minValue)
 							ThisSetting.CurrentValue = val;
-						} else {
+						else
 							ValueInput.Text = ThisSetting.CurrentValue.ToString();
-						}
 					} else {
 						ThisSetting.CurrentValue = val;
 					}
@@ -221,11 +219,10 @@ public partial class UISetting : Node {
 	public void DisplaySetting() {
 		// this is simple - hide the display value and show the editable version.
 
-		if (UseRange) {
+		if (UseRange)
 			ValueRange.Visible = true;
-		} else {
+		else
 			ValueRange.Visible = false;
-		}
 
 		switch (ThisSetting.SettingType) {
 			case "bool":

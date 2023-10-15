@@ -163,16 +163,25 @@ public class Setting {
 	public override string ToString() {
 		StringBuilder str = new StringBuilder();
 		str.Clear();
-		str.AppendLine("Filename for setting: " + SettingsFile);
-		str.AppendLine("Category: " + SettingsHeader);
-		str.AppendLine("Setting Identifier: " + SettingName);
-		str.AppendLine("Displayed Name: " + DisplayName);
+		str.Append("Filename for setting: ");
+		str.AppendLine(SettingsFile);
+		str.Append("Category: ");
+		str.AppendLine(SettingsHeader);
+		str.Append("Setting Identifier: ");
+		str.AppendLine(SettingName);
+		str.Append("Displayed Name: ");
+		str.AppendLine(DisplayName);
 		for (int i = 0; i < Description.Count; i++)
 			str.AppendLine(Description[i]);
-		str.AppendLine("Default Value: " + DefaultValue.ToString());
-		str.AppendLine("Current Value: " + CurrentValue.ToString());
-		str.AppendLine("Setting Data Type: " + SettingType);
+		str.Append("Default Value: ");
+		str.AppendLine(DefaultValue.ToString());
+		str.Append("Current Value: ");
+		str.AppendLine(CurrentValue.ToString());
+		str.Append("Setting Data Type: ");
+		str.AppendLine(SettingType);
+		str.Append("MinValue: ");
 		str.AppendLine(minValue.ToString());
+		str.Append("MaxValue: ");
 		str.AppendLine(maxValue.ToString());
 
 		return str.ToString();

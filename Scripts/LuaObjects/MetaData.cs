@@ -1,5 +1,9 @@
+#region
+
 using System.Collections.Generic;
 using Godot;
+
+#endregion
 
 #region License / Copyright
 
@@ -22,30 +26,28 @@ using Godot;
 
 #endregion
 
-namespace ApophisSoftware.LuaObjects {
-	public partial class MetaData : RefCounted {
-		internal Dictionary<string, string> metaData = new Dictionary<string, string>();
+namespace ApophisSoftware.LuaObjects;
 
-		public Variant[] lua_fields() {
-			return new Variant[] {"metaData"};
-		}
+public partial class MetaData : RefCounted {
+	internal Dictionary<string, string> metaData = new();
 
-		public void setstring(string key, string value) {
-			// stack:get_meta():set_string("description", "My worn out pick")
+	public Variant[] lua_fields() {
+		return new Variant[] {"metaData"};
+	}
 
-			if (metaData.ContainsKey(key)) {
-				metaData[key] = value;
-			} else {
-				metaData.Add(key, value);
-			}
-		}
+	public void setstring(string key, string value) {
+		// stack:get_meta():set_string("description", "My worn out pick")
 
-		public string getstring(string key, string defaultval) {
-			if (metaData.ContainsKey(key)) {
-				return metaData[key];
-			} else {
-				return defaultval;
-			}
-		}
+		if (metaData.ContainsKey(key))
+			metaData[key] = value;
+		else
+			metaData.Add(key, value);
+	}
+
+	public string getstring(string key, string defaultval) {
+		if (metaData.ContainsKey(key))
+			return metaData[key];
+		else
+			return defaultval;
 	}
 }
