@@ -52,5 +52,5 @@ licensed. That said, it's easier to qualify what has been created by this projec
 
 Links to Licenses:
 -------
-[gpl3.txt](gpl3.txt)
-[Creative Common's CC-BY-SA 4.0 International](LICENSE.txt)
+* [gpl3.txt](gpl3.txt)
+* [Creative Common's CC-BY-SA 4.0 International](LICENSE.txt)

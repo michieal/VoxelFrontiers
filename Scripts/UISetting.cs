@@ -1,7 +1,28 @@
-#region usings
+#region
 
 using System;
 using Godot;
+
+#endregion
+
+#region License / Copyright
+
+/*
+ * Copyright © 2023, Michieal.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 #endregion
 
@@ -141,11 +162,10 @@ public partial class UISetting : Node {
 				try {
 					int val = newtext.ToInt();
 					if (UseRange) {
-						if (val <= (int) ThisSetting.maxValue && val >= (int) ThisSetting.minValue) {
+						if (val <= (int) ThisSetting.maxValue && val >= (int) ThisSetting.minValue)
 							ThisSetting.CurrentValue = val;
-						} else {
+						else
 							ValueInput.Text = ThisSetting.CurrentValue.ToString();
-						}
 					} else {
 						ThisSetting.CurrentValue = val;
 					}
@@ -160,11 +180,10 @@ public partial class UISetting : Node {
 				try {
 					float val = newtext.ToInt();
 					if (UseRange) {
-						if (val <= (float) ThisSetting.maxValue && val >= (float) ThisSetting.minValue) {
+						if (val <= (float) ThisSetting.maxValue && val >= (float) ThisSetting.minValue)
 							ThisSetting.CurrentValue = val;
-						} else {
+						else
 							ValueInput.Text = ThisSetting.CurrentValue.ToString();
-						}
 					} else {
 						ThisSetting.CurrentValue = val;
 					}
@@ -200,11 +219,10 @@ public partial class UISetting : Node {
 	public void DisplaySetting() {
 		// this is simple - hide the display value and show the editable version.
 
-		if (UseRange) {
+		if (UseRange)
 			ValueRange.Visible = true;
-		} else {
+		else
 			ValueRange.Visible = false;
-		}
 
 		switch (ThisSetting.SettingType) {
 			case "bool":

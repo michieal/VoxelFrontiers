@@ -6,6 +6,27 @@ using System.Text;
 
 #endregion
 
+#region License / Copyright
+
+/*
+ * Copyright © 2023, Michieal.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#endregion
+
 namespace ApophisSoftware;
 
 public class Setting {
@@ -142,16 +163,25 @@ public class Setting {
 	public override string ToString() {
 		StringBuilder str = new StringBuilder();
 		str.Clear();
-		str.AppendLine("Filename for setting: " + SettingsFile);
-		str.AppendLine("Category: " + SettingsHeader);
-		str.AppendLine("Setting Identifier: " + SettingName);
-		str.AppendLine("Displayed Name: " + DisplayName);
+		str.Append("Filename for setting: ");
+		str.AppendLine(SettingsFile);
+		str.Append("Category: ");
+		str.AppendLine(SettingsHeader);
+		str.Append("Setting Identifier: ");
+		str.AppendLine(SettingName);
+		str.Append("Displayed Name: ");
+		str.AppendLine(DisplayName);
 		for (int i = 0; i < Description.Count; i++)
 			str.AppendLine(Description[i]);
-		str.AppendLine("Default Value: " + DefaultValue.ToString());
-		str.AppendLine("Current Value: " + CurrentValue.ToString());
-		str.AppendLine("Setting Data Type: " + SettingType);
+		str.Append("Default Value: ");
+		str.AppendLine(DefaultValue.ToString());
+		str.Append("Current Value: ");
+		str.AppendLine(CurrentValue.ToString());
+		str.Append("Setting Data Type: ");
+		str.AppendLine(SettingType);
+		str.Append("MinValue: ");
 		str.AppendLine(minValue.ToString());
+		str.Append("MaxValue: ");
 		str.AppendLine(maxValue.ToString());
 
 		return str.ToString();

@@ -1,8 +1,28 @@
-#region usings
+#region
 
-using Godot;
-using System;
 using ApophisSoftware;
+using Godot;
+
+#endregion
+
+#region License / Copyright
+
+/*
+ * Copyright © 2023, Michieal.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 #endregion
 
@@ -144,13 +164,20 @@ public partial class MenuController : Control {
 		base._Input(@event);
 	}
 
+	public override void _Notification(int what) {
+		if (what == NotificationWMCloseRequest) {
+			GetTree().Quit(); // default behavior
+		}
+	}
+
 	private void BtnExitOnPressed() {
 		if (Visible == false) return; //do nothing.
 		if (InUpdate) return;
 
 		if (DEBUG) Logging.Log("Exit Button Pressed.");
 
-		System.Environment.Exit(0);
+		// notify everything of Closing Time. 
+		GetTree().Root.PropagateNotification((int) NotificationWMCloseRequest);
 	}
 
 	internal void ShowUpdateNotice() {
