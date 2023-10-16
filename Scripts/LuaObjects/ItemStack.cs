@@ -63,9 +63,27 @@ public partial class ItemStack : RefCounted {
 		return metaData;
 	}
 
+	// Used to take 1 of the Item.
+	public ItemStack take_item() {
+		Amount -= 1;
+		return this;
+	}
+
+	public string get_description() {
+		string description = metaData.getstring("description", "");
+		return description;
+	}
+
+	public string get_short_description() {
+		string short_description = metaData.getstring("short_description", "");
+		return short_description;
+	}
+
 	public void setwear(int value) {
 		Wear = value;
 	}
+
+	#region CTOR
 
 	public ItemStack(string identifier) {
 		ItemName = identifier;
@@ -78,4 +96,6 @@ public partial class ItemStack : RefCounted {
 		ItemName = identifier;
 		Amount = amount;
 	}
+
+	#endregion
 }
