@@ -39,9 +39,7 @@ public partial class MCLPP : RefCounted {
 
 	public static MCLPP Instance {
 		get {
-			if (instance == null) {
-				instance = new MCLPP();
-			}
+			if (instance == null) instance = new MCLPP();
 
 			return instance;
 		}
@@ -221,6 +219,7 @@ public partial class MCLPP : RefCounted {
 	}
 
 	public void register_alias(string item, string alias) {
+		//TODO: Search Nodes, Items, Tools for the correct entry, then duplicate said entry with the alias' name.
 	}
 
 	/*
@@ -269,14 +268,12 @@ public partial class MCLPP : RefCounted {
 		if (!LBMs.TryAdd(name, LBM)) {
 			Logging.Log("warning", "Couldn't add in additional LBM: " + name);
 		} else {
-			if (DEBUG) {
-				Logging.Log("system", "LBM Added: " + name);
-			}
+			if (DEBUG) Logging.Log("system", "LBM Added: " + name);
 		}
 	}
 
 	/*
-	 * Item definition¶
+	 * Item definition
 
 	   Used by minetest.register_node, minetest.register_craftitem, and minetest.register_tool.
 
@@ -456,14 +453,14 @@ public partial class MCLPP : RefCounted {
 	   }
 
 	 */
+	public void register_node(Variant table) {
+	}
 
 
 	internal IEnumerator ABMCoRoutine(Array<Variant> _params) {
 		Random rng = new Random(DateTime.UtcNow.Millisecond);
 
-		if (DEBUG) {
-			Logging.Log(_params.ToString());
-		}
+		if (DEBUG) Logging.Log(_params.ToString());
 
 		double Interval = (double) _params[0];
 		int chance = (int) _params[1];

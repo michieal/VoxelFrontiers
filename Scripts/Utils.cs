@@ -264,9 +264,7 @@ public class Utils {
 	public static bool TestForError(Variant x) {
 		bool isError = false;
 
-		if (x.Obj == null) {
-			return isError;
-		}
+		if (x.Obj == null) return isError;
 
 		try {
 			if (x.Obj.GetType() == typeof(LuaError)) {
