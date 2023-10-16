@@ -34,8 +34,8 @@ public partial class LuaController : Node {
 	private        Callable print;
 
 	// API Objects
-	private MCLPP     Minetest   = new();
-	private MCLPP     Mclpp      = new();
+	private MCLPP     Minetest   = MCLPP.Instance;
+	private MCLPP     Mclpp      = MCLPP.Instance;
 	private ItemStack _itemStack = new();
 
 	#region Ctor / Dtor
