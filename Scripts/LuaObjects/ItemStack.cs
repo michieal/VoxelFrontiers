@@ -44,7 +44,7 @@ public partial class ItemStack : RefCounted {
 	public  int      Amount   = 1;
 	public  int      Wear     = 0;
 	private MetaData metaData = new();
-
+	public  Variant  definition; //TODO: Link Definition to a registered item.
 
 	public override string ToString() {
 		StringBuilder sb = new StringBuilder(ItemName);
