@@ -130,6 +130,8 @@ public partial class LuaController : Node {
 		CreateGlobalVar("ItemStack", _itemStack);
 		CreateGlobalVar("minetest", Minetest);
 		CreateGlobalVar("mclpp", Mclpp);
+		CreateGlobalVar("_Item", new Item());
+		CreateGlobalVar("Node", new NodeBlock());
 	}
 
 	public override void _Ready() {

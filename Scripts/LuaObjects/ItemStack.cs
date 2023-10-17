@@ -28,7 +28,7 @@ using Godot;
 
 namespace ApophisSoftware.LuaObjects;
 
-public partial class ItemStack : RefCounted {
+public partial class ItemStack : Item {
 	// 
 	// Full item identifier ("item name")
 	// Optional amount
@@ -40,11 +40,10 @@ public partial class ItemStack : RefCounted {
 	// stack:get_meta():set_string("description", "My worn out pick")
 	// local itemstring = stack:to_string()
 
-	public  string   ItemName = "";
-	public  int      Amount   = 1;
-	public  int      Wear     = 0;
-	private MetaData metaData = new();
-	public  Variant  definition; //TODO: Link Definition to a registered item.
+	public string  ItemName = "";
+	public int     Amount   = 1;
+	public int     Wear     = 0;
+	public Variant definition; //TODO: Link Definition to a registered item.
 
 	public override string ToString() {
 		StringBuilder sb = new StringBuilder(ItemName);
@@ -59,28 +58,18 @@ public partial class ItemStack : RefCounted {
 		return sb.ToString();
 	}
 
-	public MetaData getmeta() {
-		return metaData;
-	}
-
 	// Used to take 1 of the Item.
 	public ItemStack take_item() {
 		Amount -= 1;
 		return this;
 	}
 
-	public string get_description() {
-		string description = metaData.getstring("description", "");
-		return description;
-	}
-
-	public string get_short_description() {
-		string short_description = metaData.getstring("short_description", "");
-		return short_description;
-	}
-
 	public void setwear(int value) {
 		Wear = value;
+	}
+
+	public string get_description() {
+		return get_description();
 	}
 
 	#region CTOR
