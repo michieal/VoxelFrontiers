@@ -4,23 +4,44 @@
 --- DateTime: 10/11/23 5:28 PM
 ---
 
+local DEBUG = true
+
 local function dumpTable(table, depth)
     if (depth > 200) then
-        print("Error: Depth > 200 in dumpTable()")
+        mclpp.log("Error: Depth > 200 in dumpTable()")
         return
     end
     for k, v in pairs(table) do
         if (type(v) == "table") then
-            print(string.rep("  ", depth) .. k .. ":")
+            mclpp.log(string.rep("  ", depth) .. k .. ":")
             dumpTable(v, depth + 1)
         else
-            print(string.rep("  ", depth) .. k .. ": ", v)
+            mclpp.log(string.rep("  ", depth) .. k .. ": ", v)
         end
     end
 end
 
-function dump(table)
-    dumpTable(table, 199)
+function _dump(arg)
+    if (#arg > 1) then
+        print("========================DUMP (" .. #arg .. ")========================")
+        for i = 1, #arg do
+            print("========================DUMP [" .. i .. "]========================")
+            dump(arg[i])
+        end
+    else
+        local t = arg[1]
+        print("========================DUMP========================")
+        if t and t ~= nil then
+            for k, v in pairs(t) do
+                print("\t", k, v)
+            end
+        end
+        print("========================DUMP========================")
+    end
+end
+
+function dump(x)
+    dumpTable(x, 0)
 end
 
 function S(strText)
@@ -253,11 +274,7 @@ local test_def = {
     end,
 }
 
--- dump(test_def)
-
 print("this is a test of the external revenue system.")
-
-myvar = {}
 
 mclpp.register_abm({
     label = "Break Orphaned Bamboo",
@@ -269,3 +286,5 @@ mclpp.register_abm({
         -- mcl_bamboo.break_orphaned(pos)
     end,
 })
+
+dump(test_def)
