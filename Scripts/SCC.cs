@@ -540,7 +540,9 @@ public partial class SCC : Node {
 
 		DestroySettingsUI();
 
+#pragma warning disable CS4014
 		DownloadFile(SourceClient);
+#pragma warning restore
 	}
 
 	private async Task DownloadFile(HttpClient httpClient) {
