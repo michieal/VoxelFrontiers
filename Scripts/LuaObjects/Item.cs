@@ -568,7 +568,6 @@ public partial class Item : RefCounted {
 		sb.AppendLine("getmeta() : returns the metadata object for this object.");
 		sb.AppendLine("set_custom_field({key,value}) : {string, string}.");
 		sb.AppendLine("get_custom_field(key) : string; returns value of the field.");
-		sb.AppendLine("====================================");
 
 		return sb.ToString();
 	}
