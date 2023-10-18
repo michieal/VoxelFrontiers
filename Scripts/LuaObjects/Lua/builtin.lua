@@ -41,7 +41,20 @@ function _dump(arg)
 end
 
 function dump(x)
-    dumpTable(x, 0)
+
+    if x == nil then
+        print("dump: Object is nil.")
+    end
+
+    print("dumping: " .. x.name)
+    if type(x) == "table" then
+        print("Object is a table.")
+        dumpTable(x, 0)
+    else
+        print("Object is not a table.")
+        print(x) -- try printing it with its .ToString()
+    end
+    
 end
 
 function S(strText)
@@ -287,4 +300,21 @@ mclpp.register_abm({
     end,
 })
 
-dump(test_def)
+-- dump(test_def)
+
+local myItem = Item("Tom")
+mySecondItem = Item("Bob")
+myItem._custom_property = 10
+
+print("myItem._custom_property")
+print(myItem._custom_property)
+
+if myItem then
+    print("myItem:")
+    dump(myItem)
+end
+
+
+
+
+--

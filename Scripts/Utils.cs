@@ -442,6 +442,16 @@ public class Utils {
 
 	// ---------------------------------------------------------------------------------------------
 	// Lua Section.
+	private static LuaController _luaController;
+
+	internal static void SetLuaController(LuaController LC) {
+		_luaController = LC;
+	}
+
+	internal static LuaController GetLuaController() {
+		return _luaController;
+	}
+
 	internal static void LoadLuaScripts(Dictionary<string, string> Scripts) {
 	}
 } // class Utils.
