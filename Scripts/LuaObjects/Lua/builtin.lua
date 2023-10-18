@@ -64,6 +64,8 @@ function _exec_file(filename, modname)
     mclpp.set_current_modname("") -- clear when done.
 end
 
+minetest = mclpp
+minetest.log("minetest mapped as mclpp api: success.")
 --------------------------------------------------------------
 function S(strText)
     return strText
@@ -295,7 +297,7 @@ local test_def = {
     end,
 }
 
-print("this is a test of the external revenue system.")
+--print("this is a test of the external revenue system.")
 
 mclpp.register_abm({
     label = "Break Orphaned Bamboo",
@@ -310,24 +312,27 @@ mclpp.register_abm({
 
 -- dump(test_def)
 
-local myItem = Item("Tom")
-myItem._custom_property = 10
+--local myItem = Item("Tom")
+--myItem._custom_property = 10
 
-print(myItem.name)
+--print(myItem.name)
 
-myItem.name = "Tommy!"
-myItem.description = "this is a test description."
+--myItem.name = "Tommy!"
+--myItem.description = "this is a test description."
 
-print("myItem._custom_property")
-print(myItem._custom_property)
+--print("myItem._custom_property")
+--print(myItem._custom_property)
 
-if myItem then
-    print("myItem:")
-    dump(myItem)
+
+--myNode = Node("mcl_block:blockityblock")
+
+--print(myNode)
+
+my_item = ItemStack("mcl_nookie:item", 10)
+
+if my_item then
+    print("my_item:")
+    dump(my_item)
 end
-
-myNode = Node("mcl_block:blockityblock")
-
-print(myNode)
 
 --

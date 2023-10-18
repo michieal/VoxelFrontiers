@@ -40,32 +40,54 @@ public partial class ItemStack : Item {
 	// stack:get_meta():set_string("description", "My worn out pick")
 	// local itemstring = stack:to_string()
 
-	public string  ItemName = "";
-	public int     Amount   = 1;
-	public int     Wear     = 0;
-	public Variant definition; //TODO: Link Definition to a registered item.
+	/// <summary>
+	/// Sets the Name of the Item.
+	/// Note: Be Careful of setting the identifier often; Hidden Cost. Will search for item definition...
+	/// </summary>
+	public string identifier {
+		get { return name; }
+		set {
+			// try to find the named definition.
+			FindResult x = MCLPP.Instance.FindItem(value);
+			if (x.success) {
+				definition = x.definition;
+				itemType = x.type;
+				// TODO: add missing code for what can be done here.
+			}
+
+			name = value;
+		}
+	}
+
+	public  int            amount = 1;
+	public  int            wear   = 0;
+	public  Variant        definition; //TODO: Link Definition to base item.
+	private FindResultType itemType = FindResultType.Item;
 
 	public override string ToString() {
-		StringBuilder sb = new StringBuilder(ItemName);
-		if (Amount != 1) sb.Append(" " + Amount.ToString());
+		StringBuilder sb = new StringBuilder(identifier);
+		if (amount != 1) sb.Append(" " + amount.ToString());
 
-		if (Wear != 0) {
-			if (Amount == 1) sb.Append(" " + Amount.ToString());
-
-			sb.Append(" " + Wear.ToString());
+		if (wear != 0) {
+			if (amount == 1) sb.Append(" " + amount.ToString());
+			sb.Append(" " + wear.ToString());
 		}
 
 		return sb.ToString();
 	}
 
+	public string to_string() {
+		return identifier;
+	}
+
 	// Used to take 1 of the Item.
 	public ItemStack take_item() {
-		Amount -= 1;
+		amount -= 1;
 		return this;
 	}
 
 	public void setwear(int value) {
-		Wear = value;
+		wear = value;
 	}
 
 	public string get_description() {
@@ -74,16 +96,25 @@ public partial class ItemStack : Item {
 
 	#region CTOR
 
-	public ItemStack(string identifier) {
-		ItemName = identifier;
-	}
-
 	public ItemStack() {
 	}
 
-	public ItemStack(string identifier, int amount) {
-		ItemName = identifier;
-		Amount = amount;
+	public ItemStack CreateItemStack(LuaTuple args) {
+		ItemStack _itemStack = new ItemStack();
+
+		if (args == null || args.IsEmpty()) {
+			return _itemStack;
+		}
+
+		if (args.Size() >= 1) {
+			_itemStack.identifier = _itemStack.name; // Note: Hidden Cost. Will search for item definition... 
+		}
+
+		if (args.Size() == 2) {
+			_itemStack.amount = (int) args.ToArray()[1];
+		}
+
+		return _itemStack;
 	}
 
 	#endregion

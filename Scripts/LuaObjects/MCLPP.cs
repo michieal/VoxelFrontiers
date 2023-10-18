@@ -62,7 +62,11 @@ public partial class MCLPP : RefCounted {
 	public Godot.Collections.Dictionary<string, NodeBlock> registered_nodes =
 		new Godot.Collections.Dictionary<string, NodeBlock>();
 
-	public Godot.Collections.Dictionary<string, Item> Items = new Godot.Collections.Dictionary<string, Item>();
+	public Godot.Collections.Dictionary<string, Item> registered_items =
+		new Godot.Collections.Dictionary<string, Item>();
+
+	private Godot.Collections.Dictionary<string, string> registered_aliases =
+		new Godot.Collections.Dictionary<string, string>();
 
 	public Godot.Collections.Dictionary<string, Variant>
 		Tools = new Godot.Collections.Dictionary<string, Variant>(); // TODO: Change this once Tools are made.
@@ -234,39 +238,109 @@ public partial class MCLPP : RefCounted {
 		GC.Collect(); // finally, take out the trash.
 	}
 
-	public void register_alias(string item, string alias) {
-		//TODO: Search Items, Tools for the correct entry, then duplicate said entry with the alias' name.
-		foreach (var kvp in registered_nodes) {
-			if (kvp.Key == item) {
-				registered_nodes.Add(alias, kvp.Value);
-				return;
+	public void register_alias(string alias, string item) {
+		if (registered_aliases.ContainsKey(item)) {
+			FindResult x = FindItem(registered_aliases[item]);
+			switch (x.type) {
+				case FindResultType.Node:
+					registered_nodes.Remove(registered_aliases[item]);
+					registered_nodes.Add(alias, (NodeBlock) x.definition);
+					registered_aliases[item] = alias;
+					break;
+				case FindResultType.Item:
+					registered_items.Remove(registered_aliases[item]);
+					registered_items.Add(alias, (Item) x.definition);
+					registered_aliases[item] = alias;
+					break;
+				case FindResultType.Tool:
+					Tools.Remove(registered_aliases[item]);
+					Tools.Add(alias, x.definition);
+					registered_aliases[item] = alias;
+					break;
+				default:
+					break;
 			}
+
+			return;
 		}
+
+		//Search Items, Nodes and Tools for the correct entry, then duplicate said entry with the alias' name.
+		FindResult def = FindItem(item);
+		if (def.success == false) {
+			log("error", "Couldn't make alias: " + alias + " for item:" + item);
+			return;
+		}
+
+		if (def.type == FindResultType.Node) {
+			registered_nodes.Add(alias, (NodeBlock) def.definition);
+		} else if (def.type == FindResultType.Item) {
+			registered_items.Add(alias, (Item) def.definition);
+		} else if (def.type == FindResultType.Tool) {
+			Tools.Add(alias, def.definition);
+		}
+
+		registered_aliases.Add(item, alias);
 	}
 
-	/*
-	 * label = "Upgrade legacy doors",
-	   -- Descriptive label for profiling purposes (optional).
-	   -- Definitions with identical labels will be listed as one.
+	public FindResult FindItem(string itemStackName) {
+		FindResult fr = new FindResult();
 
-	   name = "modname:replace_legacy_door",
-	   -- Identifier of the LBM, should follow the modname:<whatever> convention
+		foreach (var kvp in registered_nodes) {
+			if (kvp.Key == itemStackName) {
+				fr.success = true;
+				fr.identifier = kvp.Key;
+				fr.definition = kvp.Value;
+				fr.type = FindResultType.Node;
+				return fr;
+			}
+		}
 
-	   nodenames = {"default:lava_source"},
-	   -- List of node names to trigger the LBM on.
-	   -- Names of non-registered nodes and groups (as group:groupname)
-	   -- will work as well.
+		foreach (var kvp in registered_items) {
+			if (kvp.Key == itemStackName) {
+				fr.success = true;
+				fr.identifier = kvp.Key;
+				fr.definition = kvp.Value;
+				fr.type = FindResultType.Item;
+				return fr;
+			}
+		}
 
-	   run_at_every_load = false,
-	   -- Whether to run the LBM's action every time a block gets activated,
-	   -- and not only the first time the block gets activated after the LBM
-	   -- was introduced.
+		foreach (var kvp in Tools) {
+			if (kvp.Key == itemStackName) {
+				fr.success = true;
+				fr.identifier = kvp.Key;
+				fr.definition = kvp.Value;
+				fr.type = FindResultType.Tool;
+				return fr;
+			}
+		}
 
-	   action = function(pos, node, dtime_s),
-	   -- Function triggered for each qualifying node.
-	   -- `dtime_s` is the in-game time (in seconds) elapsed since the block
-	   -- was last active
-	 */
+		return fr;
+	}
+
+/*
+ * label = "Upgrade legacy doors",
+   -- Descriptive label for profiling purposes (optional).
+   -- Definitions with identical labels will be listed as one.
+
+   name = "modname:replace_legacy_door",
+   -- Identifier of the LBM, should follow the modname:<whatever> convention
+
+   nodenames = {"default:lava_source"},
+   -- List of node names to trigger the LBM on.
+   -- Names of non-registered nodes and groups (as group:groupname)
+   -- will work as well.
+
+   run_at_every_load = false,
+   -- Whether to run the LBM's action every time a block gets activated,
+   -- and not only the first time the block gets activated after the LBM
+   -- was introduced.
+
+   action = function(pos, node, dtime_s),
+   -- Function triggered for each qualifying node.
+   -- `dtime_s` is the in-game time (in seconds) elapsed since the block
+   -- was last active
+ */
 	public void register_lbm(Godot.Collections.Dictionary<string, Variant> table) {
 		string label;
 		string[] nodenames;
@@ -294,190 +368,192 @@ public partial class MCLPP : RefCounted {
 		}
 	}
 
-	/*
-	 * Item definition
+/*
+ * Item definition
 
-	   Used by minetest.register_node, minetest.register_craftitem, and minetest.register_tool.
+   Used by minetest.register_node, minetest.register_craftitem, and minetest.register_tool.
 
-	   {
-	   description = "",
-	   -- Can contain new lines. "\n" has to be used as new line character.
-	   -- See also: `get_description` in [`ItemStack`]
+   {
+   description = "",
+   -- Can contain new lines. "\n" has to be used as new line character.
+   -- See also: `get_description` in [`ItemStack`]
 
-	   short_description = "",
-	   -- Must not contain new lines.
-	   -- Defaults to nil.
-	   -- Use an [`ItemStack`] to get the short description, e.g.:
-	   --   ItemStack(itemname):get_short_description()
+   short_description = "",
+   -- Must not contain new lines.
+   -- Defaults to nil.
+   -- Use an [`ItemStack`] to get the short description, e.g.:
+   --   ItemStack(itemname):get_short_description()
 
-	   groups = {},
-	   -- key = name, value = rating; rating = <number>.
-	   -- If rating not applicable, use 1.
-	   -- e.g. {wool = 1, fluffy = 3}
-	   --      {soil = 2, outerspace = 1, crumbly = 1}
-	   --      {bendy = 2, snappy = 1},
-	   --      {hard = 1, metal = 1, spikes = 1}
+   groups = {},
+   -- key = name, value = rating; rating = <number>.
+   -- If rating not applicable, use 1.
+   -- e.g. {wool = 1, fluffy = 3}
+   --      {soil = 2, outerspace = 1, crumbly = 1}
+   --      {bendy = 2, snappy = 1},
+   --      {hard = 1, metal = 1, spikes = 1}
 
-	   inventory_image = "",
-	   -- Texture shown in the inventory GUI
-	   -- Defaults to a 3D rendering of the node if left empty.
+   inventory_image = "",
+   -- Texture shown in the inventory GUI
+   -- Defaults to a 3D rendering of the node if left empty.
 
-	   inventory_overlay = "",
-	   -- An overlay texture which is not affected by colorization
+   inventory_overlay = "",
+   -- An overlay texture which is not affected by colorization
 
-	   wield_image = "",
-	   -- Texture shown when item is held in hand
-	   -- Defaults to a 3D rendering of the node if left empty.
+   wield_image = "",
+   -- Texture shown when item is held in hand
+   -- Defaults to a 3D rendering of the node if left empty.
 
-	   wield_overlay = "",
-	   -- Like inventory_overlay but only used in the same situation as wield_image
+   wield_overlay = "",
+   -- Like inventory_overlay but only used in the same situation as wield_image
 
-	   wield_scale = {x = 1, y = 1, z = 1},
-	   -- Scale for the item when held in hand
+   wield_scale = {x = 1, y = 1, z = 1},
+   -- Scale for the item when held in hand
 
-	   palette = "",
-	   -- An image file containing the palette of a node.
-	   -- You can set the currently used color as the "palette_index" field of
-	   -- the item stack metadata.
-	   -- The palette is always stretched to fit indices between 0 and 255, to
-	   -- ensure compatibility with "colorfacedir" (and similar) nodes.
+   palette = "",
+   -- An image file containing the palette of a node.
+   -- You can set the currently used color as the "palette_index" field of
+   -- the item stack metadata.
+   -- The palette is always stretched to fit indices between 0 and 255, to
+   -- ensure compatibility with "colorfacedir" (and similar) nodes.
 
-	   color = "#ffffffff",
-	   -- Color the item is colorized with. The palette overrides this.
+   color = "#ffffffff",
+   -- Color the item is colorized with. The palette overrides this.
 
-	   stack_max = 99,
-	   -- Maximum amount of items that can be in a single stack.
-	   -- The default can be changed by the setting `default_stack_max`
+   stack_max = 99,
+   -- Maximum amount of items that can be in a single stack.
+   -- The default can be changed by the setting `default_stack_max`
 
-	   range = 4.0,
-	   -- Range of node and object pointing that is possible with this item held
+   range = 4.0,
+   -- Range of node and object pointing that is possible with this item held
 
-	   liquids_pointable = false,
-	   -- If true, item can point to all liquid nodes (`liquidtype ~= "none"`),
-	   -- even those for which `pointable = false`
+   liquids_pointable = false,
+   -- If true, item can point to all liquid nodes (`liquidtype ~= "none"`),
+   -- even those for which `pointable = false`
 
-	   light_source = 0,
-	   -- When used for nodes: Defines amount of light emitted by node.
-	   -- Otherwise: Defines texture glow when viewed as a dropped item
-	   -- To set the maximum (14), use the value 'minetest.LIGHT_MAX'.
-	   -- A value outside the range 0 to minetest.LIGHT_MAX causes undefined
-	   -- behavior.
+   light_source = 0,
+   -- When used for nodes: Defines amount of light emitted by node.
+   -- Otherwise: Defines texture glow when viewed as a dropped item
+   -- To set the maximum (14), use the value 'minetest.LIGHT_MAX'.
+   -- A value outside the range 0 to minetest.LIGHT_MAX causes undefined
+   -- behavior.
 
-	   -- See "Tool Capabilities" section for an example including explanation
-	   tool_capabilities = {
-	   full_punch_interval = 1.0,
-	   max_drop_level = 0,
-	   groupcaps = {
-	   -- For example:
-	   choppy = {times = {2.50, 1.40, 1.00}, uses = 20, maxlevel = 2},
-	   },
-	   damage_groups = {groupname = damage},
-	   -- Damage values must be between -32768 and 32767 (2^15)
+   -- See "Tool Capabilities" section for an example including explanation
+   tool_capabilities = {
+   full_punch_interval = 1.0,
+   max_drop_level = 0,
+   groupcaps = {
+   -- For example:
+   choppy = {times = {2.50, 1.40, 1.00}, uses = 20, maxlevel = 2},
+   },
+   damage_groups = {groupname = damage},
+   -- Damage values must be between -32768 and 32767 (2^15)
 
-	   punch_attack_uses = nil,
-	   -- Amount of uses this tool has for attacking players and entities
-	   -- by punching them (0 = infinite uses).
-	   -- For compatibility, this is automatically set from the first
-	   -- suitable groupcap using the formula "uses * 3^(maxlevel - 1)".
-	   -- It is recommend to set this explicitly instead of relying on the
-	   -- fallback behavior.
-	   },
+   punch_attack_uses = nil,
+   -- Amount of uses this tool has for attacking players and entities
+   -- by punching them (0 = infinite uses).
+   -- For compatibility, this is automatically set from the first
+   -- suitable groupcap using the formula "uses * 3^(maxlevel - 1)".
+   -- It is recommend to set this explicitly instead of relying on the
+   -- fallback behavior.
+   },
 
-	   node_placement_prediction = nil,
-	   -- If nil and item is node, prediction is made automatically.
-	   -- If nil and item is not a node, no prediction is made.
-	   -- If "" and item is anything, no prediction is made.
-	   -- Otherwise should be name of node which the client immediately places
-	   -- on ground when the player places the item. Server will always update
-	   -- with actual result shortly.
+   node_placement_prediction = nil,
+   -- If nil and item is node, prediction is made automatically.
+   -- If nil and item is not a node, no prediction is made.
+   -- If "" and item is anything, no prediction is made.
+   -- Otherwise should be name of node which the client immediately places
+   -- on ground when the player places the item. Server will always update
+   -- with actual result shortly.
 
-	   node_dig_prediction = "air",
-	   -- if "", no prediction is made.
-	   -- if "air", node is removed.
-	   -- Otherwise should be name of node which the client immediately places
-	   -- upon digging. Server will always update with actual result shortly.
+   node_dig_prediction = "air",
+   -- if "", no prediction is made.
+   -- if "air", node is removed.
+   -- Otherwise should be name of node which the client immediately places
+   -- upon digging. Server will always update with actual result shortly.
 
-	   sound = {
-	   -- Definition of item sounds to be played at various events.
-	   -- All fields in this table are optional.
+   sound = {
+   -- Definition of item sounds to be played at various events.
+   -- All fields in this table are optional.
 
-	   breaks = <SimpleSoundSpec>,
-	   -- When tool breaks due to wear. Ignored for non-tools
+   breaks = <SimpleSoundSpec>,
+   -- When tool breaks due to wear. Ignored for non-tools
 
-	   eat = <SimpleSoundSpec>,
-	   -- When item is eaten with `minetest.do_item_eat`
+   eat = <SimpleSoundSpec>,
+   -- When item is eaten with `minetest.do_item_eat`
 
-	   punch_use = <SimpleSoundSpec>,
-	   -- When item is used with the 'punch/mine' key pointing at a node or entity
+   punch_use = <SimpleSoundSpec>,
+   -- When item is used with the 'punch/mine' key pointing at a node or entity
 
-	   punch_use_air = <SimpleSoundSpec>,
-	   -- When item is used with the 'punch/mine' key pointing at nothing (air)
-	   },
+   punch_use_air = <SimpleSoundSpec>,
+   -- When item is used with the 'punch/mine' key pointing at nothing (air)
+   },
 
-	   on_place = function(itemstack, placer, pointed_thing),
-	   -- When the 'place' key was pressed with the item in hand
-	   -- and a node was pointed at.
-	   -- Shall place item and return the leftover itemstack
-	   -- or nil to not modify the inventory.
-	   -- The placer may be any ObjectRef or nil.
-	   -- default: minetest.item_place
+   on_place = function(itemstack, placer, pointed_thing),
+   -- When the 'place' key was pressed with the item in hand
+   -- and a node was pointed at.
+   -- Shall place item and return the leftover itemstack
+   -- or nil to not modify the inventory.
+   -- The placer may be any ObjectRef or nil.
+   -- default: minetest.item_place
 
-	   on_secondary_use = function(itemstack, user, pointed_thing),
-	   -- Same as on_place but called when not pointing at a node.
-	   -- Function must return either nil if inventory shall not be modified,
-	   -- or an itemstack to replace the original itemstack.
-	   -- The user may be any ObjectRef or nil.
-	   -- default: nil
+   on_secondary_use = function(itemstack, user, pointed_thing),
+   -- Same as on_place but called when not pointing at a node.
+   -- Function must return either nil if inventory shall not be modified,
+   -- or an itemstack to replace the original itemstack.
+   -- The user may be any ObjectRef or nil.
+   -- default: nil
 
-	   on_drop = function(itemstack, dropper, pos),
-	   -- Shall drop item and return the leftover itemstack.
-	   -- The dropper may be any ObjectRef or nil.
-	   -- default: minetest.item_drop
+   on_drop = function(itemstack, dropper, pos),
+   -- Shall drop item and return the leftover itemstack.
+   -- The dropper may be any ObjectRef or nil.
+   -- default: minetest.item_drop
 
-	   on_pickup = function(itemstack, picker, pointed_thing, time_from_last_punch, ...),
-	   -- Called when a dropped item is punched by a player.
-	   -- Shall pick-up the item and return the leftover itemstack or nil to not
-	   -- modify the dropped item.
-	   -- Parameters:
-	   -- * `itemstack`: The `ItemStack` to be picked up.
-	   -- * `picker`: Any `ObjectRef` or `nil`.
-	   -- * `pointed_thing` (optional): The dropped item (a `"__builtin:item"`
-	   --   luaentity) as `type="object"` `pointed_thing`.
-	   -- * `time_from_last_punch, ...` (optional): Other parameters from
-	   --   `luaentity:on_punch`.
-	   -- default: `minetest.item_pickup`
+   on_pickup = function(itemstack, picker, pointed_thing, time_from_last_punch, ...),
+   -- Called when a dropped item is punched by a player.
+   -- Shall pick-up the item and return the leftover itemstack or nil to not
+   -- modify the dropped item.
+   -- Parameters:
+   -- * `itemstack`: The `ItemStack` to be picked up.
+   -- * `picker`: Any `ObjectRef` or `nil`.
+   -- * `pointed_thing` (optional): The dropped item (a `"__builtin:item"`
+   --   luaentity) as `type="object"` `pointed_thing`.
+   -- * `time_from_last_punch, ...` (optional): Other parameters from
+   --   `luaentity:on_punch`.
+   -- default: `minetest.item_pickup`
 
-	   on_use = function(itemstack, user, pointed_thing),
-	   -- default: nil
-	   -- When user pressed the 'punch/mine' key with the item in hand.
-	   -- Function must return either nil if inventory shall not be modified,
-	   -- or an itemstack to replace the original itemstack.
-	   -- e.g. itemstack:take_item(); return itemstack
-	   -- Otherwise, the function is free to do what it wants.
-	   -- The user may be any ObjectRef or nil.
-	   -- The default functions handle regular use cases.
+   on_use = function(itemstack, user, pointed_thing),
+   -- default: nil
+   -- When user pressed the 'punch/mine' key with the item in hand.
+   -- Function must return either nil if inventory shall not be modified,
+   -- or an itemstack to replace the original itemstack.
+   -- e.g. itemstack:take_item(); return itemstack
+   -- Otherwise, the function is free to do what it wants.
+   -- The user may be any ObjectRef or nil.
+   -- The default functions handle regular use cases.
 
-	   after_use = function(itemstack, user, node, digparams),
-	   -- default: nil
-	   -- If defined, should return an itemstack and will be called instead of
-	   -- wearing out the item (if tool). If returns nil, does nothing.
-	   -- If after_use doesn't exist, it is the same as:
-	   --   function(itemstack, user, node, digparams)
-	   --     itemstack:add_wear(digparams.wear)
-	   --     return itemstack
-	   --   end
-	   -- The user may be any ObjectRef or nil.
+   after_use = function(itemstack, user, node, digparams),
+   -- default: nil
+   -- If defined, should return an itemstack and will be called instead of
+   -- wearing out the item (if tool). If returns nil, does nothing.
+   -- If after_use doesn't exist, it is the same as:
+   --   function(itemstack, user, node, digparams)
+   --     itemstack:add_wear(digparams.wear)
+   --     return itemstack
+   --   end
+   -- The user may be any ObjectRef or nil.
 
-	   _custom_field = whatever,
-	   -- Add your own custom fields. By convention, all custom field names
-	   -- should start with `_` to avoid naming collisions with future engine
-	   -- usage.
-	   }
+   _custom_field = whatever,
+   -- Add your own custom fields. By convention, all custom field names
+   -- should start with `_` to avoid naming collisions with future engine
+   -- usage.
+   }
 
-	 */
-	public void register_node(Variant table) {
+ */
+	public void register_node(string node_name, Variant table) {
 	}
 
+	public void unregister_node(string node_name) {
+	}
 
 	internal IEnumerator ABMCoRoutine(Array<Variant> _params) {
 		Random rng = new Random(DateTime.UtcNow.Millisecond);
@@ -533,4 +609,17 @@ internal struct lbm {
 		RunAtEveryLoad = false;
 		action = null;
 	}
+}
+
+public enum FindResultType {
+	Item = 0,
+	Node = 1,
+	Tool = 2
+}
+
+public struct FindResult {
+	public bool           success;
+	public FindResultType type;
+	public Variant        definition;
+	public string         identifier;
 }

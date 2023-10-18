@@ -34,9 +34,7 @@ public partial class LuaController : Node {
 	private Callable print;
 
 	// API Objects
-	private MCLPP     Minetest   = MCLPP.Instance;
-	private MCLPP     Mclpp      = MCLPP.Instance;
-	private ItemStack _itemStack = new();
+	private MCLPP Mclpp = MCLPP.Instance;
 
 	#region Ctor / Dtor
 
@@ -125,25 +123,36 @@ public partial class LuaController : Node {
 	}
 
 	internal void RegisterAPI() {
-		CreateGlobalVar("ItemStack", _itemStack);
-		CreateGlobalVar("minetest", Minetest);
+//		CreateGlobalVar("minetest", Minetest);
 		CreateGlobalVar("mclpp", Mclpp);
 		Item _item = new Item();
 		var _item_ = new Callable(_item, Item.MethodName.CreateItem);
+		LuaCallableExtra item_wtuple = LuaCallableExtra.WithTuple(_item_, 0);
 
 		CreateGlobalVar("Item", _item);
-		LuaError error = lua.PushVariant("Item", _item_);
+		LuaError error = lua.PushVariant("Item", item_wtuple);
 		if (Utils.TestForError(error)) {
 			Logging.Log("error", "Couldn't Push Item(name) creation function in Lua Code.");
 		}
 
 		NodeBlock _NodeBlock = new NodeBlock();
 		var _NodeBlock_ = new Callable(_NodeBlock, NodeBlock.MethodName.CreateNodeBlock);
+		LuaCallableExtra nb_wtuple = LuaCallableExtra.WithTuple(_NodeBlock_, 1);
 
 		CreateGlobalVar("Node", _NodeBlock);
-		error = lua.PushVariant("Node", _NodeBlock_);
+		error = lua.PushVariant("Node", nb_wtuple);
 		if (Utils.TestForError(error)) {
 			Logging.Log("error", "Couldn't Push Node(name) creation function in Lua Code.");
+		}
+
+		ItemStack _itemStack = new();
+		var _itemStack_ = new Callable(_itemStack, ItemStack.MethodName.CreateItemStack);
+		LuaCallableExtra is_wtuple = LuaCallableExtra.WithTuple(_itemStack_, 1);
+
+		CreateGlobalVar("ItemStack", _itemStack);
+		error = lua.PushVariant("ItemStack", is_wtuple);
+		if (Utils.TestForError(error)) {
+			Logging.Log("error", "Couldn't Push ItemStack(name) creation function in Lua Code.");
 		}
 	}
 
