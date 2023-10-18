@@ -128,15 +128,22 @@ public partial class LuaController : Node {
 		CreateGlobalVar("ItemStack", _itemStack);
 		CreateGlobalVar("minetest", Minetest);
 		CreateGlobalVar("mclpp", Mclpp);
-		CreateGlobalVar("_Item", new Item());
-		CreateGlobalVar("Node", new NodeBlock());
 		Item _item = new Item();
 		var _item_ = new Callable(_item, Item.MethodName.CreateItem);
 
 		CreateGlobalVar("Item", _item);
 		LuaError error = lua.PushVariant("Item", _item_);
 		if (Utils.TestForError(error)) {
-			Logging.Log("error", "Couldn't create Item(name) creation function in Lua Code.");
+			Logging.Log("error", "Couldn't Push Item(name) creation function in Lua Code.");
+		}
+
+		NodeBlock _NodeBlock = new NodeBlock();
+		var _NodeBlock_ = new Callable(_NodeBlock, NodeBlock.MethodName.CreateNodeBlock);
+
+		CreateGlobalVar("Node", _NodeBlock);
+		error = lua.PushVariant("Node", _NodeBlock_);
+		if (Utils.TestForError(error)) {
+			Logging.Log("error", "Couldn't Push Node(name) creation function in Lua Code.");
 		}
 	}
 

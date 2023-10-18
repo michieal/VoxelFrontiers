@@ -190,12 +190,13 @@ public partial class Item : RefCounted {
 	}
 
 	public Item CreateItem(LuaTuple args) {
-		string _Name = "";
-		if (args == null || args.Size() == 0)
-			return new Item();
-		if (args.Size() > 0)
-			_Name = (string) args.ToArray()[0];
-		return new Item(_Name);
+		Item _item = new Item();
+
+		if (args != null && !args.IsEmpty()) {
+			_item.name = (string) args.ToArray()[0];
+		}
+
+		return _item;
 	}
 
 	public Variant __index(LuaApi _lua, Variant index) {

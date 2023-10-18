@@ -82,6 +82,16 @@ public partial class NodeBlock : Item {
 		this.name = name;
 	}
 
+	public NodeBlock CreateNodeBlock(LuaTuple args) {
+		NodeBlock nb = new NodeBlock("unknown");
+
+		if (args != null && !args.IsEmpty()) {
+			nb.name = (string) args.ToArray()[0];
+		}
+
+		return nb;
+	}
+
 	#endregion
 
 	public override string ToString() {
