@@ -71,7 +71,7 @@ public partial class NodeBlock : Item {
 	public LuaFunctionRef on_metadata_inventory_take;
 	public LuaFunctionRef on_blast;
 
-	public string mod_origin = "??"; // "modname"   TODO: Implement this.
+	public string mod_origin = "??"; // "modname"
 
 	#region CTOR
 
@@ -96,8 +96,165 @@ public partial class NodeBlock : Item {
 
 	public override string ToString() {
 		StringBuilder sb = new StringBuilder();
+
+		sb.Append("node_box: ");
+		sb.AppendLine(node_box.ToString());
+		sb.Append("collision_box:");
+		sb.AppendLine(collision_box.ToString());
+		sb.Append("selection_box:");
+		sb.AppendLine(selection_box.ToString());
+		sb.Append("use_texture_alpha: ");
+		sb.AppendLine(use_texture_alpha);
+		sb.Append("post_effect_color: ");
+		sb.AppendLine(post_effect_color);
+		sb.Append("place_param2: ");
+		sb.AppendLine(place_param2.ToString());
+		sb.Append("paramtype: ");
+		sb.AppendLine(paramtype);
+		sb.Append("paramtype2: ");
+		sb.AppendLine(paramtype2);
+		sb.Append("visual_scale: ");
+		sb.AppendLine(visual_scale.ToString());
+		sb.Append("is_ground_content: ");
+		sb.AppendLine(is_ground_content.ToString());
+		sb.Append("sunlight_propagates: ");
+		sb.AppendLine(sunlight_propagates.ToString());
+		sb.Append("walkable: ");
+		sb.AppendLine(walkable.ToString());
+		sb.Append("pointable: ");
+		sb.AppendLine(pointable.ToString());
+		sb.Append("diggable: ");
+		sb.AppendLine(diggable.ToString());
+		sb.Append("climbable: ");
+		sb.AppendLine(climbable.ToString());
+		sb.Append("buildable_to: ");
+		sb.AppendLine(buildable_to.ToString());
 		sb.Append("drawtype: ");
 		sb.AppendLine(drawtype.ToString());
+
+		sb.Append("[callback-function]on_construct: ");
+		if (on_construct == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_construct.ToString());
+
+		sb.Append("[callback-function]on_destruct: ");
+		if (on_destruct == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_destruct.ToString());
+
+		sb.Append("[callback-function]after_destruct: ");
+		if (after_destruct == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(after_destruct.ToString());
+
+		sb.Append("[callback-function]on_flood: ");
+		if (on_flood == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_flood.ToString());
+
+		sb.Append("[callback-function]preserve_metadata: ");
+		if (preserve_metadata == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(preserve_metadata.ToString());
+
+		sb.Append("[callback-function]after_place_node: ");
+		if (after_place_node == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(after_place_node.ToString());
+
+		sb.Append("[callback-function]after_dig_node: ");
+		if (after_dig_node == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(after_dig_node.ToString());
+
+		sb.Append("[callback-function]can_dig: ");
+		if (can_dig == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(can_dig.ToString());
+
+		sb.Append("[callback-function]on_punch: ");
+		if (on_punch == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_punch.ToString());
+
+		sb.Append("[callback-function]on_rightclick: ");
+		if (on_rightclick == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_rightclick.ToString());
+
+		sb.Append("[callback-function]on_dig: ");
+		if (on_dig == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_dig.ToString());
+
+		sb.Append("[callback-function]on_timer: ");
+		if (on_timer == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_timer.ToString());
+
+		sb.Append("[callback-function]on_receive_fields: ");
+		if (on_receive_fields == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_receive_fields.ToString());
+
+		sb.Append("[callback-function]allow_metadata_inventory_move: ");
+		if (allow_metadata_inventory_move == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(allow_metadata_inventory_move.ToString());
+
+		sb.Append("[callback-function]allow_metadata_inventory_put: ");
+		if (allow_metadata_inventory_put == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(allow_metadata_inventory_put.ToString());
+
+		sb.Append("[callback-function]allow_metadata_inventory_take: ");
+		if (allow_metadata_inventory_take == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(allow_metadata_inventory_take.ToString());
+
+		sb.Append("[callback-function]on_metadata_inventory_move: ");
+		if (on_metadata_inventory_move == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_metadata_inventory_move.ToString());
+
+		sb.Append("[callback-function]on_metadata_inventory_put: ");
+		if (on_metadata_inventory_put == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_metadata_inventory_put.ToString());
+
+		sb.Append("[callback-function]on_metadata_inventory_take: ");
+		if (on_metadata_inventory_take == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_metadata_inventory_take.ToString());
+
+		sb.Append("[callback-function]on_blast: ");
+		if (on_blast == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_blast.ToString());
+
+		sb.Append("mod_origin: ");
+		sb.AppendLine(mod_origin.ToString());
+
 		sb.AppendLine(base.ToString());
 		return sb.ToString();
 	}

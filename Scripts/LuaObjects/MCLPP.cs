@@ -53,12 +53,22 @@ public partial class MCLPP : RefCounted {
 
 	public int LIGHT_MAX = 15;
 
-	private bool DEBUG = true;
+	private bool DEBUG = false;
 
 	private System.Collections.Generic.Dictionary<string, Coroutine> ABMs = new();
 
 	private System.Collections.Generic.Dictionary<string, lbm> LBMs = new();
 
+	public Godot.Collections.Dictionary<string, NodeBlock> registered_nodes =
+		new Godot.Collections.Dictionary<string, NodeBlock>();
+
+	public Godot.Collections.Dictionary<string, Item> Items = new Godot.Collections.Dictionary<string, Item>();
+
+	public Godot.Collections.Dictionary<string, Variant>
+		Tools = new Godot.Collections.Dictionary<string, Variant>(); // TODO: Change this once Tools are made.
+
+	public Godot.Collections.Dictionary<string, Variant> registered_crafts =
+		new Godot.Collections.Dictionary<string, Variant>();
 
 	public bool log(string text) {
 		Logging.Log(text);
@@ -225,7 +235,13 @@ public partial class MCLPP : RefCounted {
 	}
 
 	public void register_alias(string item, string alias) {
-		//TODO: Search Nodes, Items, Tools for the correct entry, then duplicate said entry with the alias' name.
+		//TODO: Search Items, Tools for the correct entry, then duplicate said entry with the alias' name.
+		foreach (var kvp in registered_nodes) {
+			if (kvp.Key == item) {
+				registered_nodes.Add(alias, kvp.Value);
+				return;
+			}
+		}
 	}
 
 	/*

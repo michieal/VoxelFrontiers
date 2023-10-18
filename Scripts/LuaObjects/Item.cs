@@ -515,13 +515,11 @@ public partial class Item : RefCounted {
 		else
 			sb.AppendLine(on_drop.ToString());
 
-
 		sb.Append("[callback-function]on_pickup: ");
 		if (on_pickup == null)
 			sb.AppendLine("Not Defined.");
 		else
 			sb.AppendLine(on_pickup.ToString());
-
 
 		sb.Append("[callback-function]on_use: ");
 		if (on_use == null)
@@ -529,13 +527,11 @@ public partial class Item : RefCounted {
 		else
 			sb.AppendLine(on_use.ToString());
 
-
 		sb.Append("[callback-function]after_use: ");
 		if (after_use == null)
 			sb.AppendLine("Not Defined.");
 		else
 			sb.AppendLine(after_use.ToString());
-
 
 		sb.Append("tool_capabilities: ");
 		sb.AppendLine(tool_capabilities.ToString());

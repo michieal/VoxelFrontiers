@@ -326,8 +326,8 @@ if myItem then
     dump(myItem)
 end
 
+myNode = Node("mcl_block:blockityblock")
 
-
-
+print(myNode)
 
 --
