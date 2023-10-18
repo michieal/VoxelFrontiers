@@ -1,7 +1,8 @@
 #region
 
+using System.Collections.Generic;
+using System.Text;
 using Godot;
-using Godot.Collections;
 
 #endregion
 
@@ -26,7 +27,7 @@ using Godot.Collections;
 
 #endregion
 
-namespace ApophisSoftware.LuaObjects; 
+namespace ApophisSoftware.LuaObjects;
 
 /// <summary>
 ///     Base Class for Items, such as Nodes, Tools, CraftedItem, etc.
@@ -175,6 +176,58 @@ namespace ApophisSoftware.LuaObjects;
 ///     -- usage.
 /// </summary>
 public partial class Item : RefCounted {
+	#region CTOR
+
+	public Item(string name = "") {
+		this.name = name;
+	}
+
+	public Item CreateItem(LuaTuple args) {
+		string _Name = "";
+
+		if (args == null || args.Size() == 0)
+			return new Item();
+
+		if (args.Size() > 0)
+			_Name = (string) args.ToArray()[0];
+		return new Item(_Name);
+	}
+
+	public Variant __index(LuaApi _lua, Variant index) {
+		if (Get((string) index).Obj != null)
+			// is true if it is return self.Get(index) else return the dictionary index
+			return Get((string) index);
+
+		if (user_def.ContainsKey((string) index))
+			return user_def[(string) index];
+		else
+			return "Unknown property: " + index;
+	}
+
+	private LuaError __newindex(LuaApi _lua, Variant index, Variant value) {
+		LuaError error;
+
+		if (Get((string) index).Obj != null) {
+			// is true if it is return self.Get(index) else return the dictionary index
+			Set((string) index, value);
+			return null;
+		}
+
+		if (user_def.ContainsKey((string) index)) {
+			string errmsg = "Error: Cannot add existing index key: " + (string) index;
+			errmsg += " on object: " + name;
+			errmsg += "\nUse .set_custom_field({\"field_name\", value}) instead.";
+			error = LuaError.NewError(errmsg, LuaError.ErrorType.Runtime);
+		} else {
+			user_def.Add((string) index, value); // add in the "index" with the value.
+			error = null;
+		}
+
+		return error;
+	}
+
+	#endregion
+
 	public string  name;
 	public string  inventory_image   = "";
 	public string  inventory_overlay = "";
@@ -182,23 +235,23 @@ public partial class Item : RefCounted {
 	public string  wield_overlay     = "";
 	public Vector3 wield_scale       = new(1, 1, 1); // default to 1.0 scale on all axes.
 	public string  palette           = "";
-	public string  color             = "#ffffffff"; // hexcode color representation. aka ColorSpec
+	public string  color             = "#ffffffff"; // hex-code color representation. aka ColorSpec
 
 	public string description {
 		get => metaData.getstring("description", "");
 		set => metaData.setstring("description", value);
 	}
 
-	public string   short_description;
-	public string[] tiles         = new[] {"", "", "", "", "", ""}; // +Y, -Y, +X, -X, +Z, -Z
-	public string[] overlay_tiles = new[] {"", "", "", "", "", ""};
-	public string   drawtype      = "normal";
+	public string   short_description = "";
+	public string[] tiles             = new[] {"", "", "", "", "", ""}; // +Y, -Y, +X, -X, +Z, -Z
+	public string[] overlay_tiles     = new[] {"", "", "", "", "", ""};
 
 	public string[]
 		special_tiles = new[] {"", "", "", "", "", ""}; //special_tiles = {tile definition 1, Tile definition 2}
 
-	public Dictionary<string, int>
-		groups; // ex. groups = {handy = 1, axey = 1, choppy = 1, dig_by_piston = 1, plant = 1, non_mycelium_plant = 1, flammable = 3},
+	public Godot.Collections.Dictionary<string, int>
+		groups =
+			new Godot.Collections.Dictionary<string, int>(); // ex. groups = {handy = 1, axey = 1, choppy = 1, dig_by_piston = 1, plant = 1, non_mycelium_plant = 1, flammable = 3},
 
 	/* sound = {
 	   -- Definition of item sounds to be played at various events.
@@ -226,21 +279,39 @@ public partial class Item : RefCounted {
 #nullable enable // used to allow node_placement_prediction to be null, and not garbage collected.
 	public string? node_placement_prediction = null; // NYI
 #nullable disable
-	public string         node_dig_prediction = "air"; // NYI
-	public LuaFunctionRef on_place;                    // On_Place Function Code.
-	public LuaFunctionRef on_secondary_use;
-	public LuaFunctionRef on_drop;
-	public LuaFunctionRef on_pickup;
-	public LuaFunctionRef on_use;
-	public LuaFunctionRef after_use;
-	public ToolsCap       tool_capabilities = new();
+	public string                                        node_dig_prediction = "air"; // NYI
+	public LuaFunctionRef                                on_place;                    // On_Place Function Code.
+	public LuaFunctionRef                                on_secondary_use;
+	public LuaFunctionRef                                on_drop;
+	public LuaFunctionRef                                on_pickup;
+	public LuaFunctionRef                                on_use;
+	public LuaFunctionRef                                after_use;
+	public ToolsCap                                      tool_capabilities = new();
+	public Godot.Collections.Dictionary<string, Variant> user_def          = new();
 
-	public Dictionary<string, Variant> user_def;
 	public string liquid_alternative_flowing = ""; // liquid_alternative_flowing = "example:water_flowing"
-	public string liquid_alternative_source = ""; // liquid_alternative_source = "example:water_source"
+	public string liquid_alternative_source  = ""; // liquid_alternative_source = "example:water_source"
 
 
-	// Private Property field variables / backing.
+	public void set_custom_field(Variant _KeyValPair) {
+		Godot.Collections.Dictionary<string, Variant> KVP = (Godot.Collections.Dictionary<string, Variant>) _KeyValPair;
+		foreach (KeyValuePair<string, Variant> keyValuePair in KVP)
+			if (user_def.ContainsKey(keyValuePair.Key))
+				user_def[keyValuePair.Key] =
+					keyValuePair.Value; // assign the new value to the key. ie, do an overwrite.
+			else
+				user_def.Add(keyValuePair.Key, keyValuePair.Value);
+	}
+
+	public Variant get_custom_field(string Key) {
+		if (user_def.ContainsKey(Key))
+			return user_def[Key];
+		else
+			return new Variant();
+	}
+
+
+// Private Property field variables / backing.
 	private int?   _move_resistance = 0;
 	private int    _lightsource     = 0;
 	private string _liquidtype      = "none"; //  -- specifies liquid flowing physics
@@ -321,5 +392,175 @@ public partial class Item : RefCounted {
 	public string get_short_description() {
 		short_description = metaData.getstring("short_description", "");
 		return short_description;
+	}
+
+	public override string ToString() {
+		StringBuilder sb = new StringBuilder();
+		sb.AppendLine("Item Class Object: " + name);
+		sb.AppendLine("====================================");
+		sb.Append("description: ");
+		sb.AppendLine(description.ToString());
+		sb.Append("short_description: ");
+		sb.AppendLine(short_description.ToString());
+		sb.Append("inventory_image: ");
+		sb.AppendLine(inventory_image.ToString());
+		sb.Append("inventory_overlay: ");
+		sb.AppendLine(inventory_overlay.ToString());
+		sb.Append("wield_image: ");
+		sb.AppendLine(wield_image.ToString());
+		sb.Append("wield_overlay: ");
+		sb.AppendLine(wield_overlay.ToString());
+		sb.Append("wield_scale: ");
+		sb.AppendLine(wield_scale.ToString());
+		sb.Append("palette:");
+		sb.AppendLine(palette.ToString());
+		sb.Append("color: ");
+		sb.AppendLine(color.ToString());
+
+		sb.AppendLine("groups: {");
+		foreach (var val in groups) {
+			sb.Append("\t\"");
+			sb.Append(val.Key + "\" = ");
+			sb.AppendLine("\"" + val.Value + "\"");
+		}
+
+		sb.AppendLine("}");
+
+		sb.AppendLine("tiles: {");
+		foreach (string str in tiles) {
+			sb.Append("\"");
+			sb.Append(str);
+			sb.Append("\",");
+		}
+
+		sb.AppendLine();
+		sb.AppendLine("}");
+
+		sb.AppendLine("overlay_tiles: {");
+		foreach (string str in overlay_tiles) {
+			sb.Append("\"");
+			sb.Append(str);
+			sb.Append("\",");
+		}
+
+		sb.AppendLine();
+		sb.AppendLine("}");
+
+		sb.AppendLine("special_tiles: {");
+		foreach (string str in special_tiles) {
+			sb.Append("\"");
+			sb.Append(str);
+			sb.Append("\",");
+		}
+
+		sb.AppendLine();
+		sb.AppendLine("}");
+		sb.AppendLine("sounds: {");
+		/*
+		foreach (string s in sounds) {
+			sb.Append("\"");
+			sb.AppendLine(s);
+			sb.Append("\"");
+		}
+		*/
+		sb.AppendLine("NYI.");
+		sb.AppendLine("}");
+		sb.Append("stack_max: ");
+		sb.AppendLine(stack_max.ToString());
+		sb.Append("range: ");
+		sb.AppendLine(range.ToString());
+		sb.Append("liquids_pointable: ");
+		sb.AppendLine(liquids_pointable.ToString());
+		sb.Append("node_placement_prediction: ");
+		sb.AppendLine(node_placement_prediction);
+		sb.Append("node_dig_prediction: ");
+		sb.AppendLine(node_dig_prediction);
+		sb.Append("floodable: ");
+		sb.AppendLine(floodable.ToString());
+		sb.Append("liquidtype: ");
+		sb.AppendLine(liquidtype);
+		sb.Append("light_source: ");
+		sb.AppendLine(light_source.ToString());
+		sb.Append("move_resistance: ");
+		sb.AppendLine(move_resistance.ToString());
+		sb.Append("liquid_alternative_flowing: ");
+		sb.AppendLine(liquid_alternative_flowing);
+		sb.Append("liquid_alternative_source: ");
+		sb.AppendLine(liquid_alternative_source);
+
+		sb.Append("[callback-function]on_place: ");
+		if (on_place == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_place.ToString());
+
+		sb.Append("[callback-function]on_secondary_use: ");
+		if (on_secondary_use == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_secondary_use.ToString());
+
+		sb.Append("[callback-function]on_drop: ");
+		if (on_drop == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_drop.ToString());
+
+
+		sb.Append("[callback-function]on_pickup: ");
+		if (on_pickup == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_pickup.ToString());
+
+
+		sb.Append("[callback-function]on_use: ");
+		if (on_use == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(on_use.ToString());
+
+
+		sb.Append("[callback-function]after_use: ");
+		if (after_use == null)
+			sb.AppendLine("Not Defined.");
+		else
+			sb.AppendLine(after_use.ToString());
+
+
+		sb.Append("tool_capabilities: ");
+		sb.AppendLine(tool_capabilities.ToString());
+
+		sb.AppendLine("[Custom Properties Dictionary]: {");
+		foreach (var kvp in user_def) {
+			sb.Append("\"");
+			sb.Append(kvp.Key);
+			sb.Append(" = ");
+			sb.Append(kvp.Value.ToString());
+			sb.AppendLine("\"");
+		}
+
+		sb.AppendLine("}");
+		sb.AppendLine("Meta Data: {");
+		foreach (var kvp in metaData.metaData) {
+			sb.Append("\"");
+			sb.Append(kvp.Key);
+			sb.Append(" = ");
+			sb.Append(kvp.Value.ToString());
+			sb.AppendLine("\"");
+		}
+
+		sb.AppendLine("}");
+
+		sb.AppendLine("====================================");
+		sb.AppendLine("[API Functions] ");
+		sb.AppendLine("Item(name_of_item) : Constructor; Returns a new Item of (name). ");
+		sb.AppendLine("get_short_description(): returns the short description value (string).");
+		sb.AppendLine("getmeta() : returns the metadata object for this object.");
+		sb.AppendLine("set_custom_field({key,value}) : {string, string}.");
+		sb.AppendLine("get_custom_field(key) : string; returns value of the field.");
+		sb.AppendLine("====================================");
+
+		return sb.ToString();
 	}
 }

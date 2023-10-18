@@ -30,8 +30,8 @@ using Godot;
 namespace ApophisSoftware;
 
 public partial class LuaController : Node {
-	private static LuaApi   lua = new();
-	private        Callable print;
+	public static LuaApi   lua = new();
+	private       Callable print;
 
 	// API Objects
 	private MCLPP     Minetest   = MCLPP.Instance;
@@ -52,7 +52,7 @@ public partial class LuaController : Node {
 	#endregion
 
 	private void InitializeThis() {
-		//lua.ObjectMetatable = MetaTable;
+		Utils.SetLuaController(this);
 
 		// define libraries that the lua code has access to. 
 		Godot.Collections.Array libraries = new() {
@@ -132,6 +132,14 @@ public partial class LuaController : Node {
 		CreateGlobalVar("mclpp", Mclpp);
 		CreateGlobalVar("_Item", new Item());
 		CreateGlobalVar("Node", new NodeBlock());
+		Item _item = new Item();
+		var _item_ = new Callable(_item, Item.MethodName.CreateItem);
+
+		CreateGlobalVar("Item", _item);
+		LuaError error = lua.PushVariant("Item", _item_);
+		if (Utils.TestForError(error)) {
+			Logging.Log("error", "Couldn't create Item(name) creation function in Lua Code.");
+		}
 	}
 
 	public override void _Ready() {

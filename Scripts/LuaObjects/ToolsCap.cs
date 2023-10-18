@@ -1,6 +1,7 @@
 #region
 
 using System.Collections.Generic;
+using System.Text;
 using Godot;
 
 #endregion
@@ -26,13 +27,36 @@ using Godot;
 
 #endregion
 
-namespace ApophisSoftware.LuaObjects; 
+namespace ApophisSoftware.LuaObjects;
 
 public struct GroupCap {
-	public string   name;
-	public double[] times;
-	public int      uses;
-	public int      maxlevel;
+	public string   name     = "";
+	public double[] times    = new[] {0.0d};
+	public int      uses     = 0;
+	public int      maxlevel = 0;
+
+	public GroupCap() {
+	}
+
+	public override string ToString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.Append(name);
+		sb.Append(" = {");
+		sb.Append("times = {");
+		foreach (double d in times) {
+			sb.Append(d.ToString());
+			sb.Append(", ");
+		}
+
+		sb.Append("}, ");
+		sb.Append("uses = ");
+		sb.Append(uses.ToString());
+		sb.Append(", maxlevel = ");
+		sb.Append(maxlevel.ToString());
+		sb.AppendLine("},");
+		return sb.ToString();
+	}
 }
 
 public partial class ToolsCap : RefCounted {
@@ -57,15 +81,32 @@ public partial class ToolsCap : RefCounted {
 	},
 	*/
 
-	public double         full_punch_interval = 1.0d;
-	public int            max_drop_level      = 0;
-	public List<GroupCap> groupcaps           = new();
+	public double                                    full_punch_interval = 1.0d;
+	public int                                       max_drop_level = 0;
+	public List<GroupCap>                            groupcaps = new();
+	public Godot.Collections.Dictionary<string, int> damage_groups = new Godot.Collections.Dictionary<string, int>();
 
 	public int? punch_attack_uses {
 		get => _punch_attack_uses;
 		set => _punch_attack_uses = value;
 	}
 
-	private int?                                      _punch_attack_uses = null;
-	public  Godot.Collections.Dictionary<string, int> damage_groups { get; set; }
+	private int? _punch_attack_uses = null;
+
+	public override string ToString() {
+		StringBuilder sb = new StringBuilder();
+		sb.Append("full_punch_interval: ");
+		sb.AppendLine(full_punch_interval.ToString());
+		sb.Append("max_drop_level: ");
+		sb.AppendLine(max_drop_level.ToString());
+		sb.Append("groupcaps: ");
+		sb.AppendLine(groupcaps.ToString());
+		sb.Append("damage_groups: ");
+		sb.AppendLine(damage_groups.ToString());
+		sb.Append("punch_attack_uses: ");
+		sb.AppendLine(_punch_attack_uses.ToString());
+
+		sb.AppendLine(base.ToString());
+		return sb.ToString();
+	}
 }

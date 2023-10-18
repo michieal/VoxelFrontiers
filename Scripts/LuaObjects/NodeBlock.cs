@@ -1,5 +1,6 @@
 #region
 
+using System.Text;
 using Godot;
 
 #endregion
@@ -46,6 +47,7 @@ public partial class NodeBlock : Item {
 	public bool   diggable            = true;  //  -- If false, can never be dug
 	public bool   climbable           = false; //  -- If true, can be climbed on like a ladder
 	public bool   buildable_to        = false; // Is this node replaceable, when another node is placed?
+	public string drawtype            = "normal";
 
 	// Function References.
 	public LuaFunctionRef on_construct;
@@ -81,6 +83,14 @@ public partial class NodeBlock : Item {
 	}
 
 	#endregion
+
+	public override string ToString() {
+		StringBuilder sb = new StringBuilder();
+		sb.Append("drawtype: ");
+		sb.AppendLine(drawtype.ToString());
+		sb.AppendLine(base.ToString());
+		return sb.ToString();
+	}
 
 	/*
 	 * {
