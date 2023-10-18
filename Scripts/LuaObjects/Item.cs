@@ -178,16 +178,21 @@ namespace ApophisSoftware.LuaObjects;
 public partial class Item : RefCounted {
 	#region CTOR
 
-	public Item(string name = "") {
-		this.name = name;
+	public Item(string _Name) {
+		if (_Name == "")
+			name = "unknown";
+		else
+			name = _Name;
+	}
+
+	public Item() {
+		name = "unknown";
 	}
 
 	public Item CreateItem(LuaTuple args) {
 		string _Name = "";
-
 		if (args == null || args.Size() == 0)
 			return new Item();
-
 		if (args.Size() > 0)
 			_Name = (string) args.ToArray()[0];
 		return new Item(_Name);
@@ -396,7 +401,10 @@ public partial class Item : RefCounted {
 
 	public override string ToString() {
 		StringBuilder sb = new StringBuilder();
-		sb.AppendLine("Item Class Object: " + name);
+		sb.Append("Item Class Object: ");
+		sb.Append(name);
+		sb.Append(" / ");
+		sb.AppendLine(base.ToString());
 		sb.AppendLine("====================================");
 		sb.Append("description: ");
 		sb.AppendLine(description.ToString());

@@ -81,6 +81,8 @@ public partial class ToolsCap : RefCounted {
 	},
 	*/
 
+	// TODO: Finish this. 
+
 	public double                                    full_punch_interval = 1.0d;
 	public int                                       max_drop_level = 0;
 	public List<GroupCap>                            groupcaps = new();

@@ -78,7 +78,7 @@ public partial class NodeBlock : Item {
 	public NodeBlock() : base() {
 	}
 
-	public NodeBlock(string name) {
+	public NodeBlock(string name) : base(name) {
 		this.name = name;
 	}
 
