@@ -30,8 +30,8 @@ using Godot;
 namespace ApophisSoftware;
 
 public partial class LuaController : Node {
-	public static LuaApi   lua = new();
-	private       Callable print;
+	public  LuaApi   lua = LUA.lua;
+	private Callable print;
 
 	// API Objects
 	private MCLPP     Minetest   = MCLPP.Instance;
@@ -52,8 +52,6 @@ public partial class LuaController : Node {
 	#endregion
 
 	private void InitializeThis() {
-		Utils.SetLuaController(this);
-
 		// define libraries that the lua code has access to. 
 		Godot.Collections.Array libraries = new() {
 			"base",  // Base Lua commands
