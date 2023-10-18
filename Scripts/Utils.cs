@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using ApophisSoftware.LuaObjects;
 using Godot;
 using Environment = System.Environment;
 
@@ -283,7 +284,6 @@ public class Utils {
 		return isError;
 	}
 
-
 	public Utils() {
 		// Have a basic Ctor.
 	}
@@ -453,6 +453,9 @@ public class Utils {
 	}
 
 	internal static void LoadLuaScripts(Dictionary<string, string> Scripts) {
+		foreach (var kvp in Scripts) {
+			LUA.lua.DoString("_exec_file(\"" + kvp.Value + "\", " + kvp.Key + ")");
+		}
 	}
 } // class Utils.
 

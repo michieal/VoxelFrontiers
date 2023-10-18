@@ -57,6 +57,14 @@ function dump(x)
     
 end
 
+-- internal use only. 
+function _exec_file(filename, modname)
+    mclpp.set_current_modname(modname)
+    dofile(filename)
+    mclpp.set_current_modname("") -- clear when done.
+end
+
+--------------------------------------------------------------
 function S(strText)
     return strText
 end
@@ -303,8 +311,12 @@ mclpp.register_abm({
 -- dump(test_def)
 
 local myItem = Item("Tom")
-mySecondItem = Item("Bob")
 myItem._custom_property = 10
+
+print(myItem.name)
+
+myItem.name = "Tommy!"
+myItem.description = "this is a test description."
 
 print("myItem._custom_property")
 print(myItem._custom_property)
@@ -313,6 +325,7 @@ if myItem then
     print("myItem:")
     dump(myItem)
 end
+
 
 
 

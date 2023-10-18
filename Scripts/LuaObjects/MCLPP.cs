@@ -91,8 +91,14 @@ public partial class MCLPP : RefCounted {
 		return SCC.Instance.ModPaths[module_name];
 	}
 
+	private string _mod_name = "";
+
+	public void set_current_modname(string _ModName) {
+		_mod_name = _ModName;
+	}
+
 	public string get_current_modname() {
-		return "";
+		return _mod_name;
 	}
 
 	/*
