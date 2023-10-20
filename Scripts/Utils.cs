@@ -451,6 +451,8 @@ public class Utils {
 		return _luaController;
 	}
 
+	// Design Note: (TODO:) make where this is called from instantiate the Lua Controller, so that it's not running from
+	// the start of the program. 
 	internal static void LoadLuaScripts(Dictionary<string, string> Scripts) {
 		foreach (var kvp in Scripts) {
 			LUA.lua.DoString("_exec_file(\"" + kvp.Value + "\", " + kvp.Key + ")");

@@ -437,6 +437,7 @@ public partial class SCC : Node {
 		reference.ThisSetting = thisSetting;
 		reference.Name = thisSetting.SettingName;
 		UIGameSettings.Add(thisSetting.SettingName, reference);
+		reference.DEBUG = DEBUG;                  // Make SCC Control "Debug" for the settings UI.
 		Parent.AddChild(reference);               // Add the uisetting to the appropriate parent.
 		reference.InitializeSetting(thisSetting); // set up the newly created setting.
 		if (DEBUG) Logging.Log("Created setting: " + reference.Name);
