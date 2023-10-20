@@ -103,14 +103,14 @@ public partial class UISetting : Node {
 				if (ValueToggle != null)
 					ValueToggle.Toggled += ValueToggleOnToggled;
 
-				if (ThisSetting.CurrentValue.ToString().ToLower() == "false") {
-					togVal = true;
-					ValueToggle.Text = "TRUE";
-					ValueToggle.ButtonPressed = true;
-				} else {
+				if (ThisSetting.CurrentValue.ToString().ToLower().Trim() == "false") {
 					togVal = false;
 					ValueToggle.Text = "FALSE";
 					ValueToggle.ButtonPressed = false;
+				} else {
+					togVal = true;
+					ValueToggle.Text = "TRUE";
+					ValueToggle.ButtonPressed = true;
 				}
 
 				break;
