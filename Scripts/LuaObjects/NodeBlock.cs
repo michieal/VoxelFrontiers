@@ -30,9 +30,9 @@ using Godot;
 namespace ApophisSoftware.LuaObjects;
 
 public partial class NodeBlock : Item {
-	public BlockBox node_box      = new();
-	public BlockBox collision_box = new();
-	public BlockBox selection_box = new();
+	public BlockBox[] node_box      = new BlockBox[1];
+	public BlockBox[] collision_box = new BlockBox[1];
+	public BlockBox[] selection_box = new BlockBox[1];
 
 	public string use_texture_alpha   = "opaque";
 	public string post_effect_color   = "#00000000";

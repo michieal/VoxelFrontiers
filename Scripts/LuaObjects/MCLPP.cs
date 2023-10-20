@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Godot;
 using Godot.Collections;
+using Array = Godot.Collections.Array;
 
 #endregion
 
@@ -33,46 +34,26 @@ using Godot.Collections;
 namespace ApophisSoftware.LuaObjects;
 
 public partial class MCLPP : RefCounted {
-	#region CTOR
+	private string _mod_name = "";
 
-	private static MCLPP instance;
+	private readonly System.Collections.Generic.Dictionary<string, Coroutine> ABMs = new();
 
-	public static MCLPP Instance {
-		get {
-			if (instance == null) instance = new MCLPP();
+	private bool DEBUG;
 
-			return instance;
-		}
-	}
-
-	private MCLPP() {
-		// Private constructor to prevent external instantiation
-	}
-
-	#endregion
+	private readonly System.Collections.Generic.Dictionary<string, lbm> LBMs = new();
 
 	public int LIGHT_MAX = 15;
 
-	private bool DEBUG = false;
+	private Godot.Collections.Dictionary<string, string> registered_aliases = new();
 
-	private System.Collections.Generic.Dictionary<string, Coroutine> ABMs = new();
+	public Godot.Collections.Dictionary<string, Variant> registered_crafts = new();
 
-	private System.Collections.Generic.Dictionary<string, lbm> LBMs = new();
+	public Godot.Collections.Dictionary<string, Item> registered_items = new();
 
-	public Godot.Collections.Dictionary<string, NodeBlock> registered_nodes =
-		new Godot.Collections.Dictionary<string, NodeBlock>();
-
-	public Godot.Collections.Dictionary<string, Item> registered_items =
-		new Godot.Collections.Dictionary<string, Item>();
-
-	private Godot.Collections.Dictionary<string, string> registered_aliases =
-		new Godot.Collections.Dictionary<string, string>();
+	public Godot.Collections.Dictionary<string, NodeBlock> registered_nodes = new();
 
 	public Godot.Collections.Dictionary<string, Variant>
-		Tools = new Godot.Collections.Dictionary<string, Variant>(); // TODO: Change this once Tools are made.
-
-	public Godot.Collections.Dictionary<string, Variant> registered_crafts =
-		new Godot.Collections.Dictionary<string, Variant>();
+		Tools = new(); // TODO: Change this once Tools are made.
 
 	public bool log(string text) {
 		Logging.Log(text);
@@ -104,8 +85,6 @@ public partial class MCLPP : RefCounted {
 
 		return SCC.Instance.ModPaths[module_name];
 	}
-
-	private string _mod_name = "";
 
 	public void set_current_modname(string _ModName) {
 		_mod_name = _ModName;
@@ -159,12 +138,12 @@ public partial class MCLPP : RefCounted {
 	public void register_abm(Godot.Collections.Dictionary<string, Variant> table) {
 		string label;
 		string[] nodenames;
-		double interval = 1.0d;
-		int chance = 1;
+		var interval = 1.0d;
+		var chance = 1;
 		LuaFunctionRef action;
-		int min_y = -32768;
-		int max_y = 32768;
-		bool catchup = true;
+		var min_y = -32768;
+		var max_y = 32768;
+		var catchup = true;
 		string[] neighbors = {"default:water_source", "default:water_flowing"};
 
 		Array<Variant> _params = new();
@@ -200,12 +179,12 @@ public partial class MCLPP : RefCounted {
 		_params.Add(neighbors);
 
 		if (DEBUG) {
-			StringBuilder sbLog = new StringBuilder();
+			var sbLog = new StringBuilder();
 			sbLog.AppendLine("Register ABM Called.");
 			sbLog.Append("label: ");
 			sbLog.AppendLine(label);
 			sbLog.Append("nodename: ");
-			foreach (string nodename in nodenames) sbLog.AppendLine(nodename);
+			foreach (var nodename in nodenames) sbLog.AppendLine(nodename);
 
 			sbLog.Append("interval: ");
 			sbLog.AppendLine(interval.ToString());
@@ -219,7 +198,7 @@ public partial class MCLPP : RefCounted {
 
 		// ---- Create the coroutine for the abm.
 		if (!ABMs.ContainsKey(label)) {
-			Coroutine x = CoroutineManager.Instance.StartCoroutine(ABMCoRoutine(_params), CleanUpABM);
+			var x = CoroutineManager.Instance.StartCoroutine(ABMCoRoutine(_params), CleanUpABM);
 			ABMs.Add(label, x);
 		} else {
 			Logging.Log("warning", "Lua Code tried to create an already defined ABM. Name: " + label);
@@ -227,7 +206,7 @@ public partial class MCLPP : RefCounted {
 	}
 
 	internal void CleanUpABM() {
-		List<string> removeme = new List<string>();
+		var removeme = new List<string>();
 
 		// scan and remove completed coroutines, so that they can be GC'd.
 		foreach (var abm in ABMs)
@@ -240,7 +219,7 @@ public partial class MCLPP : RefCounted {
 
 	public void register_alias(string alias, string item) {
 		if (registered_aliases.ContainsKey(item)) {
-			FindResult x = FindItem(registered_aliases[item]);
+			var x = FindItem(registered_aliases[item]);
 			switch (x.type) {
 				case FindResultType.Node:
 					registered_nodes.Remove(registered_aliases[item]);
@@ -257,35 +236,31 @@ public partial class MCLPP : RefCounted {
 					Tools.Add(alias, x.definition);
 					registered_aliases[item] = alias;
 					break;
-				default:
-					break;
 			}
 
 			return;
 		}
 
 		//Search Items, Nodes and Tools for the correct entry, then duplicate said entry with the alias' name.
-		FindResult def = FindItem(item);
+		var def = FindItem(item);
 		if (def.success == false) {
 			log("error", "Couldn't make alias: " + alias + " for item:" + item);
 			return;
 		}
 
-		if (def.type == FindResultType.Node) {
+		if (def.type == FindResultType.Node)
 			registered_nodes.Add(alias, (NodeBlock) def.definition);
-		} else if (def.type == FindResultType.Item) {
+		else if (def.type == FindResultType.Item)
 			registered_items.Add(alias, (Item) def.definition);
-		} else if (def.type == FindResultType.Tool) {
-			Tools.Add(alias, def.definition);
-		}
+		else if (def.type == FindResultType.Tool) Tools.Add(alias, def.definition);
 
 		registered_aliases.Add(item, alias);
 	}
 
 	public FindResult FindItem(string itemStackName) {
-		FindResult fr = new FindResult();
+		var fr = new FindResult();
 
-		foreach (var kvp in registered_nodes) {
+		foreach (var kvp in registered_nodes)
 			if (kvp.Key == itemStackName) {
 				fr.success = true;
 				fr.identifier = kvp.Key;
@@ -293,9 +268,8 @@ public partial class MCLPP : RefCounted {
 				fr.type = FindResultType.Node;
 				return fr;
 			}
-		}
 
-		foreach (var kvp in registered_items) {
+		foreach (var kvp in registered_items)
 			if (kvp.Key == itemStackName) {
 				fr.success = true;
 				fr.identifier = kvp.Key;
@@ -303,9 +277,8 @@ public partial class MCLPP : RefCounted {
 				fr.type = FindResultType.Item;
 				return fr;
 			}
-		}
 
-		foreach (var kvp in Tools) {
+		foreach (var kvp in Tools)
 			if (kvp.Key == itemStackName) {
 				fr.success = true;
 				fr.identifier = kvp.Key;
@@ -313,7 +286,6 @@ public partial class MCLPP : RefCounted {
 				fr.type = FindResultType.Tool;
 				return fr;
 			}
-		}
 
 		return fr;
 	}
@@ -346,7 +318,7 @@ public partial class MCLPP : RefCounted {
 		string[] nodenames;
 		string name;
 		bool RunAtEveryLoad;
-		LuaFunctionRef action = new LuaFunctionRef();
+		var action = new LuaFunctionRef();
 
 		label = (string) table["label"];
 		nodenames = (string[]) table["nodenames"];
@@ -354,7 +326,7 @@ public partial class MCLPP : RefCounted {
 		RunAtEveryLoad = (bool) table["run_at_every_load"];
 		action = (LuaFunctionRef) table["action"];
 
-		lbm LBM = new lbm();
+		var LBM = new lbm();
 		LBM.RunAtEveryLoad = RunAtEveryLoad;
 		LBM.name = name;
 		LBM.action = action;
@@ -549,32 +521,390 @@ public partial class MCLPP : RefCounted {
    }
 
  */
-	public void register_node(string node_name, Variant table) {
+	public void register_node(string node_name, Variant NodeDefinition) {
+		var x = FindItem(node_name);
+		if (x.success) {
+			log("system",
+				"Error processing register_node item: " + node_name + " in module: " + _mod_name +
+				".\nNode already registered. Please use `.override_item` to change the node definition.\nRegister_Node failed.");
+			return;
+		}
+
+		// process table and fill out the node def.
+		NodeBlock NewNode = ProcessNode(node_name, NodeDefinition);
+
+		// add to dictionary.
+		registered_nodes.Add(node_name, NewNode);
+	}
+
+	public void register_craftitem(string item_name, Variant ItemDefinition) {
+		var x = FindItem(item_name);
+		if (x.success) {
+			log("system",
+				"Error processing register_craftitem item: " + item_name + " in module: " + _mod_name +
+				".\nItem already registered. Please use `.override_item` to change the item definition.\nRegister_Craftitem failed.");
+			return;
+		}
+
+		// process table and fill out the node def.
+		Item NewItem = ProcessItem(item_name, ItemDefinition);
+
+		// add to dictionary.
+		registered_items.Add(item_name, NewItem);
+	}
+
+	public void register_tool(string tool_name, Variant ToolDefinition) {
+		var x = FindItem(tool_name);
+		if (x.success) {
+			log("system",
+				"Error processing register_tool item: " + tool_name + " in module: " + _mod_name +
+				".\nTool already registered. Please use `.override_item` to change the tool definition.\nRegister_Tool failed.");
+			return;
+		}
+
+		// process table and fill out the node def.
+		//TODO: seriously clean up tools section
+		Item NewItem = ProcessItem(tool_name, ToolDefinition);
+
+		// add to dictionary.
+		Tools.Add(tool_name, NewItem);
+	}
+
+	public void override_item(string item_name, Variant Redefinition) {
+		var x = FindItem(item_name);
+		if (!x.success) {
+			log("system",
+				"Error overriding item: " + item_name + " in module: " + _mod_name +
+				".\nItem Not Registered. Please use the appropriate register function instead.\nOverride_Item failed.");
+			return;
+		}
+
+		switch (x.type) {
+			case FindResultType.Item:
+				registered_items[item_name] = ProcessItem(item_name, Redefinition);
+				break;
+			case FindResultType.Node:
+				registered_nodes[item_name] = ProcessNode(item_name, Redefinition);
+				break;
+			case FindResultType.Tool:
+				Tools[item_name] = ProcessTool(item_name, Redefinition);
+				break;
+			default:
+				break;
+		}
+	}
+
+	private Variant ProcessTool(string itemName, Variant redefinition) {
+		throw new NotImplementedException();
+	}
+
+	private NodeBlock ProcessNode(string NodeName, Variant NodeDef) {
+		NodeBlock nodeBlock = new NodeBlock(NodeName);
+		Godot.Collections.Dictionary<string, Variant> Nodedef = (Godot.Collections.Dictionary<string, Variant>) NodeDef;
+		if (Nodedef.TryGetValue("collision_box", out var value)) {
+			// LuaTuple collbox = (LuaTuple) value;
+			// nodeBlock.collision_box =
+			// TODO: Fix this.
+		}
+
+		if (Nodedef.TryGetValue("node_box", out value)) {
+			// nodeBlock.node_box = (BlockBox) value;
+			// TODO: Fix This
+		}
+
+		if (Nodedef.TryGetValue("selection_box", out value)) {
+			// nodeBlock.selection_box = (BlockBox) value;
+			// TODO: Fix This
+		}
+
+		if (Nodedef.TryGetValue("after_destruct", out value)) {
+			nodeBlock.after_destruct = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("after_dig_node", out value)) {
+			nodeBlock.after_dig_node = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("after_place_node", out value)) {
+			nodeBlock.after_place_node = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("after_use", out value)) {
+			nodeBlock.after_use = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("allow_metadata_inventory_move", out value)) {
+			nodeBlock.allow_metadata_inventory_move = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("allow_metadata_inventory_put", out value)) {
+			nodeBlock.allow_metadata_inventory_put = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("allow_metadata_inventory_move", out value)) {
+			nodeBlock.allow_metadata_inventory_move = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("allow_metadata_inventory_take", out value)) {
+			nodeBlock.allow_metadata_inventory_take = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("buildable_to", out value)) {
+			nodeBlock.buildable_to = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("can_dig", out value)) {
+			nodeBlock.can_dig = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("climbable", out value)) {
+			nodeBlock.climbable = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("color", out value)) {
+			nodeBlock.color = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("description", out value)) {
+			nodeBlock.description = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("diggable", out value)) {
+			nodeBlock.diggable = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("drawtype", out value)) {
+			nodeBlock.drawtype = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("floodable", out value)) {
+			nodeBlock.floodable = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("groups", out value)) {
+			nodeBlock.groups = (Godot.Collections.Dictionary<string, int>) value;
+		}
+
+		if (Nodedef.TryGetValue("inventory_image", out value)) {
+			nodeBlock.inventory_image = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("inventory_overlay", out value)) {
+			nodeBlock.inventory_overlay = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("is_ground_content", out value)) {
+			nodeBlock.is_ground_content = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("light_source", out value)) {
+			nodeBlock.light_source = (int) value;
+		}
+
+		if (Nodedef.TryGetValue("liquidtype", out value)) {
+			nodeBlock.liquidtype = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("liquids_pointable", out value)) {
+			nodeBlock.liquids_pointable = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("liquid_alternative_flowing", out value)) {
+			nodeBlock.liquid_alternative_flowing = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("liquid_alternative_source", out value)) {
+			nodeBlock.liquid_alternative_source = (string) value;
+		}
+#nullable enable
+		if (Nodedef.TryGetValue("move_resistance", out value)) {
+			nodeBlock.move_resistance = (int?) value;
+		}
+
+		if (Nodedef.TryGetValue("node_dig_prediction", out value)) {
+			nodeBlock.node_dig_prediction = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("node_placement_prediction", out value)) {
+			nodeBlock.node_placement_prediction = (string?) value;
+		}
+#nullable disable
+
+		if (Nodedef.TryGetValue("on_blast", out value)) {
+			nodeBlock.on_blast = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_construct", out value)) {
+			nodeBlock.on_construct = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_destruct", out value)) {
+			nodeBlock.on_destruct = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_dig", out value)) {
+			nodeBlock.on_dig = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_drop", out value)) {
+			nodeBlock.on_drop = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_flood", out value)) {
+			nodeBlock.on_flood = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_metadata_inventory_move", out value)) {
+			nodeBlock.on_metadata_inventory_move = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_metadata_inventory_put", out value)) {
+			nodeBlock.on_metadata_inventory_put = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_metadata_inventory_take", out value)) {
+			nodeBlock.on_metadata_inventory_take = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_punch", out value)) {
+			nodeBlock.on_punch = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_receive_fields", out value)) {
+			nodeBlock.on_receive_fields = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_rightclick", out value)) {
+			nodeBlock.on_rightclick = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_secondary_use", out value)) {
+			nodeBlock.on_secondary_use = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_timer", out value)) {
+			nodeBlock.on_timer = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("on_use", out value)) {
+			nodeBlock.on_use = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("overlay_tiles", out value)) {
+			nodeBlock.overlay_tiles = (string[]) value;
+		}
+
+		if (Nodedef.TryGetValue("paramtype", out value)) {
+			nodeBlock.paramtype = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("paramtype2", out value)) {
+			nodeBlock.paramtype2 = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("place_param2", out value)) {
+			nodeBlock.place_param2 = (int) value;
+		}
+
+		if (Nodedef.TryGetValue("pointable", out value)) {
+			nodeBlock.pointable = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("post_effect_color", out value)) {
+			nodeBlock.post_effect_color = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("preserve_metadata", out value)) {
+			nodeBlock.preserve_metadata = (LuaFunctionRef) value;
+		}
+
+		if (Nodedef.TryGetValue("short_description", out value)) {
+			nodeBlock.short_description = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("sounds", out value)) {
+			nodeBlock.sounds = (string[]) value;
+		}
+
+		if (Nodedef.TryGetValue("special_tiles", out value)) {
+			nodeBlock.special_tiles = (string[]) value;
+		}
+
+		if (Nodedef.TryGetValue("stack_max", out value)) {
+			nodeBlock.stack_max = (int) value;
+		}
+
+		if (Nodedef.TryGetValue("sunlight_propagates", out value)) {
+			nodeBlock.sunlight_propagates = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("tiles", out value)) {
+			nodeBlock.tiles = (string[]) value;
+		}
+
+		if (Nodedef.TryGetValue("tool_capabilities", out value)) {
+			nodeBlock.tool_capabilities = (ToolsCap) value;
+		}
+
+		if (Nodedef.TryGetValue("use_texture_alpha", out value)) {
+			nodeBlock.use_texture_alpha = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("user_def", out value)) {
+			nodeBlock.user_def = (Godot.Collections.Dictionary<string, Variant>) value;
+		}
+
+		if (Nodedef.TryGetValue("visual_scale", out value)) {
+			nodeBlock.visual_scale = (float) value;
+		}
+
+		if (Nodedef.TryGetValue("walkable", out value)) {
+			nodeBlock.walkable = (bool) value;
+		}
+
+		if (Nodedef.TryGetValue("wield_image", out value)) {
+			nodeBlock.wield_image = (string) value;
+		}
+
+		if (Nodedef.TryGetValue("wield_scale", out value)) {
+			nodeBlock.wield_scale = (Vector3) value;
+		}
+
+		if (Nodedef.TryGetValue("wield_scale", out value)) {
+			nodeBlock.wield_overlay = (string) value;
+		}
+
+		nodeBlock.mod_origin = _mod_name;
+		return nodeBlock;
+	}
+
+	private Item ProcessItem(string itemName, Variant redefinition) {
+		throw new NotImplementedException();
 	}
 
 	public void unregister_node(string node_name) {
 	}
 
 	internal IEnumerator ABMCoRoutine(Array<Variant> _params) {
-		Random rng = new Random(DateTime.UtcNow.Millisecond);
+		var rng = new Random(DateTime.UtcNow.Millisecond);
 
 		if (DEBUG) Logging.Log(_params.ToString());
 
-		double Interval = (double) _params[0];
-		int chance = (int) _params[1];
-		LuaFunctionRef action = (LuaFunctionRef) _params[2];
-		string label = (string) _params[3];
+		var Interval = (double) _params[0];
+		var chance = (int) _params[1];
+		var action = (LuaFunctionRef) _params[2];
+		var label = (string) _params[3];
 
-		WaitForSeconds delay = new WaitForSeconds((float) Interval);
+		var delay = new WaitForSeconds((float) Interval);
 
 		// action = function(pos, node, active_object_count, active_object_count_wider)
 
-		Vector3 pos = new Vector3(0, 0, 0);
-		NodeBlock node = new NodeBlock();
-		int ActiveObjectCount = 0;
-		int ActiveObjectCountWider = 0;
+		var pos = new Vector3(0, 0, 0);
+		var node = new NodeBlock();
+		var ActiveObjectCount = 0;
+		var ActiveObjectCountWider = 0;
 
-		Godot.Collections.Array Params = new Godot.Collections.Array();
+		var Params = new Array();
 
 		Params.Add(pos);
 		Params.Add(node);
@@ -582,7 +912,7 @@ public partial class MCLPP : RefCounted {
 		Params.Add(ActiveObjectCountWider);
 
 		while (true) {
-			int val = rng.Next(1, chance);
+			var val = rng.Next(1, chance);
 
 			if (val == 1) {
 				var error = action.Invoke(Params);
@@ -593,6 +923,24 @@ public partial class MCLPP : RefCounted {
 			yield return delay;
 		}
 	}
+
+	#region CTOR
+
+	private static MCLPP _instance;
+
+	public static MCLPP Instance {
+		get {
+			if (_instance == null) _instance = new MCLPP();
+
+			return _instance;
+		}
+	}
+
+	private MCLPP() {
+		// Private constructor to prevent external instantiation
+	}
+
+	#endregion
 }
 
 internal struct lbm {

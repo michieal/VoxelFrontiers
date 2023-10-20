@@ -1,6 +1,8 @@
+using Godot;
+
 namespace ApophisSoftware.LuaObjects;
 
-public class BlockBox {
-	public string type;
-	public string _fixed;
+public struct BlockBox {
+	public Variant   type;
+	public Variant[] _fixed;
 }
