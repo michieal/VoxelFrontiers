@@ -162,18 +162,17 @@ public class Utils {
 				if (settings.ContainsKey(setting.SettingName) == false) {
 					// prevent adding 2 of the same settings. Also, no blank settings.
 					settings.Add(setting.SettingName, setting); // Add to existing setting. 
-
 					if (settings.ContainsKey("")) settings.Remove("");
 
 					setting = new Setting();
 				}
 
 			if (value.StartsWith("[")) { // Handle Category Specifier.
-				setting.SettingsHeader = value.Remove(0, 1).Replace("]", "");
+				setting.Category = value.Remove(0, 1).Replace("]", "").ToUpper();
 				value = ""; // A nothing value.
-				SettingsCategory = setting.SettingsHeader;
+				SettingsCategory = setting.Category;
 			} else {
-				setting.SettingsHeader = SettingsCategory;
+				setting.Category = SettingsCategory;
 			}
 
 			if (value.StartsWith("#")) {    // handle Description

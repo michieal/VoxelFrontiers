@@ -30,16 +30,18 @@ namespace ApophisSoftware;
 
 public partial class UISetting : Node {
 	[ExportGroup("UI Setting Properties")] [ExportCategory("Linkages")] [Export]
-	public Label Description;
+	public Label SettingName;
 
-	[Export] public Label        SettingName;
+	[Export] public Label        Category;
+	[Export] public Label        Description;
 	[Export] public Label        DefaultValue;
 	[Export] public LineEdit     ValueInput;
 	[Export] public OptionButton ValueDropdown;
 	[Export] public CheckBox     ValueToggle;
 	[Export] public Label        ValueRange;
-	[Export] public bool         DEBUG = false;
-	internal        Setting      ThisSetting;
+
+	[ExportCategory("Settings")] [Export] public bool    DEBUG = false;
+	internal                                     Setting ThisSetting;
 
 	public UISetting() {
 	}
@@ -53,7 +55,8 @@ public partial class UISetting : Node {
 		ThisSetting = SettingDefault;
 
 		settingType = ThisSetting.SettingType;
-		SettingName.Text = ThisSetting.DisplayName;
+		SettingName.Text = ThisSetting.DisplayName.ToUpper();
+		Category.Text = ThisSetting.Category.ToUpper();
 
 		Description.Text = ""; // Clear out the placeholder text, from designing the prefab.
 		Description.TooltipText = "";
@@ -67,6 +70,11 @@ public partial class UISetting : Node {
 		ValueInput.Visible = false;
 		ValueToggle.Visible = false;
 
+		// tooltips
+		ValueDropdown.TooltipText = ThisSetting.ToString();
+		ValueInput.TooltipText = ThisSetting.ToString();
+		ValueToggle.TooltipText = ThisSetting.ToString();
+
 		if (ThisSetting.minValue.Equals(ThisSetting.maxValue))
 			UseRange = false;
 		else
@@ -75,7 +83,18 @@ public partial class UISetting : Node {
 		if (UseRange) {
 			ValueRange.TooltipText += "Minimum Value = " + ThisSetting.minValue + "\n";
 			ValueRange.TooltipText += "Maximum Value = " + ThisSetting.maxValue + "\n";
-			ValueRange.Text = "Range: " + ThisSetting.minValue + " - " + ThisSetting.maxValue;
+			ValueRange.Text = "Range: " + ThisSetting.minValue;
+			var x = ThisSetting.minValue.ToString().ToFloat();
+			var y = ThisSetting.maxValue.ToString().ToFloat();
+			if (x > y) {
+				ValueRange.Text += " - ∞";     // handle when min is set, but max is null.
+				ThisSetting.maxValue = 100000; //grant a max, as it is used to handle validation. 
+			} else if (y > x) {
+				ValueRange.Text += " - " + ThisSetting.maxValue;
+			} else {
+				ValueRange.Visible = false; // if it is the same, then it shouldn't be shown.
+				UseRange = false;
+			}
 		}
 
 		// set the current value in case we need to edit it.
