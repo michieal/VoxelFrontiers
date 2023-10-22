@@ -38,7 +38,7 @@ public partial class MCLPP : RefCounted {
 
 	private readonly System.Collections.Generic.Dictionary<string, Coroutine> ABMs = new();
 
-	private bool DEBUG;
+	private bool DEBUG = SCC.Instance.DEBUG;
 
 	private readonly System.Collections.Generic.Dictionary<string, lbm> LBMs = new();
 
@@ -53,7 +53,7 @@ public partial class MCLPP : RefCounted {
 	public Godot.Collections.Dictionary<string, NodeBlock> registered_nodes = new();
 
 	public Godot.Collections.Dictionary<string, Variant>
-		Tools = new(); // TODO: Change this once Tools are made.
+		registered_tools = new(); // TODO: Change this once Tools are made.
 
 	public bool log(string text) {
 		Logging.Log(text);
@@ -232,8 +232,8 @@ public partial class MCLPP : RefCounted {
 					registered_aliases[item] = alias;
 					break;
 				case FindResultType.Tool:
-					Tools.Remove(registered_aliases[item]);
-					Tools.Add(alias, x.definition);
+					registered_tools.Remove(registered_aliases[item]);
+					registered_tools.Add(alias, x.definition);
 					registered_aliases[item] = alias;
 					break;
 			}
@@ -252,7 +252,7 @@ public partial class MCLPP : RefCounted {
 			registered_nodes.Add(alias, (NodeBlock) def.definition);
 		else if (def.type == FindResultType.Item)
 			registered_items.Add(alias, (Item) def.definition);
-		else if (def.type == FindResultType.Tool) Tools.Add(alias, def.definition);
+		else if (def.type == FindResultType.Tool) registered_tools.Add(alias, def.definition);
 
 		registered_aliases.Add(item, alias);
 	}
@@ -278,7 +278,7 @@ public partial class MCLPP : RefCounted {
 				return fr;
 			}
 
-		foreach (var kvp in Tools)
+		foreach (var kvp in registered_tools)
 			if (kvp.Key == itemStackName) {
 				fr.success = true;
 				fr.identifier = kvp.Key;
@@ -567,7 +567,7 @@ public partial class MCLPP : RefCounted {
 		Item NewItem = ProcessItem(tool_name, ToolDefinition);
 
 		// add to dictionary.
-		Tools.Add(tool_name, NewItem);
+		registered_tools.Add(tool_name, NewItem);
 	}
 
 	public void override_item(string item_name, Variant Redefinition) {
@@ -587,7 +587,7 @@ public partial class MCLPP : RefCounted {
 				registered_nodes[item_name] = ProcessNode(item_name, Redefinition);
 				break;
 			case FindResultType.Tool:
-				Tools[item_name] = ProcessTool(item_name, Redefinition);
+				registered_tools[item_name] = ProcessTool(item_name, Redefinition);
 				break;
 			default:
 				break;
@@ -870,7 +870,7 @@ public partial class MCLPP : RefCounted {
 			nodeBlock.wield_scale = (Vector3) value;
 		}
 
-		if (Nodedef.TryGetValue("wield_scale", out value)) {
+		if (Nodedef.TryGetValue("wield_overlay", out value)) {
 			nodeBlock.wield_overlay = (string) value;
 		}
 
@@ -883,6 +883,9 @@ public partial class MCLPP : RefCounted {
 	}
 
 	public void unregister_node(string node_name) {
+	}
+
+	public void get_translator(string modname) {
 	}
 
 	internal IEnumerator ABMCoRoutine(Array<Variant> _params) {
