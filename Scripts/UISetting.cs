@@ -257,6 +257,6 @@ public partial class UISetting : Node {
 	}
 
 	internal void Remove() {
-		Free();
+		QueueFree();
 	}
 }
