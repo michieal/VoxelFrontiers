@@ -533,6 +533,11 @@ public partial class MCLPP : RefCounted {
 		// process table and fill out the node def.
 		NodeBlock NewNode = ProcessNode(node_name, NodeDefinition);
 
+		if (NewNode == null) {
+			log("error", "Invalid node was attempted to be registered.");
+			return;
+		}
+
 		// add to dictionary.
 		registered_nodes.Add(node_name, NewNode);
 	}
@@ -598,6 +603,71 @@ public partial class MCLPP : RefCounted {
 		throw new NotImplementedException();
 	}
 
+	private BlockBox ProcessBox(string NodeName, Godot.Collections.Dictionary<string, Variant> BoxDictionary) {
+		BlockBox this_box = new BlockBox();
+		if (BoxDictionary.ContainsKey("type") == false) {
+			log("error",
+				"Node Definition: " + NodeName +
+				" In Register Node contains a collision box, but doesn't have `type` defined.");
+			return null;
+		} else {
+			this_box.type = ((string) BoxDictionary["type"]).ToLower();
+		}
+
+		switch (this_box.type.ToLower()) {
+			case "regular": // do nothing else.
+				break;
+			case "fixed":
+				if (BoxDictionary.ContainsKey("fixed") == false) {
+					log("error",
+						"Node Definition: " + NodeName +
+						" In Register Node contains a fixed collision box, but doesn't have `fixed` defined.");
+					return null;
+				}
+
+				break;
+			case "wallmounted":
+				if (BoxDictionary.ContainsKey("wall_top") == false) {
+					log("error",
+						"Node Definition: " + NodeName +
+						" In Register Node contains a fixed collision box, but doesn't have `wall_top` defined.");
+					return null;
+				}
+
+				if (BoxDictionary.ContainsKey("wall_bottom") == false) {
+					log("error",
+						"Node Definition: " + NodeName +
+						" In Register Node contains a fixed collision box, but doesn't have `wall_bottom` defined.");
+					return null;
+				}
+
+				if (BoxDictionary.ContainsKey("wall_side") == false) {
+					log("error",
+						"Node Definition: " + NodeName +
+						" In Register Node contains a fixed collision box, but doesn't have `wall_side` defined.");
+					return null;
+				}
+
+				break;
+			case "connected":
+				if (BoxDictionary.ContainsKey("fixed") == false) {
+					log("error",
+						"Node Definition: " + NodeName +
+						" In Register Node contains a fixed collision box, but doesn't have `fixed` defined.");
+					return null;
+				}
+
+				break;
+			default:
+				Logging.Log("error", "Invalid 'type' given to BlockBox.");
+				return null;
+				break;
+		}
+
+
+		return this_box;
+	}
+
 	private NodeBlock ProcessNode(string NodeName, Variant NodeDef) {
 		NodeBlock nodeBlock = new NodeBlock(NodeName);
 		Godot.Collections.Dictionary<string, Variant> Nodedef = (Godot.Collections.Dictionary<string, Variant>) NodeDef;
@@ -607,14 +677,40 @@ public partial class MCLPP : RefCounted {
 			// TODO: Fix this.
 		}
 
+		if (Nodedef.TryGetValue("collision_box", out value)) {
+			var collBox = (Godot.Collections.Dictionary<string, Variant>) value;
+
+			BlockBox collisionBox = ProcessBox(NodeName, collBox);
+
+			if (collisionBox == null) {
+				return null;
+			}
+
+			nodeBlock.collision_box = collisionBox;
+		}
+
 		if (Nodedef.TryGetValue("node_box", out value)) {
-			// nodeBlock.node_box = (BlockBox) value;
-			// TODO: Fix This
+			var _nodebox = (Godot.Collections.Dictionary<string, Variant>) value;
+
+			BlockBox nodeBox = ProcessBox(NodeName, _nodebox);
+
+			if (nodeBox == null) {
+				return null;
+			}
+
+			nodeBlock.node_box = nodeBox;
 		}
 
 		if (Nodedef.TryGetValue("selection_box", out value)) {
-			// nodeBlock.selection_box = (BlockBox) value;
-			// TODO: Fix This
+			var _selectionbox = (Godot.Collections.Dictionary<string, Variant>) value;
+
+			BlockBox selectionBox = ProcessBox(NodeName, _selectionbox);
+
+			if (selectionBox == null) {
+				return null;
+			}
+
+			nodeBlock.selection_box = selectionBox;
 		}
 
 		if (Nodedef.TryGetValue("after_destruct", out value)) {
