@@ -129,7 +129,7 @@ public static class PerlinNoise2D {
 
 		var frequency = 0.5f;
 		var amplitude = 1f;
-		var persistence = 0.25f;
+		// var persistence = 0.25f; // build: marked as unused
 
 		for (var octave = 0; octave < octaves; octave++) {
 			/// parallel loop - easy and fast.

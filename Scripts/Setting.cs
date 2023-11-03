@@ -30,19 +30,19 @@ using System.Text;
 namespace ApophisSoftware;
 
 public class Setting {
-	internal List<string> Description;  // A text Description of the Setting, usually shown to the user.
-	internal string       SettingName;  // The Name of the setting. Used as the main Identifier.
+	internal string       Category = "General"; // the category that the setting is in.
+	internal List<string> Description; // A text Description of the Setting, usually shown to the user.
+	internal string       SettingName; // The Name of the setting. Used as the main Identifier.
 	internal object       DefaultValue; // The setting's Default Value. Actual data type determined by the SettingType.
 	internal object       CurrentValue; // The setting's Actual Value.
-	internal string       SettingType;  // type of Setting. IE, Int, Float, String, Bool, etc. 
-	internal string       DisplayName;  // The visible name of the setting shown to user, contained in ()'s.
+	internal string       SettingType; // type of Setting. IE, Int, Float, String, Bool, etc. 
+	internal string       DisplayName; // The visible name of the setting shown to user, contained in ()'s.
 
 	internal object
 		minValue; // Min value for the range. Set for a range value. ie, 0.0 to 1.0 (float) or 1 to 100 for int, etc. 
 
 	internal object   maxValue;          // Max value of the range.
 	internal string   SettingsFile;      // the file location that stores the setting.
-	internal string   SettingsHeader;    // Defines the settings header (Category) for the setting.
 	internal string[] EnumerationValues; // Holds the Enumeration values from the Enum type in settings.
 
 	// Define a constructor to initialize the properties
@@ -166,7 +166,7 @@ public class Setting {
 		str.Append("Filename for setting: ");
 		str.AppendLine(SettingsFile);
 		str.Append("Category: ");
-		str.AppendLine(SettingsHeader);
+		str.AppendLine(Category);
 		str.Append("Setting Identifier: ");
 		str.AppendLine(SettingName);
 		str.Append("Displayed Name: ");

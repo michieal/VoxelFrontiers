@@ -451,7 +451,7 @@ horizontal_scroll_mode = 0
 
 [node name="GS_Mount" type="VBoxContainer" parent="Canvas/MainMenuSetup/SettingsMenu/TabContainer/Game Settings/GameSet"]
 clip_contents = true
-custom_minimum_size = Vector2(1000, 190)
+custom_minimum_size = Vector2(1000, 255)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -476,7 +476,7 @@ horizontal_scroll_mode = 0
 
 [node name="ES_Mount" type="VBoxContainer" parent="Canvas/MainMenuSetup/SettingsMenu/TabContainer/Engine Settings/EngineSet"]
 clip_contents = true
-custom_minimum_size = Vector2(1000, 190)
+custom_minimum_size = Vector2(1000, 255)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

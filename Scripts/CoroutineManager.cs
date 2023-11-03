@@ -73,27 +73,23 @@ public partial class CoroutineManager : Node {
 				if (customCoroutine.Enumerator.Current is WaitForSeconds) {
 					var waitForSeconds = (WaitForSeconds) customCoroutine.Enumerator.Current;
 					if (waitForSeconds.Started) {
-						if (waitForSeconds.Update(delta)) {
+						if (waitForSeconds.Update(delta))
 							// if it's done waiting, then continue processing and move it to the next step.
 							waitForSeconds.Stop();
-						} else {
+						else
 							continue; // if it's not done waiting, then skip this one. 
-						}
 					}
 				}
 
 				if (customCoroutine.Enumerator.MoveNext()) {
 					if (customCoroutine.Enumerator.Current is WaitForSeconds) {
 						var waitForSeconds = (WaitForSeconds) customCoroutine.Enumerator.Current;
-						if (!waitForSeconds.Started) {
-							waitForSeconds.Start(); // Start timing
-						}
+						if (!waitForSeconds.Started) waitForSeconds.Start(); // Start timing
 					} else if (customCoroutine.Enumerator.Current is WaitOneFrame) {
 						var waitOneFrame = (WaitOneFrame) customCoroutine.Enumerator.Current;
-						if (waitOneFrame.Update()) {
+						if (waitOneFrame.Update())
 							// The WaitOneFrame has completed, remove it
 							customCoroutine.Enumerator.MoveNext(); // Move to the next line of the coroutine
-						}
 					}
 				} else {
 					// The Coroutine has completed, remove it
@@ -117,9 +113,7 @@ public partial class CoroutineManager : Node {
 	}
 
 	public override void _Notification(int what) {
-		if (what == NotificationWMCloseRequest) {
-			StopAllCoroutines(); // Stop all coroutines on exit.
-		}
+		if (what == NotificationWMCloseRequest) StopAllCoroutines(); // Stop all coroutines on exit.
 	}
 }
 

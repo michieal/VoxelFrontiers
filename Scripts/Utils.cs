@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using ApophisSoftware.LuaObjects;
 using Godot;
 using Environment = System.Environment;
 
@@ -63,8 +64,8 @@ public class Utils {
 
 	// --------------------------------------------
 
-	public static T ConvertTo<T>(object source) {
-		return (T) Convert.ChangeType(source, typeof(T));
+	public static T ConvertTo<T>(object Source) {
+		return (T) Convert.ChangeType(Source, typeof(T));
 	}
 
 	public static string GetStoragePath() {
@@ -85,14 +86,14 @@ public class Utils {
 		}
 	}
 
-	public static string ProcessConfSettingFromFile(string filename, string setting) {
-		StreamReader srStream = File.OpenText(filename);
+	public static string ProcessConfSettingFromFile(string Filename, string Setting) {
+		StreamReader srStream = File.OpenText(Filename);
 		string value = "";
 
 		while (!srStream.EndOfStream) {
 			value = srStream.ReadLine().ToLower();
-			if (value.StartsWith(setting)) { // if found, strip out the bs. should end up with a "mcl_" something.
-				value = value.Replace(setting, ""); // "=\"{}#"
+			if (value.StartsWith(Setting)) { // if found, strip out the bs. should end up with a "mcl_" something.
+				value = value.Replace(Setting, ""); // "=\"{}#"
 				value = value.Replace(" ", "");
 				value = value.Replace("=", "");
 				value = value.Replace("\"", "");
@@ -105,8 +106,8 @@ public class Utils {
 		return value;
 	}
 
-	public static void SaveSettingsToFile(string settingsConf, Dictionary<string, object> SettingsDict) {
-		StreamWriter swWriter = new StreamWriter(settingsConf);
+	public static void SaveSettingsToFile(string SettingsConf, Dictionary<string, object> SettingsDict) {
+		StreamWriter swWriter = new StreamWriter(SettingsConf);
 		string data;
 
 		foreach (KeyValuePair<string, object> setting in SettingsDict) {
@@ -133,10 +134,12 @@ public class Utils {
 		string[] setdata;
 		while (srReader.EndOfStream == false) {
 			data = srReader.ReadLine();
-			if (data.Contains('=') && data.StartsWith("#") == false) {
-				setdata = data.Split("=");
-				if (!settings.ContainsKey(setdata[0].ToLower().Trim()))
-					settings.Add(setdata[0].ToLower().Trim(), setdata[1].ToLower().Trim());
+			if (data != null) {
+				if (data.Contains('=') && data.StartsWith("#") == false) {
+					setdata = data.Split("=");
+					if (!settings.ContainsKey(setdata[0].ToLower().Trim()))
+						settings.Add(setdata[0].ToLower().Trim(), setdata[1].ToLower().Trim());
+				}
 			}
 		}
 
@@ -145,34 +148,33 @@ public class Utils {
 		return settings;
 	}
 
-	public static Dictionary<string, Setting> ProcessSettingFromTextFile(string filename) {
+	public static Dictionary<string, Setting> ProcessSettingFromTextFile(string Filename) {
 		Dictionary<string, Setting> settings = new Dictionary<string, Setting>();
 		Setting setting = new Setting();
-		StreamReader srStream = File.OpenText(filename);
+		StreamReader srStream = File.OpenText(Filename);
 		string value = "";
 
 		string SettingsCategory = "General";
 
 		while (!srStream.EndOfStream) {
-			setting.SettingsFile = filename;
+			setting.SettingsFile = Filename;
 			value = srStream.ReadLine().ToLower().Trim();
 
 			if (value == "") // handle a new setting.
 				if (settings.ContainsKey(setting.SettingName) == false) {
 					// prevent adding 2 of the same settings. Also, no blank settings.
 					settings.Add(setting.SettingName, setting); // Add to existing setting. 
-
 					if (settings.ContainsKey("")) settings.Remove("");
 
 					setting = new Setting();
 				}
 
 			if (value.StartsWith("[")) { // Handle Category Specifier.
-				setting.SettingsHeader = value.Remove(0, 1).Replace("]", "");
+				setting.Category = value.Remove(0, 1).Replace("]", "").ToUpper();
 				value = ""; // A nothing value.
-				SettingsCategory = setting.SettingsHeader;
+				SettingsCategory = setting.Category;
 			} else {
-				setting.SettingsHeader = SettingsCategory;
+				setting.Category = SettingsCategory;
 			}
 
 			if (value.StartsWith("#")) {    // handle Description
@@ -261,16 +263,14 @@ public class Utils {
 		return settings; // return the defined settings from this file.
 	}                    // function.
 
-	public static bool TestForError(Variant x) {
+	public static bool TestForError(Variant X) {
 		bool isError = false;
 
-		if (x.Obj == null) {
-			return isError;
-		}
+		if (X.Obj == null) return isError;
 
 		try {
-			if (x.Obj.GetType() == typeof(LuaError)) {
-				var z = (LuaError) x;
+			if (X.Obj.GetType() == typeof(LuaError)) {
+				var z = (LuaError) X;
 				if (z.Message != "") {
 					isError = true;
 					Logging.Log("error", "LUA Runtime Error Catch.");
@@ -285,7 +285,6 @@ public class Utils {
 		return isError;
 	}
 
-
 	public Utils() {
 		// Have a basic Ctor.
 	}
@@ -294,14 +293,21 @@ public class Utils {
 		GetLocalization(); // initialize the language.
 	}
 
-	internal static string GetLocalization() {
+	internal static string GetRawLocalizationCode() {
 		// Get the current culture
 		CultureInfo currentCulture = CultureInfo.CurrentCulture;
 
 		// Get the current language code (two-letter ISO language name)
 		string languageCode = currentCulture.TwoLetterISOLanguageName;
 
-		switch (languageCode.ToUpper()) {
+		return languageCode.ToUpper();
+	}
+
+	internal static string GetLocalization() {
+		// Get the current language code (two-letter ISO language name)
+		string languageCode = GetRawLocalizationCode();
+
+		switch (languageCode) {
 			case "EN":
 				CurrentLocale = LanguageCodes.en;
 				break;
@@ -310,12 +316,15 @@ public class Utils {
 				LoadLocalizationFile("res://locale/locale.es.tr", LanguageCodes.en);
 				break;
 			case "FR":
+				LoadLocalizationFile("res://locale/locale.fr.tr", LanguageCodes.fr);
 				CurrentLocale = LanguageCodes.fr;
 				break;
 			case "DE":
+				LoadLocalizationFile("res://locale/locale.de.tr", LanguageCodes.de);
 				CurrentLocale = LanguageCodes.de;
 				break;
 			case "JA":
+				LoadLocalizationFile("res://locale/locale.ja.tr", LanguageCodes.ja);
 				CurrentLocale = LanguageCodes.ja;
 				break;
 		}
@@ -325,12 +334,12 @@ public class Utils {
 
 	public static LanguageCodes CurrentLocale = LanguageCodes.en;
 
-	public static string S(string strDisplayString) {
-		return LocalizeString(strDisplayString, CurrentLocale);
+	public static string S(string StrDisplay) {
+		return LocalizeString(StrDisplay, CurrentLocale);
 	}
 
-	public static string GS(string strDisplayString) {
-		return LocalizeString(strDisplayString, CurrentLocale, true);
+	public static string GsTranslateString(string StrDisplay) {
+		return LocalizeString(StrDisplay, CurrentLocale, true);
 	}
 
 	public static string LocalizeString(string DisplayString, LanguageCodes Lang, bool ForGame = false) {
@@ -338,33 +347,33 @@ public class Utils {
 		switch (Lang) {
 			case LanguageCodes.de:
 				if (ForGame) {
-					if (GameLangDE.ContainsKey(DisplayString)) return GameLangDE[DisplayString];
+					if (GameLangDE.TryGetValue(DisplayString, out var s)) return s;
 				} else {
-					if (EngineLangDE.ContainsKey(DisplayString)) return EngineLangDE[DisplayString];
+					if (EngineLangDE.TryGetValue(DisplayString, out var s)) return s;
 				}
 
 				break;
 			case LanguageCodes.fr:
 				if (ForGame) {
-					if (GameLangFR.ContainsKey(DisplayString)) return GameLangFR[DisplayString];
+					if (GameLangFR.TryGetValue(DisplayString, out var s)) return s;
 				} else {
-					if (EngineLangFR.ContainsKey(DisplayString)) return EngineLangFR[DisplayString];
+					if (EngineLangFR.TryGetValue(DisplayString, out var s)) return s;
 				}
 
 				break;
 			case LanguageCodes.es:
 				if (ForGame) {
-					if (GameLangES.ContainsKey(DisplayString)) return GameLangES[DisplayString];
+					if (GameLangES.TryGetValue(DisplayString, out var s)) return s;
 				} else {
-					if (EngineLangES.ContainsKey(DisplayString)) return EngineLangES[DisplayString];
+					if (EngineLangES.TryGetValue(DisplayString, out var s)) return s;
 				}
 
 				break;
 			case LanguageCodes.ja:
 				if (ForGame) {
-					if (GameLangJA.ContainsKey(DisplayString)) return GameLangJA[DisplayString];
+					if (GameLangJA.TryGetValue(DisplayString, out var s)) return s;
 				} else {
-					if (EngineLangJA.ContainsKey(DisplayString)) return EngineLangJA[DisplayString];
+					if (EngineLangJA.TryGetValue(DisplayString, out var s)) return s;
 				}
 
 				break;
@@ -444,7 +453,22 @@ public class Utils {
 
 	// ---------------------------------------------------------------------------------------------
 	// Lua Section.
+	private static LuaController _luaController;
+
+	internal static void SetLuaController(LuaController LC) {
+		_luaController = LC;
+	}
+
+	internal static LuaController GetLuaController() {
+		return _luaController;
+	}
+
+	// Design Note: (TODO:) make where this is called from instantiate the Lua Controller, so that it's not running from
+	// the start of the program. 
 	internal static void LoadLuaScripts(Dictionary<string, string> Scripts) {
+		foreach (var kvp in Scripts) {
+			LUA.lua.DoString("_exec_file(\"" + kvp.Value + "\", " + kvp.Key + ")");
+		}
 	}
 } // class Utils.
 

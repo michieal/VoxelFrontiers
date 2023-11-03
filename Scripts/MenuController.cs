@@ -165,9 +165,7 @@ public partial class MenuController : Control {
 	}
 
 	public override void _Notification(int what) {
-		if (what == NotificationWMCloseRequest) {
-			GetTree().Quit(); // default behavior
-		}
+		if (what == NotificationWMCloseRequest) GetTree().Quit(); // default behavior
 	}
 
 	private void BtnExitOnPressed() {

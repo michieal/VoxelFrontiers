@@ -3,71 +3,75 @@
 [ext_resource type="Theme" uid="uid://d070er741ktai" path="res://GUIThemes/GUITheme.tres" id="1_28svq"]
 [ext_resource type="Script" path="res://Scripts/UISetting.cs" id="2_f1vi1"]
 
-[node name="UISetting" type="Control" node_paths=PackedStringArray("Description", "SettingName", "DefaultValue", "ValueInput", "ValueDropdown", "ValueToggle", "ValueRange")]
-custom_minimum_size = Vector2(450, 185)
+[node name="UISetting" type="Control" node_paths=PackedStringArray("SettingName", "Category", "Description", "DefaultValue", "ValueInput", "ValueDropdown", "ValueToggle", "ValueRange")]
+custom_minimum_size = Vector2(450, 250)
 layout_mode = 3
 anchor_right = 1.0
-anchor_bottom = 0.171
-offset_bottom = 40.32
+anchor_bottom = 0.208
+offset_bottom = 2.36
 grow_horizontal = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("1_28svq")
 script = ExtResource("2_f1vi1")
-Description = NodePath("Description")
 SettingName = NodePath("SettingName")
+Category = NodePath("Category")
+Description = NodePath("Description")
 DefaultValue = NodePath("DefaultValue")
 ValueInput = NodePath("ValueInput")
 ValueDropdown = NodePath("ValueDropdown")
 ValueToggle = NodePath("ValueToggle")
 ValueRange = NodePath("DefaultValue/Range")
 
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -250.0
+offset_bottom = -246.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="SettingName" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.06
+anchor_bottom = 0.124
+offset_right = 0.799995
+text = "SettingName"
+
+[node name="Category" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.94
+anchor_right = 1.0
+anchor_bottom = 0.124
+offset_left = -0.800049
+grow_horizontal = 0
+text = "Category"
+
 [node name="Description" type="Label" parent="."]
 custom_minimum_size = Vector2(1000, 155)
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 152.0
+offset_top = 32.0
+offset_bottom = 187.0
 grow_horizontal = 2
 text = "Some Text goes here!"
 autowrap_mode = 3
 clip_text = true
 text_overrun_behavior = 3
 
-[node name="HSeparator" type="HSeparator" parent="Description"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -155.0
-offset_bottom = -151.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="SettingName" type="Label" parent="."]
+[node name="DefaultValue" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -30.0
-offset_right = 116.0
-offset_bottom = 1.0
-grow_vertical = 0
-text = "SettingName"
-
-[node name="DefaultValue" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -36.0
-offset_top = -30.0
-offset_right = 36.0
-offset_bottom = 1.0
-grow_horizontal = 2
+offset_top = -31.0
+offset_right = 72.0
 grow_vertical = 0
 text = "Default"
 
@@ -89,13 +93,13 @@ text = "Range (000 - 100000)"
 
 [node name="ValueInput" type="LineEdit" parent="."]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
+anchors_preset = -1
+anchor_left = 0.896
+anchor_top = 0.756
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -61.0
+offset_left = -0.320068
+offset_top = -1.52588e-05
 offset_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -107,26 +111,26 @@ caret_force_displayed = true
 [node name="ValueDropdown" type="OptionButton" parent="."]
 custom_minimum_size = Vector2(150, 32)
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
+anchors_preset = -1
+anchor_left = 0.896
+anchor_top = 0.756
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -61.0
+offset_left = -0.320068
+offset_top = -1.52588e-05
 offset_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 0
 
 [node name="ValueToggle" type="CheckBox" parent="."]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
+anchors_preset = -1
+anchor_left = 0.896
+anchor_top = 0.756
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -61.0
+offset_left = -0.320068
+offset_top = -1.52588e-05
 offset_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 0
