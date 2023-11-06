@@ -33,14 +33,14 @@ So, it all came together as a perfect fit.
 
 How to use
 -------
-Currently, you will need Godot 4.1.1 C# (latest .NET version of Godot) to build the 
+Currently, you will need LuaAPI Godot 4.1.2 C# (latest .NET version of Godot) to build the 
 project. We will make binary versions when the project gets closer to completion. Until 
 then, download the source, and open it up as a project in Godot. It'll take a minute to 
 load, as it's importing all of the assets. When it's done, you can hit the `Play` button in
 the upper right-hand corner.
 
 With the switch to using LuaAPI and using the editor with it built in, the current version of the
-editor being used is this [Editor Download](https://github.com/WeaselGames/godot_luaAPI/releases/tag/v2.1-beta6).
+editor being used is this [Editor Download](https://github.com/WeaselGames/godot_luaAPI/releases/tag/v2.1-beta8).
 I have been working with Weasel Games to get the DotNet side of their editor working as intended
 and I have been creating examples for their LuaAPI. As it is a different editor build, it requires the use
 of updated Export Templates. Please read the documentation there, as I fully explain how to install the editor,
