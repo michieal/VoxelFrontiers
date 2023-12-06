@@ -56,7 +56,7 @@ dotnet can see that it has the sdk(s) listed. Ideally, install both version 6 an
 
 Contributing
 -------
-At the current moment, the only contributions needed are people to test it on various systems. 
+At the current moment, we happily accept contributions, and they are needed. We also need people to test the engine on various systems. 
 Please use the Issue Tracker to report the outcomes, so that if needed, we can look into it.
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
