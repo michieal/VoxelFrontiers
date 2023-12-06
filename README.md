@@ -27,24 +27,25 @@ build this from just fanciful thoughts into a real, honest engine.
 
 Initial versions of this project were created In Unity/C#. But, with the recent events, 
 and Unity being a dumpster fire (as well as closed source, proprietary software) I have
-moved the project over to the Godot engine 4.1.1 stable-mono-official (.NET Version). 
+moved the project over to the Godot engine 4.2 stable-mono-official (.NET Version). 
 Mineclone 2 is open source, this engine's code is open source, and Godot is open source. 
 So, it all came together as a perfect fit.
 
 How to use
 -------
-Currently, you will need Godot 4.1.1 C# (latest .NET version of Godot) to build the 
+Currently, you will need LuaAPI Godot 4.2 C# (latest .NET version of Godot) to build the 
 project. We will make binary versions when the project gets closer to completion. Until 
 then, download the source, and open it up as a project in Godot. It'll take a minute to 
 load, as it's importing all of the assets. When it's done, you can hit the `Play` button in
 the upper right-hand corner.
 
 With the switch to using LuaAPI and using the editor with it built in, the current version of the
-editor being used is this [Editor Download](https://github.com/WeaselGames/godot_luaAPI/releases/tag/v2.1-beta6).
+editor being used is this [Editor Download](https://github.com/WeaselGames/godot_luaAPI/releases/tag/v2.1-beta9).
+Please use the `Mono` version of the Editor and export templates.
 I have been working with Weasel Games to get the DotNet side of their editor working as intended
 and I have been creating examples for their LuaAPI. As it is a different editor build, it requires the use
 of updated Export Templates. Please read the documentation there, as I fully explain how to install the editor,
-and templates to use it. Those instructions apply here. 
+and templates to use it. Those instructions apply here. Note the nuget section of that, when updating to a newer editor. 
 
 You can also build a fully executable version of the game for your OS by clicking 
 `Project` -> `Export...` and select the predefined export package. You will need to download
@@ -52,7 +53,7 @@ the project targets from the pop up, but they are small (~120 mb) to make it. Ad
 you will need DotNet installed (DotNet 6) and configured, so that it can use MS Build to compile 
 the code into a fully working game. There have been some issues for people installing DotNet, and 
 if you're one of those affected by that, use the command `dotnet --list-sdks` to make sure that 
-dotnet can see that it has the sdk(s) listed. Ideally, install both version 6 and 7.
+dotnet can see that it has the sdk(s) listed. Ideally, install both version 7 and 8.
 
 Contributing
 -------
