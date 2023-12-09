@@ -51,7 +51,7 @@ public partial class LuaController : Node {
 
 	private void InitializeThis() {
 		// define libraries that the lua code has access to. 
-		Godot.Collections.Array libraries = new() {
+		Godot.Collections.Array<string> libraries = new() {
 			"base",  // Base Lua commands
 			"debug", // Debug.
 			"math",  // Math Functions.
