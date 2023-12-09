@@ -104,12 +104,12 @@ public partial class LuaController : Node {
 	*/
 	}
 
-	private void LuaPrint(string message) {
-		Logging.Log("[LUA]: " + message);
+	private void LuaPrint(string Message) {
+		Logging.Log("[LUA]: " + Message);
 	}
 
-	internal void Dofile(string filename) {
-		lua.DoFile(filename);
+	internal void Dofile(string Filename) {
+		lua.DoFile(Filename);
 	}
 
 	internal void CreateGlobalVar(string VariableName, string VariableValue) {
@@ -123,7 +123,8 @@ public partial class LuaController : Node {
 	}
 
 	internal void RegisterAPI() {
-//		CreateGlobalVar("minetest", Minetest);
+		// Removed in favor of just aliasing it in the builtin.lua code.
+		// CreateGlobalVar("minetest", Minetest);
 		CreateGlobalVar("mclpp", Mclpp);
 		Item _item = new Item();
 		var _item_ = new Callable(_item, Item.MethodName.CreateItem);
