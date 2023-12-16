@@ -5,7 +5,8 @@
 ---
 
 local DEBUG = true
-
+--[[
+-- Old dump code. -Michieal
 local function dumpTable(table, depth)
     if (depth > 200) then
         mclpp.log("Error: Depth > 200 in dumpTable()")
@@ -56,6 +57,7 @@ function dump(x)
     end
     
 end
+]]
 
 -- internal use only. 
 function _exec_file(filename, modname)
@@ -66,12 +68,306 @@ end
 
 minetest = mclpp
 minetest.log("minetest mapped as mclpp api: success.")
+
+
+
 --------------------------------------------------------------
+-- Minetest: builtin/misc_helpers.lua
+-- Copyright, Minetest Project Team. Used to provide similar lua functionality. 
+
+--------------------------------------------------------------------------------
+-- Localize functions to avoid table lookups (better performance).
+local string_sub, string_find = string.sub, string.find
+
+--------------------------------------------------------------------------------
+local function basic_dump(o)
+    local tp = type(o)
+    if tp == "number" then
+        return tostring(o)
+    elseif tp == "string" then
+        return string.format("%q", o)
+    elseif tp == "boolean" then
+        return tostring(o)
+    elseif tp == "nil" then
+        return "nil"
+        -- Uncomment for full function dumping support.
+        -- Not currently enabled because bytecode isn't very human-readable and
+        -- dump's output is intended for humans.
+        --elseif tp == "function" then
+        --	return string.format("loadstring(%q)", string.dump(o))
+    elseif tp == "userdata" then
+        return tostring(o)
+    else
+        return string.format("<%s>", tp)
+    end
+end
+
+local keywords = {
+    ["and"] = true,
+    ["break"] = true,
+    ["do"] = true,
+    ["else"] = true,
+    ["elseif"] = true,
+    ["end"] = true,
+    ["false"] = true,
+    ["for"] = true,
+    ["function"] = true,
+    ["goto"] = true, -- Lua 5.2
+    ["if"] = true,
+    ["in"] = true,
+    ["local"] = true,
+    ["nil"] = true,
+    ["not"] = true,
+    ["or"] = true,
+    ["repeat"] = true,
+    ["return"] = true,
+    ["then"] = true,
+    ["true"] = true,
+    ["until"] = true,
+    ["while"] = true,
+}
+local function is_valid_identifier(str)
+    if not str:find("^[a-zA-Z_][a-zA-Z0-9_]*$") or keywords[str] then
+        return false
+    end
+    return true
+end
+
+--------------------------------------------------------------------------------
+-- Dumps values in a line-per-value format.
+-- For example, {test = {"Testing..."}} becomes:
+--   _["test"] = {}
+--   _["test"][1] = "Testing..."
+-- This handles tables as keys and circular references properly.
+-- It also handles multiple references well, writing the table only once.
+-- The dumped argument is internal-only.
+
+function dump2(o, name, dumped)
+    name = name or "_"
+    -- "dumped" is used to keep track of serialized tables to handle
+    -- multiple references and circular tables properly.
+    -- It only contains tables as keys.  The value is the name that
+    -- the table has in the dump, eg:
+    -- {x = {"y"}} -> dumped[{"y"}] = '_["x"]'
+    dumped = dumped or {}
+    if type(o) ~= "table" then
+        return string.format("%s = %s\n", name, basic_dump(o))
+    end
+    if dumped[o] then
+        return string.format("%s = %s\n", name, dumped[o])
+    end
+    dumped[o] = name
+    -- This contains a list of strings to be concatenated later (because
+    -- Lua is slow at individual concatenation).
+    local t = {}
+    for k, v in pairs(o) do
+        local keyStr
+        if type(k) == "table" then
+            if dumped[k] then
+                keyStr = dumped[k]
+            else
+                -- Key tables don't have a name, so use one of
+                -- the form _G["table: 0xFFFFFFF"]
+                keyStr = string.format("_G[%q]", tostring(k))
+                -- Dump key table
+                t[#t + 1] = dump2(k, keyStr, dumped)
+            end
+        else
+            keyStr = basic_dump(k)
+        end
+        local vname = string.format("%s[%s]", name, keyStr)
+        t[#t + 1] = dump2(v, vname, dumped)
+    end
+    return string.format("%s = {}\n%s", name, table.concat(t))
+end
+
+--------------------------------------------------------------------------------
+-- This dumps values in a one-statement format.
+-- For example, {test = {"Testing..."}} becomes:
+-- [[{
+-- 	test = {
+-- 		"Testing..."
+-- 	}
+-- }]]
+-- This supports tables as keys, but not circular references.
+-- It performs poorly with multiple references as it writes out the full
+-- table each time.
+-- The indent field specifies a indentation string, it defaults to a tab.
+-- Use the empty string to disable indentation.
+-- The dumped and level arguments are internal-only.
+
+function dump(o, indent, nested, level)
+    local t = type(o)
+    if not level and t == "userdata" then
+        -- when userdata (e.g. player) is passed directly, print its metatable:
+        return "userdata metatable: " .. dump(getmetatable(o))
+    end
+    if t ~= "table" then
+        return basic_dump(o)
+    end
+
+    -- Contains table -> true/nil of currently nested tables
+    nested = nested or {}
+    if nested[o] then
+        return "<circular reference>"
+    end
+    nested[o] = true
+    indent = indent or "\t"
+    level = level or 1
+
+    local ret = {}
+    local dumped_indexes = {}
+    for i, v in ipairs(o) do
+        ret[#ret + 1] = dump(v, indent, nested, level + 1)
+        dumped_indexes[i] = true
+    end
+    for k, v in pairs(o) do
+        if not dumped_indexes[k] then
+            if type(k) ~= "string" or not is_valid_identifier(k) then
+                k = "[" .. dump(k, indent, nested, level + 1) .. "]"
+            end
+            v = dump(v, indent, nested, level + 1)
+            ret[#ret + 1] = k .. " = " .. v
+        end
+    end
+    nested[o] = nil
+    if indent ~= "" then
+        local indent_str = "\n" .. string.rep(indent, level)
+        local end_indent_str = "\n" .. string.rep(indent, level - 1)
+        return string.format("{%s%s%s}",
+                indent_str,
+                table.concat(ret, "," .. indent_str),
+                end_indent_str)
+    end
+    return "{" .. table.concat(ret, ", ") .. "}"
+end
+
+--------------------------------------------------------------------------------
+function string.split(str, delim, include_empty, max_splits, sep_is_pattern)
+    delim = delim or ","
+    if delim == "" then
+        error("string.split separator is empty", 2)
+    end
+    max_splits = max_splits or -2
+    local items = {}
+    local pos, len = 1, #str
+    local plain = not sep_is_pattern
+    max_splits = max_splits + 1
+    repeat
+        local np, npe = string_find(str, delim, pos, plain)
+        np, npe = (np or (len + 1)), (npe or (len + 1))
+        if (not np) or (max_splits == 1) then
+            np = len + 1
+            npe = np
+        end
+        local s = string_sub(str, pos, np - 1)
+        if include_empty or (s ~= "") then
+            max_splits = max_splits - 1
+            items[#items + 1] = s
+        end
+        pos = npe + 1
+    until (max_splits == 0) or (pos > (len + 1))
+    return items
+end
+
+--------------------------------------------------------------------------------
+function table.indexof(list, val)
+    for i, v in ipairs(list) do
+        if v == val then
+            return i
+        end
+    end
+    return -1
+end
+
+--------------------------------------------------------------------------------
+function string:trim()
+    return self:match("^%s*(.-)%s*$")
+end
+
+--------------------------------------------------------------------------------
+function math.hypot(x, y)
+    return math.sqrt(x * x + y * y)
+end
+
+--------------------------------------------------------------------------------
+function math.sign(x, tolerance)
+    tolerance = tolerance or 0
+    if x > tolerance then
+        return 1
+    elseif x < -tolerance then
+        return -1
+    end
+    return 0
+end
+
+--------------------------------------------------------------------------------
+function math.factorial(x)
+    assert(x % 1 == 0 and x >= 0, "factorial expects a non-negative integer")
+    if x >= 171 then
+        -- 171! is greater than the biggest double, no need to calculate
+        return math.huge
+    end
+    local v = 1
+    for k = 2, x do
+        v = v * k
+    end
+    return v
+end
+
+function math.round(x)
+    if x >= 0 then
+        return math.floor(x + 0.5)
+    end
+    return math.ceil(x - 0.5)
+end
+
+local formspec_escapes = {
+    ["\\"] = "\\\\",
+    ["["] = "\\[",
+    ["]"] = "\\]",
+    [";"] = "\\;",
+    [","] = "\\,",
+    ["$"] = "\\$",
+}
+function mclpp.formspec_escape(text)
+    -- Use explicit character set instead of dot here because it doubles the performance
+    return text and string.gsub(text, "[\\%[%];,$]", formspec_escapes)
+end
+
+function mclpp.wrap_text(text, max_length, as_table)
+    local result = {}
+    local line = {}
+    if #text <= max_length then
+        return as_table and { text } or text
+    end
+
+    local line_length = 0
+    for word in text:gmatch("%S+") do
+        if line_length > 0 and line_length + #word + 1 >= max_length then
+            -- word wouldn't fit on current line, move to next line
+            table.insert(result, table.concat(line, " "))
+            line = { word }
+            line_length = #word
+        else
+            table.insert(line, word)
+            line_length = line_length + 1 + #word
+        end
+    end
+
+    table.insert(result, table.concat(line, " "))
+    return as_table and result or table.concat(result, "\n")
+end
+
+-- END: Minetest: builtin/misc_helpers.lua 
+--------------------------------------------------------------------------------
+
 function S(strText)
     return strText
 end
 
 function minetest.get_node(pos)
+    -- temporary helper
     return pos
 end
 
@@ -310,7 +606,7 @@ mclpp.register_abm({
     end,
 })
 
--- dump(test_def)
+mclpp.log(dump(test_def))
 
 --local myItem = Item("Tom")
 --myItem._custom_property = 10
