@@ -46,11 +46,12 @@ I have been working with Weasel Games to get the DotNet side of their editor wor
 and I have been creating examples for their LuaAPI. As it is a different editor build, it requires the use
 of updated Export Templates. Please read the documentation there, as I fully explain how to install the editor,
 and templates to use it. Those instructions apply here. Note the nuget section of that, when updating to a newer editor. 
+The link to these instructions is here: https://luaapi.weaselgames.info/v2.1/getting_started/dotnet/
 
 You can also build a fully executable version of the game for your OS by clicking 
 `Project` -> `Export...` and select the predefined export package. You will need to download
 the project targets from the pop up, but they are small (~120 mb) to make it. Additionally,
-you will need DotNet installed (DotNet 6) and configured, so that it can use MS Build to compile 
+you will need DotNet installed (DotNet 7) and configured, so that it can use MS Build to compile 
 the code into a fully working game. There have been some issues for people installing DotNet, and 
 if you're one of those affected by that, use the command `dotnet --list-sdks` to make sure that 
 dotnet can see that it has the sdk(s) listed. Ideally, install both version 7 and 8.
