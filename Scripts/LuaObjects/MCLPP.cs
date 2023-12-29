@@ -671,10 +671,17 @@ public partial class MCLPP : RefCounted {
 	private NodeBlock ProcessNode(string NodeName, Variant NodeDef) {
 		NodeBlock nodeBlock = new NodeBlock(NodeName);
 		Godot.Collections.Dictionary<string, Variant> Nodedef = (Godot.Collections.Dictionary<string, Variant>) NodeDef;
-		if (Nodedef.TryGetValue("collision_box", out var value)) {
-			// LuaTuple collbox = (LuaTuple) value;
-			// nodeBlock.collision_box =
-			// TODO: Fix this.
+
+		if (Nodedef.TryGetValue("node_box", out var value)) {
+			var _nodebox = (Godot.Collections.Dictionary<string, Variant>) value;
+
+			BlockBox nodeBox = ProcessBox(NodeName, _nodebox);
+
+			if (nodeBox == null) {
+				return null;
+			}
+
+			nodeBlock.node_box = nodeBox;
 		}
 
 		if (Nodedef.TryGetValue("collision_box", out value)) {
@@ -687,18 +694,10 @@ public partial class MCLPP : RefCounted {
 			}
 
 			nodeBlock.collision_box = collisionBox;
-		}
-
-		if (Nodedef.TryGetValue("node_box", out value)) {
-			var _nodebox = (Godot.Collections.Dictionary<string, Variant>) value;
-
-			BlockBox nodeBox = ProcessBox(NodeName, _nodebox);
-
-			if (nodeBox == null) {
-				return null;
+		} else {
+			if (nodeBlock.node_box != null) {
+				nodeBlock.collision_box = nodeBlock.node_box;
 			}
-
-			nodeBlock.node_box = nodeBox;
 		}
 
 		if (Nodedef.TryGetValue("selection_box", out value)) {
@@ -711,6 +710,10 @@ public partial class MCLPP : RefCounted {
 			}
 
 			nodeBlock.selection_box = selectionBox;
+		} else {
+			if (nodeBlock.collision_box != null) {
+				nodeBlock.selection_box = nodeBlock.collision_box;
+			}
 		}
 
 		if (Nodedef.TryGetValue("after_destruct", out value)) {
