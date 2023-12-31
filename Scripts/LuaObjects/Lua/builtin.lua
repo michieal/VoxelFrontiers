@@ -280,6 +280,43 @@ function table.indexof(list, val)
     return -1
 end
 
+------------------ This Segment is From Mineclonia
+-- Updates all values in t using values from to*.
+function table.update(t, ...)
+    for _, to in ipairs { ... } do
+        for k, v in pairs(to) do
+            t[k] = v
+        end
+    end
+    return t
+end
+
+-- Updates nil values in t using values from to*.
+function table.update_nil(t, ...)
+    for _, to in ipairs { ... } do
+        for k, v in pairs(to) do
+            if t[k] == nil then
+                t[k] = v
+            end
+        end
+    end
+    return t
+end
+
+function table.merge(t, ...)
+    local t2 = table.copy(t)
+    return table.update(t2, ...)
+end
+
+function table.reverse(t)
+    local len = #t
+    for i = len - 1, 1, -1 do
+        t[len] = table.remove(t, i)
+    end
+end
+------------------
+
+
 --------------------------------------------------------------------------------
 function string:trim()
     return self:match("^%s*(.-)%s*$")
