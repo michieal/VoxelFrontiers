@@ -191,7 +191,9 @@ public static class ImageManipulation {
 		} catch (Exception error) {
 			// Handle loading error, e.g., print a message
 			Logging.Log("error", $"Error loading texture: {FilePath}.\nError message: {error.Message}");
-			return null;
+			Image notex = Image.LoadFromFile("res://Sprites/MissingTexture.png");
+			notex.Fill(Colors.Fuchsia);
+			return ImageTexture.CreateFromImage(notex);
 		}
 
 		return ImageTexture.CreateFromImage(tex);
