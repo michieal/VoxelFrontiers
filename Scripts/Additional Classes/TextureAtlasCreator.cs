@@ -174,6 +174,192 @@ public static class ImageManipulation {
 		// return the modified image.
 		return ImageTexture.CreateFromImage(tex);
 	}
+
+	public static Texture2D AdjustBCS(Image SrcImg, float Brightness, float Contrast, float Saturation) {
+		SrcImg.AdjustBcs(Brightness, Contrast, Saturation);
+		return ImageTexture.CreateFromImage(SrcImg);
+	}
+
+	public static Texture2D CropImage(Image SrcImg, int Height, int Width) {
+		SrcImg.Crop(Width, Height);
+		return ImageTexture.CreateFromImage(SrcImg);
+	}
+
+	public static Texture2D ShiftHue(string FilePath, float HueShift) {
+		Image tex;
+
+		// Load each texture
+		try {
+			tex = Image.LoadFromFile(FilePath);
+		} catch (Exception error) {
+			// Handle loading error, e.g., print a message
+			Logging.Log("error", $"Error loading texture: {FilePath}.\nError message: {error.Message}");
+			return null;
+		}
+
+		// Get the size of the image
+		int width = tex.GetWidth();
+		int height = tex.GetHeight();
+
+		// Loop through each pixel and apply hue shift
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				// Get the original pixel color
+				Color originalColor = tex.GetPixel(x, y);
+
+				// Convert the color to HSL
+				originalColor.ToHsv(out float h, out float s, out float l);
+
+				// Shift the hue
+				h = (h + HueShift) % 1.0f;
+
+				// Convert back to RGB
+				Color shiftedColor = Color.FromHsv(h, s, l);
+
+				// Set the new color to the pixel
+				tex.SetPixel(x, y, shiftedColor);
+			}
+		}
+
+		return ImageTexture.CreateFromImage(tex);
+	}
+
+	public static Texture2D ShiftHue(Image SrcImg, float HueShift) {
+		// Get the size of the image
+		int width = SrcImg.GetWidth();
+		int height = SrcImg.GetHeight();
+
+		// Loop through each pixel and apply hue shift
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				// Get the original pixel color
+				Color originalColor = SrcImg.GetPixel(x, y);
+
+				// Convert the color to HSL
+				originalColor.ToHsv(out float h, out float s, out float l);
+
+				// Shift the hue
+				h = (h + HueShift) % 1.0f;
+
+				// Convert back to RGB
+				Color shiftedColor = Color.FromHsv(h, s, l);
+
+				// Set the new color to the pixel
+				SrcImg.SetPixel(x, y, shiftedColor);
+			}
+		}
+
+		return ImageTexture.CreateFromImage(SrcImg);
+	}
+
+	public static Texture2D Clip(Image SrcImg, float Percentage, ClipImgSpecs HowToClip) {
+		// Get the size of the image
+		int width = SrcImg.GetWidth();
+		int height = SrcImg.GetHeight();
+
+		Image proxy = new();
+		proxy.CopyFrom(SrcImg);
+
+		Percentage = Mathf.Clamp(Percentage, 0f, 1f);
+
+		int pixels = 0;
+
+		switch (HowToClip) {
+			case ClipImgSpecs.HorizontalFromLeft:
+				pixels = Mathf.FloorToInt(width * Percentage);
+
+				// Loop through each pixel and apply clip
+				for (int x = 0; x < width; x++) {
+					for (int y = 0; y < height; y++) {
+						// Get the original pixel color
+
+						if (x > pixels) {
+							Color originalColor = proxy.GetPixel(x, y);
+							// make transparent.
+							Color shiftedColor = originalColor;
+							shiftedColor.A = 0;
+
+							// Set the new color to the pixel
+							proxy.SetPixel(x, y, shiftedColor);
+						}
+					}
+				}
+
+				break;
+
+			case ClipImgSpecs.HorizontalFromRight:
+				pixels = Mathf.FloorToInt(width * Percentage);
+
+				// Loop through each pixel and apply clip
+				for (int x = width; x > 0; x--) {
+					for (int y = 0; y < height; y++) {
+						// Get the original pixel color
+
+						if (x < pixels) {
+							Color originalColor = proxy.GetPixel(x, y);
+							// make transparent.
+							Color shiftedColor = originalColor;
+							shiftedColor.A = 0;
+
+							// Set the new color to the pixel
+							proxy.SetPixel(x, y, shiftedColor);
+						}
+					}
+				}
+
+				break;
+
+			case ClipImgSpecs.VerticalFromBottom:
+				pixels = Mathf.FloorToInt(height * Percentage);
+
+				// Loop through each pixel and apply clip
+				for (int y = height; y > 0; y--) {
+					for (int x = 0; x < width; x++) {
+						// Get the original pixel color
+
+						if (y < pixels) {
+							Color originalColor = proxy.GetPixel(x, y);
+							// make transparent.
+							Color shiftedColor = originalColor;
+							shiftedColor.A = 0;
+
+							// Set the new color to the pixel
+							proxy.SetPixel(x, y, shiftedColor);
+						}
+					}
+				}
+
+				break;
+
+			case ClipImgSpecs.VerticalFromTop:
+				pixels = Mathf.FloorToInt(height * Percentage);
+
+				// Loop through each pixel and apply clip
+				for (int y = 0; y < height; y++) {
+					for (int x = 0; x < width; x++) {
+						// Get the original pixel color
+
+						if (y > pixels) {
+							Color originalColor = proxy.GetPixel(x, y);
+							// make transparent.
+							Color shiftedColor = originalColor;
+							shiftedColor.A = 0;
+
+							// Set the new color to the pixel
+							proxy.SetPixel(x, y, shiftedColor);
+						}
+					}
+				}
+
+				break;
+
+			default:
+				break;
+		}
+
+
+		return ImageTexture.CreateFromImage(proxy);
+	}
 }
 
 public enum RotateImgSpec {
@@ -181,4 +367,11 @@ public enum RotateImgSpec {
 	Right90   = 1,
 	Left90    = 2,
 	Rotate180 = 4,
+}
+
+public enum ClipImgSpecs {
+	VerticalFromTop     = 1,
+	VerticalFromBottom  = 2,
+	HorizontalFromLeft  = 3,
+	HorizontalFromRight = 4,
 }
