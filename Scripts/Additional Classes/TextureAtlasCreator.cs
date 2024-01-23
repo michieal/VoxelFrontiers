@@ -3,7 +3,7 @@ using Godot;
 
 namespace ApophisSoftware;
 
-public static class TextureAtlasCreator {
+public static class ImageManipulation {
 	// Specify the paths to your six image files
 	internal static string[] ImagePaths = new string[] {
 		"res://path/to/texture1.png",
