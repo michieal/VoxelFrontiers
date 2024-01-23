@@ -4,30 +4,21 @@ using Godot;
 namespace ApophisSoftware;
 
 public static class ImageManipulation {
-	//TODO: Add in proxy clones to methods, to prevent the manipulation of the original image.
+	public static Texture2D AdjustBCS(Image Source, float Brightness, float Contrast, float Saturation) {
+		Image proxy = new Image();
+		proxy.CopyFrom(Source);
 
-	// Specify the paths to your six image files
-	internal static string[] ImagePaths = new string[] {
-		"res://path/to/texture1.png",
-		"res://path/to/texture2.png",
-		"res://path/to/texture3.png",
-		"res://path/to/texture4.png",
-		"res://path/to/texture5.png",
-		"res://path/to/texture6.png"
-	}; // Simply in for testing purposes.
-
-	public static Texture2D AdjustBCS(Image SrcImg, float Brightness, float Contrast, float Saturation) {
-		SrcImg.AdjustBcs(Brightness, Contrast, Saturation);
-		return ImageTexture.CreateFromImage(SrcImg);
+		proxy.AdjustBcs(Brightness, Contrast, Saturation);
+		return ImageTexture.CreateFromImage(proxy);
 	}
 
-	public static Texture2D Clip(Image SrcImg, float Percentage, ClipImgSpecs HowToClip) {
+	public static Texture2D Clip(Image Source, float Percentage, ClipImgSpecs HowToClip) {
 		// Get the size of the image
-		int width = SrcImg.GetWidth();
-		int height = SrcImg.GetHeight();
+		int width = Source.GetWidth();
+		int height = Source.GetHeight();
 
 		Image proxy = new();
-		proxy.CopyFrom(SrcImg);
+		proxy.CopyFrom(Source);
 
 		Percentage = Mathf.Clamp(Percentage, 0f, 1f);
 
@@ -130,17 +121,9 @@ public static class ImageManipulation {
 		return ImageTexture.CreateFromImage(proxy);
 	}
 
-	public static Texture2D ColorizeTexture(string FilePath, Color ColorToUse) {
-		Image tex;
-
-		// Load each texture
-		try {
-			tex = Image.LoadFromFile(FilePath);
-		} catch (Exception error) {
-			// Handle loading error, e.g., print a message
-			Logging.Log("error", $"Error loading texture: {FilePath}.\nError message: {error.Message}");
-			return null;
-		}
+	public static Texture2D ColorizeTexture(Image Source, Color ColorToUse) {
+		Image tex = new Image();
+		tex.CopyFrom(Source);
 
 		// Get the size of the image
 		int width = tex.GetWidth();
@@ -164,7 +147,7 @@ public static class ImageManipulation {
 		return ImageTexture.CreateFromImage(tex);
 	}
 
-	public static Texture2D CreateTextureAtlas() {
+	public static Texture2D CreateTextureAtlas(string[] ImagePaths) {
 		// Load the six textures
 		ImageTexture[] textures = LoadTextures(ImagePaths);
 		if (textures == null) {
@@ -192,9 +175,11 @@ public static class ImageManipulation {
 		return ImageTexture.CreateFromImage(atlasImage);
 	}
 
-	public static Texture2D CropImage(Image SrcImg, int Height, int Width) {
-		SrcImg.Crop(Width, Height);
-		return ImageTexture.CreateFromImage(SrcImg);
+	public static Texture2D CropImage(Image Source, int Height, int Width) {
+		Image tex = new Image();
+		tex.CopyFrom(Source);
+		Source.Crop(Width, Height);
+		return ImageTexture.CreateFromImage(tex);
 	}
 
 	public static Texture2D LoadImageFromFile(string FilePath) {
@@ -235,18 +220,30 @@ public static class ImageManipulation {
 		return textures;
 	}
 
-	public static Texture2D ManipulateTexture(string FilePath, bool FlipHorizontal, bool FlipVertical,
-	                                          RotateImgSpec Rotation = RotateImgSpec.None) {
-		Image tex;
+	public static Texture2D MakeTransparent(Image Source, Color SrcColor) {
+		Image proxy = new Image();
+		proxy.CopyFrom(Source);
 
-		// Load each texture
-		try {
-			tex = Image.LoadFromFile(FilePath);
-		} catch (Exception error) {
-			// Handle loading error, e.g., print a message
-			Logging.Log("error", $"Error loading texture: {FilePath}.\nError message: {error.Message}");
-			return null;
+		int height = proxy.GetHeight();
+		int width = proxy.GetWidth();
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				Color pixel = proxy.GetPixel(x, y);
+				pixel.A = 0;
+				if (pixel == SrcColor) {
+					proxy.SetPixel(x, y, pixel);
+				}
+			}
 		}
+
+		return ImageTexture.CreateFromImage(proxy);
+	}
+
+	public static Texture2D ManipulateTexture(Image Source, bool FlipHorizontal, bool FlipVertical,
+	                                          RotateImgSpec Rotation = RotateImgSpec.None) {
+		Image tex = new Image();
+		tex.CopyFrom(Source);
 
 		// Flip horizontally
 		if (FlipHorizontal)
@@ -276,36 +273,6 @@ public static class ImageManipulation {
 		return ImageTexture.CreateFromImage(tex);
 	}
 
-	public static Texture2D ManipulateTexture(Image ModTexture, bool FlipHorizontal, bool FlipVertical,
-	                                          RotateImgSpec Rotation = RotateImgSpec.None) {
-		// Flip horizontally
-		if (FlipHorizontal)
-			ModTexture.FlipX();
-
-		// Flip vertically
-		if (FlipVertical)
-			ModTexture.FlipY();
-
-		// Rotate the image
-
-		switch (Rotation) {
-			case RotateImgSpec.Right90:
-				ModTexture.Rotate90(ClockDirection.Clockwise); // Rotate Right
-				break;
-			case RotateImgSpec.Left90:
-				ModTexture.Rotate90(ClockDirection.Counterclockwise); // Rotate left
-				break;
-			case RotateImgSpec.Rotate180:
-				ModTexture.Rotate180(); // Rotate 180 degrees
-				break;
-			default:
-				break;
-		}
-
-		// return the modified image.
-		return ImageTexture.CreateFromImage(ModTexture);
-	}
-
 	public static Texture2D MaskImage(Image Source, Image Mask) {
 		Image proxy = new Image();
 		proxy.CopyFrom(Source);
@@ -317,13 +284,13 @@ public static class ImageManipulation {
 
 		proxyMask.Resize(width, height, Image.Interpolation.Nearest); // make sure that the mask is the same size.
 
-		Color Removed = new Color(0f, 0f, 0f, 0f);
+		Color removed = new Color(0f, 0f, 0f, 0f);
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				Color Pixel = proxyMask.GetPixel(x, y);
-				if (Pixel.A == 0 || Pixel == Colors.Black) {
-					proxy.SetPixel(x, y, Removed);
+				Color pixel = proxyMask.GetPixel(x, y);
+				if (pixel.A == 0 || pixel == Colors.Black) {
+					proxy.SetPixel(x, y, removed);
 				}
 			}
 		}
@@ -331,32 +298,88 @@ public static class ImageManipulation {
 		return ImageTexture.CreateFromImage(proxy);
 	}
 
-	public static Texture2D ShiftHue(Image SrcImg, float HueShift) {
+	public static Texture2D ReplaceColor(Image Source, Color SrcColor, Color NewColor) {
+		Image proxy = new Image();
+		proxy.CopyFrom(Source);
+
+		int height = proxy.GetHeight();
+		int width = proxy.GetWidth();
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				Color pixel = proxy.GetPixel(x, y);
+				if (pixel == SrcColor) {
+					proxy.SetPixel(x, y, NewColor);
+				}
+			}
+		}
+
+		return ImageTexture.CreateFromImage(proxy);
+	}
+
+	public static Texture2D ShiftHsv(Image Source, float HueShift, float SaturationShift, float ValueShift) {
+		// Make a proxy...
+		Image proxy = new Image();
+		proxy.CopyFrom(Source);
+
 		// Get the size of the image
-		int width = SrcImg.GetWidth();
-		int height = SrcImg.GetHeight();
+		int width = proxy.GetWidth();
+		int height = proxy.GetHeight();
+
+		// Loop through each pixel and apply HSV shift
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				// Get the original pixel color
+				Color originalColor = proxy.GetPixel(x, y);
+
+				// Convert the color to HSV
+				originalColor.ToHsv(out float h, out float s, out float v);
+
+				// Apply shifts
+				h = (h + HueShift) % 1.0f;
+				s = Mathf.Clamp(s + SaturationShift, 0.0f, 1.0f);
+				v = Mathf.Clamp(v + ValueShift, 0.0f, 1.0f);
+
+				// Convert back to RGB
+				Color shiftedColor = Color.FromHsv(h, s, v);
+
+				// Set the new color to the pixel
+				proxy.SetPixel(x, y, shiftedColor);
+			}
+		}
+
+		return ImageTexture.CreateFromImage(proxy);
+	}
+
+	public static Texture2D ShiftHue(Image Source, float HueShift) {
+		Image proxy = new Image();
+		proxy.CopyFrom(Source);
+
+		// Get the size of the image
+		int width = proxy.GetWidth();
+		int height = proxy.GetHeight();
 
 		// Loop through each pixel and apply hue shift
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				// Get the original pixel color
-				Color originalColor = SrcImg.GetPixel(x, y);
+				Color originalColor = proxy.GetPixel(x, y);
 
 				// Convert the color to HSL
-				originalColor.ToHsv(out float h, out float s, out float l);
+				originalColor.ToHsv(out float h, out float s, out float v);
 
 				// Shift the hue
 				h = (h + HueShift) % 1.0f;
 
 				// Convert back to RGB
-				Color shiftedColor = Color.FromHsv(h, s, l);
+				Color shiftedColor = Color.FromHsv(h, s, v);
 
 				// Set the new color to the pixel
-				SrcImg.SetPixel(x, y, shiftedColor);
+				proxy.SetPixel(x, y, shiftedColor);
 			}
 		}
 
-		return ImageTexture.CreateFromImage(SrcImg);
+		return ImageTexture.CreateFromImage(proxy);
 	}
 }
 
