@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckd68yit2pd2s"
 path.s3tc="res://.godot/imported/Tony-Stark-Relaxing.png-f4d6dc77c303153b7449d8280aa8b6f7.s3tc.ctex"
+path.etc2="res://.godot/imported/Tony-Stark-Relaxing.png-f4d6dc77c303153b7449d8280aa8b6f7.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://Materials/Tony-Stark-Relaxing.png"
-dest_files=["res://.godot/imported/Tony-Stark-Relaxing.png-f4d6dc77c303153b7449d8280aa8b6f7.s3tc.ctex"]
+dest_files=["res://.godot/imported/Tony-Stark-Relaxing.png-f4d6dc77c303153b7449d8280aa8b6f7.s3tc.ctex", "res://.godot/imported/Tony-Stark-Relaxing.png-f4d6dc77c303153b7449d8280aa8b6f7.etc2.ctex"]
 
 [params]
 
