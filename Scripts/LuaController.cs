@@ -1,5 +1,6 @@
-#region
+#region Usings
 
+using System;
 using System.IO;
 using ApophisSoftware.LuaObjects;
 using Godot;
@@ -68,40 +69,6 @@ public partial class LuaController : Node {
 		Logging.Log("info", "Initializing Game API.");
 		// try to register the api for the game.
 		RegisterAPI();
-
-		/*
-		// test out the api.
-		// Let's pull our lua function from the lua code.
-		var val = lua.PullVariant("mclpp.log");
-		// Check to see if it returned an error, or a value.
-		if (val.GetType() == typeof(LuaError)) {
-			LuaError error = val.As<LuaError>();
-			GD.Print("ERROR %d: %s", error.Type, error.Message);
-			lua.DoString("print(dump(mclpp))");
-			return;
-		}
-
-		// We create a LuaFunctionRef as our reference to the Lua code's function,
-		// then we use .As<LuaFunctionRef>() to cast it as a LuaFunctionRef.
-		LuaFunctionRef API_Test = val.As<LuaFunctionRef>();
-		if (API_Test == null) {
-			var k = lua.DoString("print(mclpp)");
-			var Q = lua.DoString("mclpp.test_for_success(mclpp)");
-			Logging.Log("error", "ERROR: API_Test is null.");
-			return;
-		}
-
-		// Make the Params Array, to pass to the API Function.
-		Godot.Collections.Array Params = new Godot.Collections.Array();
-		Params.Add("system");
-		Params.Add("Lua System Activated.");
-
-		// We use .Invoke to actually call the lua function within the Lua State.
-		// And, finally, we log the output of the function to Godot Output Console.
-		var x = API_Test.Invoke(Params);
-		if (TestForError(x))
-			Logging.Log("Error found on API Test Call.");
-	*/
 	}
 
 	private void LuaPrint(string Message) {
@@ -158,22 +125,33 @@ public partial class LuaController : Node {
 	}
 
 	public override void _Ready() {
-		LuaError error = lua.DoString(@"
+		Variant error = lua.DoString(@"
 					mclpp.log (""system"" , ""Lua System Ready."")
 				");
+		try {
+			LuaError _Error = (LuaError) error;
 
-		if (error != null && error.Message != "")
-			if (error != null && error.Message != "") {
+			if (_Error != null && _Error.Message != "") {
 				Logging.Log("error", "An error occurred calling DoString.");
-				Logging.Log("error", "ERROR " + error.Type + ": " + error.Message);
+				Logging.Log("error", "ERROR " + _Error.Type + ": " + _Error.Message);
 			}
+		} catch (Exception e) {
+			// Do Nothing. This is just to make sure that casting works, and nothing throws a real error. 
+			// Done because of the changes made to DoString and DoFile in v2.1-beta11. -MRO
+		}
 
 		lua.UseCallables = false;
-		LuaError BuiltInError = lua.DoFile("res://Scripts/LuaObjects/Lua/builtin.lua");
+		Variant BuiltInVar = lua.DoFile("res://Scripts/LuaObjects/Lua/builtin.lua");
+		try {
+			LuaError BuiltInError = (LuaError) BuiltInVar;
 
-		if (BuiltInError != null && BuiltInError.Message != "") {
-			Logging.Log("system", "Error: " + BuiltInError.Type);
-			Logging.Log("system", "Error: " + BuiltInError.Message);
+			if (BuiltInError != null && BuiltInError.Message != "") {
+				Logging.Log("system", "Error: " + BuiltInError.Type);
+				Logging.Log("system", "Error: " + BuiltInError.Message);
+			}
+		} catch (Exception e) {
+			// Do Nothing. This is just to make sure that casting works, and nothing throws a real error. 
+			// Done because of the changes made to DoString and DoFile in v2.1-beta11. -MRO
 		}
 	}
 
