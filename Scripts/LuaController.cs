@@ -125,15 +125,20 @@ public partial class LuaController : Node {
 	}
 
 	public override void _Ready() {
-		LuaError error = lua.DoString(@"
+		Variant error = lua.DoString(@"
 					mclpp.log (""system"" , ""Lua System Ready."")
 				");
+		try {
+			LuaError _Error = (LuaError) error;
 
-		if (error != null && error.Message != "")
-			if (error != null && error.Message != "") {
+			if (_Error != null && _Error.Message != "") {
 				Logging.Log("error", "An error occurred calling DoString.");
-				Logging.Log("error", "ERROR " + error.Type + ": " + error.Message);
+				Logging.Log("error", "ERROR " + _Error.Type + ": " + _Error.Message);
 			}
+		} catch (Exception e) {
+			// Do Nothing. This is just to make sure that casting works, and nothing throws a real error. 
+			// Done because of the changes made to DoString and DoFile in v2.1-beta11. -MRO
+		}
 
 		lua.UseCallables = false;
 		Variant BuiltInVar = lua.DoFile("res://Scripts/LuaObjects/Lua/builtin.lua");
