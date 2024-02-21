@@ -605,66 +605,56 @@ public partial class MCLPP : RefCounted {
 
 	private BlockBox ProcessBox(string NodeName, Godot.Collections.Dictionary<string, Variant> BoxDictionary) {
 		BlockBox this_box = new BlockBox();
-		if (BoxDictionary.ContainsKey("type") == false) {
+
+		if (!BoxDictionary.TryGetValue("type", out var typeVariant)) {
 			log("error",
 				"Node Definition: " + NodeName +
 				" In Register Node contains a collision box, but doesn't have `type` defined.");
 			return null;
-		} else {
-			this_box.type = ((string) BoxDictionary["type"]).ToLower();
 		}
 
-		switch (this_box.type.ToLower()) {
-			case "regular": // do nothing else.
+		string type = ((string)typeVariant).ToLower();
+
+		switch (type) {
+			case "regular": 
 				break;
 			case "fixed":
-				if (BoxDictionary.ContainsKey("fixed") == false) {
+			case "connected":
+				if (!BoxDictionary.ContainsKey("fixed")) {
 					log("error",
 						"Node Definition: " + NodeName +
 						" In Register Node contains a fixed collision box, but doesn't have `fixed` defined.");
 					return null;
 				}
-
 				break;
 			case "wallmounted":
-				if (BoxDictionary.ContainsKey("wall_top") == false) {
+				if (!BoxDictionary.ContainsKey("wall_top")) {
 					log("error",
 						"Node Definition: " + NodeName +
 						" In Register Node contains a fixed collision box, but doesn't have `wall_top` defined.");
 					return null;
 				}
 
-				if (BoxDictionary.ContainsKey("wall_bottom") == false) {
+				if (!BoxDictionary.ContainsKey("wall_bottom")) {
 					log("error",
 						"Node Definition: " + NodeName +
 						" In Register Node contains a fixed collision box, but doesn't have `wall_bottom` defined.");
 					return null;
 				}
 
-				if (BoxDictionary.ContainsKey("wall_side") == false) {
+				if (!BoxDictionary.ContainsKey("wall_side")) {
 					log("error",
 						"Node Definition: " + NodeName +
 						" In Register Node contains a fixed collision box, but doesn't have `wall_side` defined.");
 					return null;
 				}
-
-				break;
-			case "connected":
-				if (BoxDictionary.ContainsKey("fixed") == false) {
-					log("error",
-						"Node Definition: " + NodeName +
-						" In Register Node contains a fixed collision box, but doesn't have `fixed` defined.");
-					return null;
-				}
-
 				break;
 			default:
 				Logging.Log("error", "Invalid 'type' given to BlockBox.");
 				return null;
-				break;
 		}
 
-
+		this_box.type = type;
 		return this_box;
 	}
 
