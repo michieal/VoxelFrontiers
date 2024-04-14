@@ -1,0 +1,25 @@
+# Translation Template.
+# MenuController.cs
+Update Game = Atualizar Jogo
+Settings = Configurações
+Exit Game = Sair do Jogo
+View Log = Ver Registro
+An error has occurred trying to download the source code. Please try again later. = Ocorreu um erro ao tentar baixar o código-fonte. Por favor, tente novamente mais tarde.
+# SCC.cs
+Game Initializing. = Inicializando o Jogo.
+Game Source Not Found. Downloading. = Fonte do Jogo não encontrada. Baixando...
+Deep Scanning Game structure. = Analisando a estrutura do Jogo.
+Building directory structure. = Construindo estrutura de diretórios.
+Building Textures List. = Construindo Lista de Texturas.
+Building Sounds List. = Construindo Lista de Sons.
+Building Models List. = Construindo Lista de Modelos.
+Indexing Locale Files. = Indexando Arquivos de Localização.
+Processing Settings. = Processando Configurações.
+Settings Processing Done. = Processamento de Configurações Concluído.
+Settings Build Completed. = Compilação de Configurações Concluída.
+Building Source Code List. = Construindo Lista de Código Fonte.
+Source Scan Completed. = Análise de Fonte Concluída.
+Processing Settings Files. = Processando Arquivos de Configuração.
+Downloading Game Source; Please wait. = Baixando Fonte do Jogo; Por favor, aguarde.
+Game Source Download Complete! Extracting. = Download da Fonte do Jogo Completo! Extraindo.
+Game Source Extracted. Scanning Directories. = Fonte do Jogo Extraída. Escaneando Diretórios.
