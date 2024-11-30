@@ -643,6 +643,11 @@ mclpp.register_abm({
     end,
 })
 
+mclpp.log("Test block def dump:\n" .. dump(test_def))
+mclpp.log("Registering test block definition.")
+mclpp.register_node("mclpp_builtin:test_node",test_def)
+mclpp.log("Registered Nodes: \n"..dump (mclpp.registered_nodes))
+
 mclpp.log(dump(test_def))
 
 --local myItem = Item("Tom")
