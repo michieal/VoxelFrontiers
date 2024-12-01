@@ -12,8 +12,8 @@
 
 What it is
 -------
-VoxelFrontiers is an engine designed to run the VoxeLibre (Originally) MineClone 2 Minetest Game.
-After having developed for the VoxeLibre (formerly) Mineclone 2 team, and realizing that the Minetest developers
+VoxelFrontiers is an engine designed to run the VoxeLibre (Originally) MineClone 2 Luanti (Fromally) Minetest Game.
+After having developed for the VoxeLibre (formerly) Mineclone 2 team, and realizing that the Luanti (Originally) Minetest developers
 were more than complacent to leave 5-10 year old issues unanswered, even after most of the 
 developers had decided that it was a great idea, and had given their consent on the PR's 
 that fixed said issues, that they would never merge the PRs. Instead, we watched them as a 
