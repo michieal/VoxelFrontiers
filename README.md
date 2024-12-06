@@ -62,6 +62,8 @@ At the current moment, we happily accept contributions, and they are needed. We 
 Please use the Issue Tracker to report the outcomes, so that if needed, we can look into it.
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
+For those that wish to support this project, we have set up a Ko-Fi support option. [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z8NGVMV). A single donation will get you access to the Apophis Software Lounge discord server, and Monthly Donations will give you access to the "Supporter" role, and access to a special Supporter channel!
+
 License
 -------
 Please see [LICENSE.md](LICENSE.md) for information on the License of this software.
