@@ -1,8 +1,8 @@
-# MCLPP Codeneame Mineclone Plus Plus
+# Voxelfronteirs
 ==========================
 
 <!-- TOC -->
-* [# MCLPP Codeneame Mineclone Plus Plus](#-mclpp-codeneame-mineclone-plus-plus)
+* [# VoxelFrontiers](#-VoxelFrontiers)
   * [What it is](#what-it-is)
   * [How to use](#how-to-use)
   * [Contributing](#contributing)
@@ -12,23 +12,23 @@
 
 What it is
 -------
-Mineclone Plus Plus (MCLPP) is an engine designed to run the MineClone2 Minetest Game.
-After having developed for the Mineclone 2 team, and realizing that the Minetest developers
+VoxelFrontiers is an engine designed to run the VoxeLibre (Originally) MineClone 2 Luanti (Fromally) Minetest Game.
+After having developed for the VoxeLibre (formerly) Mineclone 2 team, and realizing that the Luanti (Originally) Minetest developers
 were more than complacent to leave 5-10 year old issues unanswered, even after most of the 
 developers had decided that it was a great idea, and had given their consent on the PR's 
 that fixed said issues, that they would never merge the PRs. Instead, we watched them as a 
 whole engage in blaming their engine's game developers "for shoddy, dumpster fire code" 
 instead of making real and much needed inprovements to their engine.
 
-So, I decided to step back from the main Mineclone 2 Development team, to work on this 
+So, I decided to step back from the main VoxeLibre (formerly) Mineclone 2 Development team, to work on this 
 project. To give life to an engine that would help the game that I (and many others) love. 
-And so, with a lot of prodding, and some pestering, from my good friend JoMW I decided to 
+And so, with a lot of prodding, and some pestering, from my good friend WBJ I decided to 
 build this from just fanciful thoughts into a real, honest engine.
 
 Initial versions of this project were created In Unity/C#. But, with the recent events, 
 and Unity being a dumpster fire (as well as closed source, proprietary software) I have
 moved the project over to the Godot engine 4.2 stable-mono-official (.NET Version). 
-Mineclone 2 is open source, this engine's code is open source, and Godot is open source. 
+VoxeLibre (Originally) Mineclone 2 is open source, this engine's code is open source, and Godot is open source. 
 So, it all came together as a perfect fit.
 
 How to use
@@ -61,6 +61,8 @@ Contributing
 At the current moment, we happily accept contributions, and they are needed. We also need people to test the engine on various systems. 
 Please use the Issue Tracker to report the outcomes, so that if needed, we can look into it.
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
+
+For those that wish to support this project, we have set up a Ko-Fi support option. [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z8NGVMV). A single donation will get you access to the Apophis Software Lounge discord server, and Monthly Donations will give you access to the "Supporter" role, and access to a special Supporter channel!
 
 License
 -------
