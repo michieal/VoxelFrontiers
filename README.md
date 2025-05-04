@@ -96,6 +96,7 @@ Additionally, some versions of Windows like to mark downloaded files as inaccess
 For additional help / to ask questions, please feel free to ask questions in the ⁉-support or development channel.
 
 https://discord.gg/5ZnuVhAAqF
+
 Contributing
 -------
 At the current moment, we happily accept contributions, and they are needed. We also need people to test the engine on various systems. 
