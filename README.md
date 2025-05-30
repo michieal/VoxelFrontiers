@@ -1,8 +1,8 @@
-# MCLPP Codeneame Mineclone Plus Plus
+# Voxel Frontiers
 ==========================
 
 <!-- TOC -->
-* [# MCLPP Codeneame Mineclone Plus Plus](#-mclpp-codeneame-mineclone-plus-plus)
+* [# Voxel Frontiers](#voxel-frontiers)
   * [What it is](#what-it-is)
   * [How to use](#how-to-use)
   * [Contributing](#contributing)
@@ -12,8 +12,8 @@
 
 What it is
 -------
-Mineclone Plus Plus (MCLPP) is an engine designed to run the MineClone2 Minetest Game.
-After having developed for the Mineclone 2 team, and realizing that the Minetest developers
+Voxel Frontiers is an engine designed to run the Voxel Libre Minetest Game.
+After having developed for the Voxel Libre team, and realizing that the Minetest developers
 were more than complacent to leave 5-10 year old issues unanswered, even after most of the 
 developers had decided that it was a great idea, and had given their consent on the PR's 
 that fixed said issues, that they would never merge the PRs. Instead, we watched them as a 
